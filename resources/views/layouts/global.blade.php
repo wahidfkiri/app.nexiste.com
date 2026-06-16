@@ -985,6 +985,47 @@
   ];
 @endphp
 <script>
+window.CLIENT_LANG = Object.assign(window.CLIENT_LANG || {}, {
+  confirmText: @json(__('client::clients.actions.confirm')),
+  cancelText: @json(__('client::clients.actions.cancel')),
+  openAction: @json(__('client::clients.actions.open')),
+  acceptAction: @json(__('client::clients.actions.accept')),
+  deleteAction: @json(__('client::clients.actions.delete')),
+  successTitle: @json(__('client::clients.messages.success_title')),
+  errorTitle: @json(__('client::clients.messages.error_title')),
+  validationTitle: @json(__('client::clients.messages.validation_title')),
+  processing: @json(__('client::clients.messages.processing')),
+  deleting: @json(__('client::clients.messages.deleting')),
+  loadFailed: @json(__('client::clients.messages.load_failed')),
+  unexpectedError: @json(__('client::clients.messages.unexpected_error')),
+  operationSuccess: @json(__('client::clients.messages.operation_success')),
+  deleteUnable: @json(__('client::clients.messages.delete_unable')),
+  fixErrors: @json(__('client::clients.messages.fix_errors')),
+  deletedTitle: @json(__('client::clients.messages.deleted')),
+  draftRestoredStatus: @json(__('client::clients.messages.draft_restored')),
+  draftRestoredTitle: @json(__('client::clients.messages.draft_restored_title')),
+  draftRestoredHelp: @json(__('client::clients.messages.draft_restored_help')),
+  draftDeletedStatus: @json(__('client::clients.messages.draft_deleted')),
+  draftDeletedHelp: @json(__('client::clients.messages.draft_deleted_help')),
+  draftAvailableTitle: @json(__('client::clients.messages.draft_available_title')),
+  draftAvailableMessage: @json(__('client::clients.messages.draft_available_message', ['label' => ':label'])),
+  draftResume: @json(__('client::clients.messages.draft_resume')),
+  draftCancelDelete: @json(__('client::clients.messages.draft_cancel_delete')),
+  draftAvailableLabel: @json(__('client::clients.messages.draft_available_label', ['label' => ':label'])),
+  draftAutoSave: @json(__('client::clients.messages.draft_auto_save')),
+  draftSaving: @json(__('client::clients.messages.draft_saving')),
+  draftUnavailable: @json(__('client::clients.messages.draft_unavailable')),
+  draftFailed: @json(__('client::clients.messages.draft_failed')),
+  draftSavedAt: @json(__('client::clients.messages.draft_saved_at', ['time' => ':time'])),
+  draftResumeButton: @json(__('client::clients.messages.draft_resume_button')),
+  draftCurrent: @json(__('client::clients.messages.draft_current')),
+  automationSuccessMessage: @json(__('client::clients.messages.automation_success_message')),
+  automationRoutesUnavailable: @json(__('client::clients.messages.automation_routes_unavailable')),
+  automationActionFailed: @json(__('client::clients.messages.automation_action_failed')),
+  automationBulkFailed: @json(__('client::clients.messages.automation_bulk_failed')),
+  automationReloadFailed: @json(__('client::clients.messages.automation_reload_failed')),
+  automationPartialFailed: @json(__('client::clients.messages.automation_partial_failed', ['count' => ':count'])),
+});
 window.CLIENT_ROUTES = Object.assign(window.CLIENT_ROUTES || {}, @json($clientJsRoutes));
 window.CLIENT_EXTENSION_ROUTES = Object.assign(window.CLIENT_EXTENSION_ROUTES || {}, @json($clientExtensionRoutes));
 window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, @json($invoiceJsRoutes));
