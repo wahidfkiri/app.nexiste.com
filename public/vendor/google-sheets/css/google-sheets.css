@@ -1,0 +1,118 @@
+/* Google Sheets Extension — Styles */
+
+.gs-spreadsheet-row:hover {
+  background: var(--c-accent-xl);
+}
+
+.gs-sheet-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--c-ink-10);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+  font-size: 12.5px;
+  font-weight: var(--fw-medium);
+  color: var(--c-ink-60);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+  white-space: nowrap;
+}
+
+.gs-sheet-tab:hover {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: var(--c-accent-xl);
+}
+
+.gs-sheet-tab.active {
+  border-color: var(--c-accent);
+  background: var(--c-accent);
+  color: #fff;
+}
+
+.gs-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-family: "DM Sans", sans-serif;
+}
+
+.gs-data-table th {
+  background: var(--surface-2);
+  color: var(--c-ink-60);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid var(--c-ink-05);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.gs-data-table td {
+  padding: 6px 10px;
+  border: 1px solid var(--c-ink-05);
+  color: var(--c-ink-80);
+  vertical-align: top;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gs-data-table tr:nth-child(even) td {
+  background: var(--surface-0);
+}
+
+.gs-data-table tr:hover td {
+  background: var(--c-accent-xl);
+}
+
+.gs-data-wrap {
+  overflow: auto;
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-ink-05);
+  max-height: 480px;
+}
+
+.gs-col-header {
+  background: var(--surface-2);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--c-ink-40);
+  text-align: center;
+  padding: 6px 10px;
+  border: 1px solid var(--c-ink-05);
+  min-width: 40px;
+}
+
+.gs-row-num {
+  background: var(--surface-2);
+  font-size: 11px;
+  color: var(--c-ink-40);
+  text-align: center;
+  padding: 6px 8px;
+  border: 1px solid var(--c-ink-05);
+  min-width: 36px;
+  font-weight: 600;
+}
+
+#gsDataModal .modal {
+  max-width: 92vw;
+  width: 92vw;
+}
+
+.gs-range-input {
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  letter-spacing: .02em;
+}
+
+.gs-empty-cell {
+  color: var(--c-ink-10);
+}

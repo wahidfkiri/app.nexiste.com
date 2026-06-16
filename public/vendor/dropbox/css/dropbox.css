@@ -1,0 +1,223 @@
+.dbx-folder-link:hover {
+  text-decoration: underline;
+}
+
+.dbx-upload-modal {
+  display: grid;
+  gap: 18px;
+}
+
+.dbx-share-modal {
+  display: grid;
+  gap: 18px;
+}
+
+.dbx-share-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.dbx-share-help {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--c-ink-60);
+}
+
+.dbx-upload-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--c-ink-10);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(0, 97, 255, 0.06), rgba(0, 97, 255, 0.01));
+}
+
+.dbx-upload-summary-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: rgba(0, 97, 255, 0.12);
+  color: #0061ff;
+  font-size: 18px;
+}
+
+.dbx-upload-summary-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--c-ink-50);
+}
+
+.dbx-upload-summary-value {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+
+.dbx-upload-picker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 18px;
+  border: 1px dashed rgba(0, 97, 255, 0.35);
+  border-radius: 18px;
+  background: rgba(0, 97, 255, 0.03);
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.dbx-upload-picker:hover {
+  border-color: rgba(0, 97, 255, 0.62);
+  background: rgba(0, 97, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.dbx-upload-picker-icon {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #fff;
+  color: #0061ff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  font-size: 18px;
+}
+
+.dbx-upload-picker-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--c-ink-70);
+}
+
+.dbx-upload-picker-body strong {
+  color: var(--c-ink);
+  font-size: 15px;
+}
+
+.dbx-upload-picker-body small {
+  color: var(--c-ink-60);
+  line-height: 1.5;
+}
+
+.dbx-upload-selected {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--c-ink-05);
+  font-size: 13px;
+  color: var(--c-ink-70);
+}
+
+.dbx-upload-errors {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(220, 38, 38, 0.18);
+  background: rgba(220, 38, 38, 0.06);
+  color: #b42318;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.dbx-upload-files {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.dbx-upload-file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--c-ink-08);
+  background: #fff;
+}
+
+.dbx-upload-file-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dbx-upload-file-icon {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(0, 97, 255, 0.08);
+  color: #0061ff;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.dbx-upload-file-text {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.dbx-upload-file-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dbx-upload-file-meta {
+  font-size: 12px;
+  color: var(--c-ink-60);
+}
+
+.dbx-upload-file-remove {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(220, 38, 38, 0.08);
+  color: #b42318;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.dbx-upload-file-remove:hover {
+  background: rgba(220, 38, 38, 0.14);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .dbx-share-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dbx-upload-file-item {
+    align-items: flex-start;
+  }
+}
+
+#dbxTrashModal .table-empty,
+#dbxFilesTableBody .table-empty {
+  padding: 28px 12px;
+}

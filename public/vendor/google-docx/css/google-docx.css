@@ -1,0 +1,16 @@
+/* Google Docs Extension - Styles */
+
+.gdx-document-row:hover {
+  background: var(--c-accent-xl);
+}
+
+#gdxEditorModal .modal {
+  max-width: 900px;
+}
+
+#gdxCurrentContent,
+#gdxAppendText,
+#gdxSearchText,
+#gdxReplaceText {
+  font-family: "DM Sans", sans-serif;
+}

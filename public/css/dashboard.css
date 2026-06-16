@@ -1,0 +1,3 @@
+﻿/* Dashboard legacy entrypoint.
+   The dashboard UI is now implemented by public/css/dashboard-light.css. */
+@import url('./dashboard-light.css');

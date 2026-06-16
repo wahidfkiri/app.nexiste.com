@@ -1,0 +1,9 @@
+.gd-folder-link:hover {
+  text-decoration: underline;
+}
+
+#gdTrashModal .table-empty,
+#gdFilesTableBody .table-empty {
+  padding: 28px 12px;
+}
+

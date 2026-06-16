@@ -1,0 +1,103 @@
+{
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The Laravel Framework.",
+    "keywords": ["framework", "laravel"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "barryvdh/laravel-dompdf": "^3.1",
+        "giggsey/libphonenumber-for-php": "^8.13",
+        "google/apiclient": "^2.15",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^10.0",
+        "laravel/octane": "^2.17",
+        "laravel/sanctum": "*",
+        "laravel/tinker": "^2.8",
+        "laravel/ui": "^4.6",
+        "maatwebsite/excel": "^3.1",
+        "predis/predis": "2.2",
+        "spatie/laravel-permission": "^6.25",
+        "spiral/roadrunner-cli": "^2.7",
+        "spiral/roadrunner-http": "^4.1"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.9.1",
+        "laravel/pint": "^1.0",
+        "laravel/sail": "^1.18",
+        "laravel/telescope": "^5.20",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/",
+            "Vendor\\CrmCore\\": "packages/vendor/crm-core/src/",
+            "Vendor\\Client\\": "packages/vendor/client/src/",
+            "Vendor\\Invoice\\": "packages/vendor/invoice/src/",
+            "Vendor\\Stock\\": "packages/vendor/stock/src/",
+            "Vendor\\User\\": "packages/vendor/user/src/",
+            "Vendor\\Rbac\\": "packages/vendor/rbac/src/",
+            "Vendor\\Extensions\\": "packages/vendor/extensions/src/",
+            "Vendor\\Automation\\": "packages/vendor/automation/src/",
+            "Vendor\\GoogleCalendar\\": "extensions/google-calendar/src/",
+            "NexusExtensions\\Projects\\": "extensions/projects/src/",
+            "NexusExtensions\\NotionWorkspace\\": "extensions/notion-workspace/src/",
+            "NexusExtensions\\GoogleDrive\\": "extensions/gdrive/src/",
+            "NexusExtensions\\Dropbox\\": "extensions/dropbox/src/",
+            "NexusExtensions\\GoogleSheets\\": "extensions/google-sheets/src/",
+            "NexusExtensions\\GoogleDocx\\": "extensions/google-docx/src/",
+            "NexusExtensions\\GoogleGmail\\": "extensions/google-gmail/src/",
+            "NexusExtensions\\GoogleMeet\\": "extensions/google-meet/src/",
+            "NexusExtensions\\Slack\\": "extensions/slack/src/",
+            "NexusExtensions\\Chatbot\\": "extensions/chatbot/src/",
+            "Modules\\TrelloIntegration\\": "Modules/TrelloIntegration/src/"
+         
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "10.x-dev"
+        },
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "audit": {
+            "block-insecure": false
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

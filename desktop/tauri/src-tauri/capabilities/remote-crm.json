@@ -1,0 +1,21 @@
+{
+  "$schema": "../gen/schemas/remote-schema.json",
+  "identifier": "remote-crm",
+  "description": "Permissions exposed to the Laravel CRM loaded inside the desktop shell",
+  "windows": ["main"],
+  "remote": {
+    "urls": [
+      "http://127.0.0.1:8000/*",
+      "https://crm.example.com/*",
+      "https://www.crm.example.com/*"
+    ]
+  },
+  "local": false,
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "deep-link:default",
+    "notification:default",
+    "updater:default"
+  ]
+}

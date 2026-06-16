@@ -1,0 +1,16 @@
+{
+  "name": "nexus-slack-socket-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Socket.IO relay server for Nexus CRM Slack extension",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
+

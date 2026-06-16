@@ -1,0 +1,24 @@
+{
+    "name": "vendor/extensions",
+    "description": "Marketplace d'extensions / plugins pour CRM SaaS multi-tenant — géré par super-admin",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Vendor\\Extensions\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vendor\\Extensions\\ExtensionsServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0",
+        "vendor/crm-core": "*",
+        "maatwebsite/excel": "^3.1"
+    }
+}

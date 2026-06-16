@@ -1,0 +1,22 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "desktop:tauri:install": "npm --prefix desktop/tauri install",
+        "desktop:tauri:dev": "powershell -ExecutionPolicy Bypass -File .\\desktop\\tauri\\scripts\\tauri-env.ps1 dev",
+        "desktop:tauri:build": "powershell -ExecutionPolicy Bypass -File .\\desktop\\tauri\\scripts\\tauri-env.ps1 build",
+        "desktop:tauri:build:no-bundle": "powershell -ExecutionPolicy Bypass -File .\\desktop\\tauri\\scripts\\tauri-env.ps1 build-no-bundle",
+        "desktop:tauri:frontend:build": "npm --prefix desktop/tauri run build"
+    },
+    "devDependencies": {
+        "@popperjs/core": "^2.11.6",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "axios": "^1.1.2",
+        "bootstrap": "^5.2.3",
+        "laravel-vite-plugin": "^0.7.2",
+        "sass": "^1.56.1",
+        "vite": "^4.0.0",
+        "vue": "^3.5.13"
+    }
+}

@@ -1,0 +1,60 @@
+<?php
+
+return [
+    'sectors' => [
+        'freelance' => 'Freelance',
+        'retail' => 'Commerce',
+        'services' => 'Services',
+        'startup' => 'Startup',
+        'construction' => 'BTP',
+        'consulting' => 'Conseil',
+    ],
+
+    'defaults_by_sector' => [
+        'freelance' => ['clients', 'invoice', 'projects', 'notion-workspace', 'google-calendar'],
+        'retail' => ['clients', 'invoice', 'stock', 'projects', 'notion-workspace'],
+        'services' => ['clients', 'invoice', 'projects', 'notion-workspace', 'google-calendar'],
+        'startup' => ['clients', 'invoice', 'projects', 'notion-workspace', 'google-calendar', 'google-drive'],
+        'construction' => ['clients', 'invoice', 'stock', 'projects'],
+        'consulting' => ['clients', 'invoice', 'projects', 'notion-workspace', 'google-docx'],
+    ],
+
+    'countries' => [
+        ['code' => 'FR', 'name' => 'France', 'dial' => '+33', 'timezone' => 'Europe/Paris', 'currency' => 'EUR', 'phone_lengths' => [9]],
+        ['code' => 'MA', 'name' => 'Maroc', 'dial' => '+212', 'timezone' => 'Africa/Casablanca', 'currency' => 'MAD', 'phone_lengths' => [9]],
+        ['code' => 'DZ', 'name' => 'Algérie', 'dial' => '+213', 'timezone' => 'Africa/Algiers', 'currency' => 'DZD', 'phone_lengths' => [9]],
+        ['code' => 'TN', 'name' => 'Tunisie', 'dial' => '+216', 'timezone' => 'Africa/Tunis', 'currency' => 'TND', 'phone_lengths' => [8]],
+        ['code' => 'BE', 'name' => 'Belgique', 'dial' => '+32', 'timezone' => 'Europe/Brussels', 'currency' => 'EUR', 'phone_lengths' => [8, 9]],
+        ['code' => 'CH', 'name' => 'Suisse', 'dial' => '+41', 'timezone' => 'Europe/Zurich', 'currency' => 'CHF', 'phone_lengths' => [9]],
+        ['code' => 'CA', 'name' => 'Canada', 'dial' => '+1', 'timezone' => 'America/Toronto', 'currency' => 'CAD', 'phone_lengths' => [10]],
+        ['code' => 'US', 'name' => 'États-Unis', 'dial' => '+1', 'timezone' => 'America/New_York', 'currency' => 'USD', 'phone_lengths' => [10]],
+        ['code' => 'GB', 'name' => 'Royaume-Uni', 'dial' => '+44', 'timezone' => 'Europe/London', 'currency' => 'GBP', 'phone_lengths' => [10]],
+        ['code' => 'DE', 'name' => 'Allemagne', 'dial' => '+49', 'timezone' => 'Europe/Berlin', 'currency' => 'EUR', 'phone_lengths' => [10, 11]],
+        ['code' => 'ES', 'name' => 'Espagne', 'dial' => '+34', 'timezone' => 'Europe/Madrid', 'currency' => 'EUR', 'phone_lengths' => [9]],
+        ['code' => 'IT', 'name' => 'Italie', 'dial' => '+39', 'timezone' => 'Europe/Rome', 'currency' => 'EUR', 'phone_lengths' => [9, 10]],
+        ['code' => 'NL', 'name' => 'Pays-Bas', 'dial' => '+31', 'timezone' => 'Europe/Amsterdam', 'currency' => 'EUR', 'phone_lengths' => [9]],
+        ['code' => 'PT', 'name' => 'Portugal', 'dial' => '+351', 'timezone' => 'Europe/Lisbon', 'currency' => 'EUR', 'phone_lengths' => [9]],
+        ['code' => 'AE', 'name' => 'Émirats arabes unis', 'dial' => '+971', 'timezone' => 'Asia/Dubai', 'currency' => 'AED', 'phone_lengths' => [8, 9]],
+        ['code' => 'SA', 'name' => 'Arabie saoudite', 'dial' => '+966', 'timezone' => 'Asia/Riyadh', 'currency' => 'SAR', 'phone_lengths' => [9]],
+        ['code' => 'EG', 'name' => 'Égypte', 'dial' => '+20', 'timezone' => 'Africa/Cairo', 'currency' => 'EGP', 'phone_lengths' => [10]],
+        ['code' => 'SN', 'name' => 'Sénégal', 'dial' => '+221', 'timezone' => 'Africa/Dakar', 'currency' => 'XOF', 'phone_lengths' => [9]],
+        ['code' => 'CI', 'name' => 'Côte d’Ivoire', 'dial' => '+225', 'timezone' => 'Africa/Abidjan', 'currency' => 'XOF', 'phone_lengths' => [10]],
+        ['code' => 'CM', 'name' => 'Cameroun', 'dial' => '+237', 'timezone' => 'Africa/Douala', 'currency' => 'XAF', 'phone_lengths' => [9]],
+    ],
+
+    'currencies' => [
+        'EUR' => 'Euro (EUR)',
+        'USD' => 'Dollar US (USD)',
+        'MAD' => 'Dirham marocain (MAD)',
+        'DZD' => 'Dinar algérien (DZD)',
+        'TND' => 'Dinar tunisien (TND)',
+        'CAD' => 'Dollar canadien (CAD)',
+        'CHF' => 'Franc suisse (CHF)',
+        'GBP' => 'Livre sterling (GBP)',
+        'AED' => 'Dirham des Émirats (AED)',
+        'SAR' => 'Riyal saoudien (SAR)',
+        'EGP' => 'Livre égyptienne (EGP)',
+        'XOF' => 'Franc CFA BCEAO (XOF)',
+        'XAF' => 'Franc CFA BEAC (XAF)',
+    ],
+];

@@ -1,0 +1,35 @@
+{
+    "name": "nexus-extensions/google-sheets",
+    "description": "Extension Google Sheets pour NexusCRM — Gestionnaire de feuilles de calcul complet avec OAuth2 par tenant",
+    "type": "library",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "keywords": ["google-sheets", "spreadsheet", "crm", "extension", "oauth2"],
+    "autoload": {
+        "psr-4": {
+            "NexusExtensions\\GoogleSheets\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NexusExtensions\\GoogleSheets\\GoogleSheetsServiceProvider"
+            ]
+        },
+        "nexus-extension": {
+            "slug": "google-sheets",
+            "name": "Google Sheets",
+            "version": "1.0.0",
+            "category": "productivity",
+            "pricing_type": "free"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0",
+        "google/apiclient": "^2.15"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0"
+    }
+}

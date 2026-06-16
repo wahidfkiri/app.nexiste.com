@@ -1,0 +1,35 @@
+﻿{
+    "name": "nexus-extensions/dropbox",
+    "description": "Extension Dropbox pour NexusCRM - file manager complet avec OAuth2 par tenant",
+    "type": "library",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "keywords": ["dropbox", "storage", "crm", "extension", "oauth2"],
+    "autoload": {
+        "psr-4": {
+            "NexusExtensions\\Dropbox\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NexusExtensions\\Dropbox\\DropboxServiceProvider"
+            ]
+        },
+        "nexus-extension": {
+            "slug": "dropbox",
+            "name": "Dropbox",
+            "version": "1.0.0",
+            "category": "storage",
+            "pricing_type": "free"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0|^11.0",
+        "guzzlehttp/guzzle": "^7.2"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0"
+    }
+}
