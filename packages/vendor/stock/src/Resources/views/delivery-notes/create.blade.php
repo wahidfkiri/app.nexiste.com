@@ -85,6 +85,58 @@ document.addEventListener('DOMContentLoaded', () => {
   Stock.bindAjaxForm('deliveryNoteForm');
   Stock.toggleDeliveryType(document.getElementById('deliveryTypeInput')?.value || 'in');
   document.getElementById('deliveryTypeInput')?.addEventListener('change', (event) => Stock.toggleDeliveryType(event.target.value));
+
+  window.CrmDrafts?.attach('deliveryNoteForm', {
+    type: 'stock_delivery_note',
+    label: 'bon livraison',
+    collect: (data) => {
+      const items = [];
+      const tbody = document.getElementById('deliveryNoteItemsBody');
+      if (tbody) {
+        Array.from(tbody.querySelectorAll('tr')).forEach((tr) => {
+          const get = (sel) => {
+            const el = tr.querySelector(sel);
+            return el ? el.value : '';
+          };
+          items.push({
+            article_id: get('[name$="[article_id]"]') || '',
+            sku: get('[name$="[sku]"]') || '',
+            name: get('[name$="[name]"]') || '',
+            quantity: get('[name$="[quantity]"]') || '',
+            unit: get('[name$="[unit]"]') || '',
+          });
+        });
+      }
+      data.__draft_items = items;
+      return data;
+    },
+    apply: (data) => {
+      if (Array.isArray(data.__draft_items)) {
+        const tbody = document.getElementById('deliveryNoteItemsBody');
+        if (tbody) {
+          tbody.innerHTML = '';
+          data.__draft_items.forEach((item) => {
+            Stock.addDeliveryLine('deliveryNoteItemsBody');
+            const rows = tbody.querySelectorAll('tr');
+            const last = rows[rows.length - 1];
+            if (!last) return;
+            const set = (sel, value) => {
+              const el = last.querySelector(sel);
+              if (!el) return;
+              el.value = value ?? '';
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            };
+            set('[name$="[article_id]"]', item.article_id || '');
+            set('[name$="[sku]"]', item.sku || '');
+            set('[name$="[name]"]', item.name || '');
+            set('[name$="[quantity]"]', item.quantity ?? 1);
+            set('[name$="[unit]"]', item.unit || '');
+          });
+        }
+      }
+    },
+  });
 });
 </script>
 @endpush

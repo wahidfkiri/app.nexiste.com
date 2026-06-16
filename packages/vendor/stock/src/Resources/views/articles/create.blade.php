@@ -64,5 +64,14 @@
 @endsection
 
 @push('scripts')
-<script>document.addEventListener('DOMContentLoaded', () => Stock.bindAjaxForm('articleForm'));</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Stock.bindAjaxForm('articleForm');
+
+  window.CrmDrafts?.attach('articleForm', {
+    type: 'stock_article',
+    label: 'article',
+  });
+});
+</script>
 @endpush

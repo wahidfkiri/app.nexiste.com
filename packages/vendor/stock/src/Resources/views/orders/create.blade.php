@@ -87,6 +87,58 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   window.StockArticleOptionsHtml = @json($articleOptionsHtml);
   Stock.bindAjaxForm('orderForm');
+
+  window.CrmDrafts?.attach('orderForm', {
+    type: 'stock_order',
+    label: 'commande',
+    collect: (data) => {
+      const items = [];
+      const tbody = document.getElementById('orderItemsBody');
+      if (tbody) {
+        Array.from(tbody.querySelectorAll('tr')).forEach((tr) => {
+          const get = (sel) => {
+            const el = tr.querySelector(sel);
+            return el ? el.value : '';
+          };
+          items.push({
+            article_id: get('[name$="[article_id]"]') || '',
+            name: get('[name$="[name]"]') || '',
+            quantity: get('[name$="[quantity]"]') || '',
+            unit: get('[name$="[unit]"]') || '',
+            unit_price: get('[name$="[unit_price]"]') || '',
+          });
+        });
+      }
+      data.__draft_items = items;
+      return data;
+    },
+    apply: (data) => {
+      if (Array.isArray(data.__draft_items)) {
+        const tbody = document.getElementById('orderItemsBody');
+        if (tbody) {
+          tbody.innerHTML = '';
+          data.__draft_items.forEach((item) => {
+            Stock.addOrderLine('orderItemsBody');
+            const rows = tbody.querySelectorAll('tr');
+            const last = rows[rows.length - 1];
+            if (!last) return;
+            const set = (sel, value) => {
+              const el = last.querySelector(sel);
+              if (!el) return;
+              el.value = value ?? '';
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            };
+            set('[name$="[article_id]"]', item.article_id || '');
+            set('[name$="[name]"]', item.name || '');
+            set('[name$="[quantity]"]', item.quantity ?? 1);
+            set('[name$="[unit]"]', item.unit || '');
+            set('[name$="[unit_price]"]', item.unit_price ?? 0);
+          });
+        }
+      }
+    },
+  });
 });
 </script>
 @endpush
