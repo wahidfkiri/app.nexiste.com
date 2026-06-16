@@ -674,7 +674,7 @@ class DashboardController extends Controller
                 'resource_count' => $resourceCount,
                 'resource_label' => $definition['label'],
                 'last_sync' => $lastSync,
-                'url' => $definition['url'],
+                'url' => isset($definition['route']) ? $this->routeIfExists($definition['route']) : null,
             ];
         })->filter()->sortBy([['state', 'asc'], ['name', 'asc']])->values()->all();
     }
