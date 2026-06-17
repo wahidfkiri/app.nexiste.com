@@ -131,7 +131,7 @@
                     </button>
                 </form>
 
-                <!-- <div class="login-divider"><span>{{ __('auth-ui.login.divider') }}</span></div>
+                <div class="login-divider"><span>{{ __('auth-ui.login.divider') }}</span></div>
 
                 <a href="{{ route('auth.google.redirect') }}" class="login-google-btn">
                     <i class="fab fa-google"></i>
@@ -141,7 +141,7 @@
                 <div class="login-footer">
                     <span>{{ __('auth-ui.login.no_account') }}</span>
                     <a href="{{ route('register') }}">{{ __('auth-ui.login.create_account') }}</a>
-                </div> -->
+                </div>
             </section>
         </main>
     </div>
