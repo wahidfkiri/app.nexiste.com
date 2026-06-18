@@ -34,6 +34,9 @@
   };
 
   $charts = data_get($dashboard, 'charts', []);
+  $quickActions = collect(data_get($dashboard, 'actions', []))
+      ->filter(fn ($action) => ! empty($action['url']))
+      ->take(4);
 @endphp
 
 @push('styles')
@@ -42,46 +45,22 @@
 
 @section('content')
 <div class="nexus-dashboard">
-  <section class="nd-hero">
-    <div class="nd-hero-orb nd-hero-orb-one"></div>
-    <div class="nd-hero-orb nd-hero-orb-two"></div>
-
-    <div class="nd-hero-main">
-      @if(data_get($dashboard, 'meta.eyebrow'))
-        <span class="nd-kicker"><i class="fas fa-sparkles"></i>{{ data_get($dashboard, 'meta.eyebrow') }}</span>
-      @endif
-      <h1>{{ data_get($dashboard, 'meta.title') }}</h1>
-      <p>{{ data_get($dashboard, 'meta.subtitle') }}</p>
-
-      <div class="nd-actions">
-        @forelse(data_get($dashboard, 'actions', []) as $action)
-          @continue(empty($action['url']))
-          <a href="{{ $action['url'] }}" class="nd-action nd-action-{{ $action['variant'] ?? 'secondary' }}">
-            <span>{!! $iconMarkup($action['icon'] ?? 'fas fa-arrow-right') !!}</span>
-            {{ $action['label'] ?? __('dashboard.actions.fallback') }}
-          </a>
-        @empty
-          <a href="{{ route('marketplace.index') }}" class="nd-action nd-action-primary"><span><i class="fas fa-store"></i></span>{{ __('dashboard.actions.applications') }}</a>
-        @endforelse
-      </div>
+  <section class="nd-welcome-bar">
+    <div class="nd-welcome-copy">
+      <span>{{ data_get($dashboard, 'meta.date') }}</span>
+      <h1>Bienvenue, {{ data_get($dashboard, 'meta.user.name') }}</h1>
     </div>
 
-    <aside class="nd-command-card">
-      <div class="nd-user-chip">
-        <div class="nd-user-avatar">{{ data_get($dashboard, 'meta.user.initials', 'U') }}</div>
-        <div>
-          <strong>{{ data_get($dashboard, 'meta.user.name') }}</strong>
-          <span>{{ data_get($dashboard, 'meta.user.role') }}</span>
-        </div>
-      </div>
-
-      <div class="nd-command-grid">
-        <div><span>{{ __('dashboard.command.modules') }}</span><strong>{{ __('dashboard.command.modules_active', ['count' => count(data_get($dashboard, 'modules', []))]) }}</strong></div>
-        <div><span>{{ __('dashboard.command.currency') }}</span><strong>{{ data_get($dashboard, 'meta.currency') }}</strong></div>
-        <div><span>{{ __('dashboard.command.integrations') }}</span><strong>{{ data_get($dashboard, 'integrations.connected', 0) }}/{{ data_get($dashboard, 'integrations.total', 0) }}</strong></div>
-        <div><span>{{ __('dashboard.command.date') }}</span><strong>{{ data_get($dashboard, 'meta.date') }}</strong></div>
-      </div>
-    </aside>
+    <div class="nd-actions nd-welcome-actions">
+      @forelse($quickActions as $action)
+        <a href="{{ $action['url'] }}" class="nd-action nd-action-{{ $action['variant'] ?? 'secondary' }}">
+          <span>{!! $iconMarkup($action['icon'] ?? 'fas fa-arrow-right') !!}</span>
+          {{ $action['label'] ?? __('dashboard.actions.fallback') }}
+        </a>
+      @empty
+        <a href="{{ route('marketplace.index') }}" class="nd-action nd-action-primary"><span><i class="fas fa-store"></i></span>{{ __('dashboard.actions.applications') }}</a>
+      @endforelse
+    </div>
   </section>
 
   <section class="nd-signal-rail" aria-label="{{ __('dashboard.signals.aria_label') }}">
