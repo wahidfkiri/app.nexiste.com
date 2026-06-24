@@ -586,6 +586,10 @@
         transform:translateY(0);
       }
     }
+    @media (max-width: 768px){
+      .crm-header-breadcrumb,
+      .global-search-wrap{display:none !important}
+    }
   </style>
   @stack('styles')
 </head>
