@@ -447,10 +447,6 @@ function renderCardGrid(a) {
   const newBadge   = a.is_new
     ? `<span class="app-badge-pill" style="background:#dbeafe;color:#1d4ed8;">${MKT_I18N.newBadge}</span>`
     : '';
-  const offBadge   = a.is_official
-    ? `<span class="app-badge-pill" style="background:#f3e8ff;color:#7c3aed;"><i class="fas fa-certificate" style="font-size:9px;margin-right:2px;"></i>${MKT_I18N.officialBadge}</span>`
-    : '';
-
   const actionBtn = a.is_activated
     ? `<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();deactivateApp(${slugArg},${nameArg},${iconUrlArg},${iconClassArg},${colorArg})">
          <i class="fas fa-plug-circle-xmark"></i> ${MKT_I18N.deactivateConfirm}
@@ -467,7 +463,7 @@ function renderCardGrid(a) {
         ${iconHtml}
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;">
-        ${activeBadge}${newBadge}${offBadge}${trialBadge}
+        ${activeBadge}${newBadge}${trialBadge}
       </div>
     </div>
 
