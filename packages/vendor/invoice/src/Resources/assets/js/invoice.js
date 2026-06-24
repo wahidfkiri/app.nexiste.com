@@ -194,7 +194,8 @@ class InvTable {
   }
 
   _fmtCur(n) {
-    return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n || 0);
+    const cur = window.DEFAULT_CURRENCY || 'EUR';
+    return new Intl.NumberFormat('fr-FR', { style:'currency', currency: cur, maximumFractionDigits:0 }).format(n || 0);
   }
 
   _showSkeletons(count = 5) {

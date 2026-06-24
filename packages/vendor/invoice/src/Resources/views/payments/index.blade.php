@@ -126,6 +126,7 @@
 @push('scripts')
 <script>
 window.INVOICE_CURRENCIES = @json(config('invoice.currencies'));
+window.DEFAULT_CURRENCY   = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
 
 document.addEventListener('DOMContentLoaded', () => {
   window._payTable = new InvTable({

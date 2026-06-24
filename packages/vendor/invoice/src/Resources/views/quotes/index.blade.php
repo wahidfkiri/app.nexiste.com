@@ -166,6 +166,7 @@ window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, {
   quoteDestroy: window.QUOTE_ROUTES.destroy,
 });
 window.INVOICE_CURRENCIES = @json(config('invoice.currencies'));
+window.DEFAULT_CURRENCY   = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
 const quoteRoute = (template, id) => String(template).replace('__QUOTE__', encodeURIComponent(String(id)));
 
 document.addEventListener('DOMContentLoaded', () => {

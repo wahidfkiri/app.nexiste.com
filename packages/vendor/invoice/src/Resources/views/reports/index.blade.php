@@ -3,6 +3,8 @@
 @php
   $reportsPage = trans('invoice::invoices.pages.reports_index');
   $common = trans('invoice::invoices.common');
+  $currencyCode = auth()->user()->tenant->currency ?? 'EUR';
+  $currencySymbol = config('invoice.currencies.' . $currencyCode . '.symbol', $currencyCode);
 @endphp
 
 @section('title', __('invoice::invoices.reports'))
@@ -56,21 +58,21 @@
   <div class="stat-card">
     <div class="stat-icon" style="background:var(--c-accent-lt);color:var(--c-accent)"><i class="fas fa-chart-line"></i></div>
     <div class="stat-body">
-      <div class="stat-value" id="rCA">{{ number_format($stats['revenue']['year'] ?? 0, 0, ',', ' ') }} €</div>
+      <div class="stat-value" id="rCA">{{ number_format($stats['revenue']['year'] ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div>
       <div class="stat-label">{{ $reportsPage['annual_revenue'] }}</div>
     </div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:var(--c-success-lt);color:var(--c-success)"><i class="fas fa-circle-check"></i></div>
     <div class="stat-body">
-      <div class="stat-value" id="rPaid">{{ number_format($stats['invoices']['paid_total'] ?? 0, 0, ',', ' ') }} €</div>
+      <div class="stat-value" id="rPaid">{{ number_format($stats['invoices']['paid_total'] ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div>
       <div class="stat-label">{{ $reportsPage['collected'] }}</div>
     </div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:var(--c-danger-lt);color:var(--c-danger)"><i class="fas fa-hourglass-half"></i></div>
     <div class="stat-body">
-      <div class="stat-value" id="rDue">{{ number_format($stats['invoices']['due_total'] ?? 0, 0, ',', ' ') }} €</div>
+      <div class="stat-value" id="rDue">{{ number_format($stats['invoices']['due_total'] ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div>
       <div class="stat-label">{{ $reportsPage['to_collect'] }}</div>
     </div>
   </div>
@@ -131,16 +133,16 @@
           @endphp
           <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
             <div style="display:flex;gap:3px;align-items:flex-end;width:100%;justify-content:center;">
-              <div style="width:45%;height:{{ $revH }}px;background:var(--c-accent);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ $month }}: {{ number_format($rev,0,',',' ') }} €"></div>
-              <div style="width:45%;height:{{ $paidH }}px;background:var(--c-success);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ __('invoice::invoices.pages.reports_index.month_paid_title', ['month' => $month, 'amount' => number_format($paid,0,',',' ').' €']) }}"></div>
+              <div style="width:45%;height:{{ $revH }}px;background:var(--c-accent);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ $month }}: {{ number_format($rev,0,',',' ') }} {{ $currencySymbol }}"></div>
+              <div style="width:45%;height:{{ $paidH }}px;background:var(--c-success);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ __('invoice::invoices.pages.reports_index.month_paid_title', ['month' => $month, 'amount' => number_format($paid,0,',',' ').$currencySymbol]) }}"></div>
             </div>
             <div style="font-size:10px;color:var(--c-ink-40);">{{ $month }}</div>
           </div>
           @endforeach
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:var(--c-ink-40);">
-          <span>{{ $reportsPage['billed_revenue'] }} : <strong style="color:var(--c-ink);">{{ number_format(array_sum($monthlyRevenue ?? [0]), 0, ',', ' ') }} €</strong></span>
-          <span>{{ $reportsPage['collected'] }} : <strong style="color:var(--c-success);">{{ number_format(array_sum($monthlyPaid ?? [0]), 0, ',', ' ') }} €</strong></span>
+          <span>{{ $reportsPage['billed_revenue'] }} : <strong style="color:var(--c-ink);">{{ number_format(array_sum($monthlyRevenue ?? [0]), 0, ',', ' ') }} {{ $currencySymbol }}</strong></span>
+          <span>{{ $reportsPage['collected'] }} : <strong style="color:var(--c-success);">{{ number_format(array_sum($monthlyPaid ?? [0]), 0, ',', ' ') }} {{ $currencySymbol }}</strong></span>
         </div>
       </div>
     </div>
@@ -173,8 +175,8 @@
           <tr>
             <td style="font-weight:var(--fw-medium);">{{ $month }} {{ date('Y') }}</td>
             <td class="text-right">{{ $count }}</td>
-            <td class="text-right fw-semi font-mono">{{ number_format($rev, 2, ',', ' ') }} €</td>
-            <td class="text-right fw-semi font-mono" style="color:var(--c-success);">{{ number_format($paid, 2, ',', ' ') }} €</td>
+            <td class="text-right fw-semi font-mono">{{ number_format($rev, 2, ',', ' ') }} {{ $currencySymbol }}</td>
+            <td class="text-right fw-semi font-mono" style="color:var(--c-success);">{{ number_format($paid, 2, ',', ' ') }} {{ $currencySymbol }}</td>
             <td class="text-right">
               <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
                 <div style="width:50px;height:5px;background:var(--c-ink-05);border-radius:99px;overflow:hidden;">
@@ -183,7 +185,7 @@
                 <span>{{ $rate }}%</span>
               </div>
             </td>
-            <td class="text-right" style="{{ $overdue > 0 ? 'color:var(--c-danger);' : 'color:var(--c-ink-40);' }}">{{ $overdue > 0 ? number_format($overdue, 2, ',', ' ').' €' : '—' }}</td>
+            <td class="text-right" style="{{ $overdue > 0 ? 'color:var(--c-danger);' : 'color:var(--c-ink-40);' }}">{{ $overdue > 0 ? number_format($overdue, 2, ',', ' ').$currencySymbol : '—' }}</td>
           </tr>
           @endforeach
         </tbody>
@@ -191,13 +193,13 @@
           <tr style="background:var(--surface-1);font-weight:var(--fw-semi);">
             <td>{{ __('invoice::invoices.pages.reports_index.year_total', ['year' => date('Y')]) }}</td>
             <td class="text-right">{{ array_sum($monthlyCount ?? [0]) }}</td>
-            <td class="text-right font-mono">{{ number_format(array_sum($monthlyRevenue ?? [0]), 2, ',', ' ') }} €</td>
-            <td class="text-right font-mono" style="color:var(--c-success);">{{ number_format(array_sum($monthlyPaid ?? [0]), 2, ',', ' ') }} €</td>
+            <td class="text-right font-mono">{{ number_format(array_sum($monthlyRevenue ?? [0]), 2, ',', ' ') }} {{ $currencySymbol }}</td>
+            <td class="text-right font-mono" style="color:var(--c-success);">{{ number_format(array_sum($monthlyPaid ?? [0]), 2, ',', ' ') }} {{ $currencySymbol }}</td>
             <td class="text-right">
               @php $tot = array_sum($monthlyRevenue ?? [0]); $totP = array_sum($monthlyPaid ?? [0]); @endphp
               {{ $tot > 0 ? round($totP / $tot * 100) : 0 }}%
             </td>
-            <td class="text-right" style="color:var(--c-danger);">{{ number_format(array_sum($monthlyOverdue ?? [0]), 2, ',', ' ') }} €</td>
+            <td class="text-right" style="color:var(--c-danger);">{{ number_format(array_sum($monthlyOverdue ?? [0]), 2, ',', ' ') }} {{ $currencySymbol }}</td>
           </tr>
         </tfoot>
       </table>
@@ -257,7 +259,7 @@
             <div style="font-weight:var(--fw-medium);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $c->company_name }}</div>
             <div style="font-size:11.5px;color:var(--c-ink-40);">{{ __('invoice::invoices.pages.reports_index.invoice_count_suffix', ['count' => $c->invoice_count]) }}</div>
           </div>
-          <div style="font-weight:var(--fw-semi);font-size:13px;font-family: "DM Sans", sans-serif;color:var(--c-ink);">{{ number_format($c->total_revenue, 0, ',', ' ') }} €</div>
+          <div style="font-weight:var(--fw-semi);font-size:13px;font-family: "DM Sans", sans-serif;color:var(--c-ink);">{{ number_format($c->total_revenue, 0, ',', ' ') }} {{ $currencySymbol }}</div>
         </div>
         @empty
         <div style="padding:20px;text-align:center;color:var(--c-ink-40);font-size:13px;">{{ $common['no_data'] }}</div>
@@ -282,7 +284,7 @@
           <div class="donut-legend-item">
             <div class="donut-dot" style="background:{{ $payColors[$i % count($payColors)] }};"></div>
             <span class="donut-legend-label">{{ config("invoice.payment_methods.{$pm->payment_method}", $pm->payment_method) }}</span>
-            <span class="donut-legend-value">{{ number_format($pm->total, 0, ',', ' ') }} €</span>
+            <span class="donut-legend-value">{{ number_format($pm->total, 0, ',', ' ') }} {{ $currencySymbol }}</span>
           </div>
           @empty
           <div style="text-align:center;color:var(--c-ink-40);font-size:13px;">{{ $common['no_data'] }}</div>

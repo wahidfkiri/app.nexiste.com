@@ -3,6 +3,7 @@
 @php
   $page = trans('invoice::invoices.pages.invoice_edit');
   $common = trans('invoice::invoices.common');
+  $currencySymbol = config('invoice.currencies.' . (auth()->user()->tenant->currency ?? 'EUR') . '.symbol', auth()->user()->tenant->currency ?? 'EUR');
 @endphp
 
 @section('title', __('invoice::invoices.pages.invoice_edit.title', ['number' => $invoice->number]))
@@ -178,12 +179,12 @@
       <div class="form-section">
         <h3 class="form-section-title"><i class="fas fa-calculator"></i> {{ $common['totals'] }}</h3>
         <div class="totals-panel">
-          <div class="totals-row"><span class="totals-label">{{ $common['subtotal'] }}</span><span class="totals-value" id="tot-subtotal">0,00 €</span></div>
-          <div class="totals-row discount" id="tot-discount-row" style="display:none;"><span class="totals-label">{{ $common['discount'] }}</span><span class="totals-value" id="tot-discount">0,00 €</span></div>
-          <div class="totals-row"><span class="totals-label">{{ $common['vat'] }}</span><span class="totals-value" id="tot-tax">0,00 €</span></div>
-          <div class="totals-row" id="tot-withholding-row" style="display:none;"><span class="totals-label">{{ $common['withholding'] }}</span><span class="totals-value" id="tot-withholding">0,00 €</span></div>
-          <div class="totals-row grand-total"><span class="totals-label">{{ $common['total'] }}</span><span class="totals-value" id="tot-grand">0,00 €</span></div>
-          <div class="withholding-info" id="withholding-info" style="display:none;">{{ $common['net_after_withholding'] }} : <strong id="tot-net">0,00 €</strong></div>
+          <div class="totals-row"><span class="totals-label">{{ $common['subtotal'] }}</span><span class="totals-value" id="tot-subtotal">0,00 {{ $currencySymbol }}</span></div>
+          <div class="totals-row discount" id="tot-discount-row" style="display:none;"><span class="totals-label">{{ $common['discount'] }}</span><span class="totals-value" id="tot-discount">0,00 {{ $currencySymbol }}</span></div>
+          <div class="totals-row"><span class="totals-label">{{ $common['vat'] }}</span><span class="totals-value" id="tot-tax">0,00 {{ $currencySymbol }}</span></div>
+          <div class="totals-row" id="tot-withholding-row" style="display:none;"><span class="totals-label">{{ $common['withholding'] }}</span><span class="totals-value" id="tot-withholding">0,00 {{ $currencySymbol }}</span></div>
+          <div class="totals-row grand-total"><span class="totals-label">{{ $common['total'] }}</span><span class="totals-value" id="tot-grand">0,00 {{ $currencySymbol }}</span></div>
+          <div class="withholding-info" id="withholding-info" style="display:none;">{{ $common['net_after_withholding'] }} : <strong id="tot-net">0,00 {{ $currencySymbol }}</strong></div>
         </div>
       </div>
     </div>
