@@ -72,9 +72,9 @@ class OnboardingController extends Controller
         $recommended = $this->recommendedAppsForSector($sector);
 
         $country = $this->normalizeCountryCode(
-            $this->getSetting((int) $tenant->id, 'company_country') ?: 'FR',
+            $this->getSetting((int) $tenant->id, 'company_country') ?: 'TN',
             $countryCodes,
-            'FR'
+            'TN'
         );
         $phoneCountry = $this->normalizeCountryCode(
             $this->getSetting((int) $tenant->id, 'company_phone_country') ?: $country,

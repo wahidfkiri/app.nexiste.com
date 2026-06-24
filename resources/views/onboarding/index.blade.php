@@ -23,7 +23,7 @@
     ];
 
     $profilePhoneRaw = (string) old('phone', $user->phone ?? '');
-    $profilePhoneCountry = (string) old('profile_phone_country', $companySetup['company_phone_country'] ?? 'FR');
+    $profilePhoneCountry = (string) old('profile_phone_country', $companySetup['company_phone_country'] ?? 'TN');
     $profilePhoneLocal = (string) old('phone_local', $profilePhoneRaw);
 
     if (!old('phone_local') && $profilePhoneRaw !== '') {
