@@ -240,10 +240,7 @@
   margin-bottom:14px;
   flex-shrink:0;
 }
-.app-card-badges {
-  position:absolute;top:14px;right:14px;
-  display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;
-}
+
 .app-badge-pill {
   padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700;
   letter-spacing:.03em;
@@ -440,8 +437,9 @@ function renderCardGrid(a) {
   const priceHtml  = a.is_free
     ? `<span style="background:#dcfce7;color:#15803d;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;">${MKT_I18N.freeLabel}</span>`
     : `<span style="background:var(--c-accent-lt);color:var(--c-accent);padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;">${_esc(a.pricing_label)}</span>`;
-  const activeBadge= a.is_activated
-    ? `<div class="activated-ring"></div><span style="position:absolute;top:14px;left:14px;background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700;"><i class="fas fa-check" style="margin-right:3px;font-size:9px;"></i>${MKT_I18N.activatedBadge}</span>`
+  const activeRing  = a.is_activated ? '<div class="activated-ring"></div>' : '';
+  const activeBadge = a.is_activated
+    ? `<span style="background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:99px;font-size:10px;font-weight:700;"><i class="fas fa-check" style="margin-right:3px;font-size:9px;"></i>${MKT_I18N.activatedBadge}</span>`
     : '';
   const trialBadge = a.has_trial && !a.is_activated
     ? `<span class="app-badge-pill" style="background:#fef3c7;color:#92400e;">${MKT_I18N.trialBadge}</span>`
@@ -463,13 +461,13 @@ function renderCardGrid(a) {
 
   return `
   <div class="app-card" style="--app-color:${color};" onclick="openAppModal(${slugArg})">
-    ${activeBadge}
+    ${activeRing}
     <div style="display:flex;align-items:flex-start;justify-content:space-between;">
       <div class="app-icon-wrap" style="background:${iconBg};">
         ${iconHtml}
       </div>
-      <div class="app-card-badges">
-        ${newBadge}${offBadge}${trialBadge}
+      <div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;">
+        ${activeBadge}${newBadge}${offBadge}${trialBadge}
       </div>
     </div>
 
