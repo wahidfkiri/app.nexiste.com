@@ -538,7 +538,6 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   margin-top: 5px;
   display: flex; align-items: center; gap: 4px;
 }
-.form-error::before { content: '⚠'; font-size: 11px; }
 
 /* Input with icon */
 .input-group { position: relative; }

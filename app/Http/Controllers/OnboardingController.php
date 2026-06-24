@@ -666,10 +666,16 @@ class OnboardingController extends Controller
     {
         $defaults = config('onboarding.defaults_by_sector', []);
         if (!$sector || !array_key_exists($sector, $defaults)) {
-            return ['clients', 'invoice', 'projects', 'notion-workspace'];
+            $defaults = ['clients', 'invoice', 'projects', 'notion-workspace'];
+        } else {
+            $defaults = $defaults[$sector];
         }
 
-        return $defaults[$sector];
+        if (!in_array('stock', $defaults, true)) {
+            $defaults[] = 'stock';
+        }
+
+        return $defaults;
     }
 
     private function getSetting(int $tenantId, string $key): ?string

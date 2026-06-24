@@ -807,11 +807,6 @@
                        value="{{ old('company_address', $tenant->address ?? '') }}">
               </div>
 
-              <div class="ob-field" style="grid-column: 1 / -1;">
-                <label for="companyDescription">Description de la société</label>
-                <textarea class="ob-textarea" id="companyDescription" name="company_description"
-                          data-label="Description de la société">{{ old('company_description', $companySetup['company_description']) }}</textarea>
-              </div>
 
               <div class="ob-field">
                 <label for="companyWebsite">Site web</label>
@@ -931,16 +926,6 @@
   </div>
 </div>
 
-<div class="ob-install-overlay" id="installOverlay">
-  <div class="ob-install-card">
-    <h3>Installation de votre espace</h3>
-    <p id="installStatus">Initialisation de votre environnement CRM...</p>
-    <div class="ob-install-bar-track">
-      <div class="ob-install-bar" id="installBar"></div>
-    </div>
-    <div class="ob-install-value" id="installValue">0%</div>
-  </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -967,11 +952,6 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
-    const installOverlay = document.getElementById('installOverlay');
-    const installBar = document.getElementById('installBar');
-    const installValue = document.getElementById('installValue');
-    const installStatus = document.getElementById('installStatus');
-
     const countries = @json($countries);
     const countriesMap = countries.reduce((carry, item) => {
       carry[item.code] = item;
@@ -980,7 +960,6 @@
 
     let currentStep = 0;
     const totalSteps = stepPanels.length;
-    let installTimer = null;
 
     const stepConfig = isOwner
       ? [
@@ -1427,72 +1406,23 @@
           : 'Suivant <i class="fas fa-arrow-right"></i>';
       }
     }
-
-    function startInstallProgress() {
-      if (!installOverlay || !installBar || !installValue || !installStatus) {
-        return;
-      }
-      let value = 0;
-      installOverlay.classList.add('open');
-      installBar.style.width = '0%';
-      installValue.textContent = '0%';
-      installStatus.textContent = 'Préparation de votre espace CRM...';
-
-      if (installTimer) {
-        window.clearInterval(installTimer);
-      }
-      installTimer = window.setInterval(() => {
-        value = Math.min(value + Math.floor(Math.random() * 8) + 2, 92);
-        installBar.style.width = `${value}%`;
-        installValue.textContent = `${value}%`;
-        if (value > 20) installStatus.textContent = 'Création de la structure de votre espace...';
-        if (value > 45) installStatus.textContent = 'Installation des applications sélectionnées...';
-        if (value > 70) installStatus.textContent = 'Finalisation et vérifications...';
-        if (value >= 92 && installTimer) {
-          window.clearInterval(installTimer);
-          installTimer = null;
-        }
-      }, 230);
-    }
-
-    function finishInstallProgress() {
-      if (installTimer) {
-        window.clearInterval(installTimer);
-        installTimer = null;
-      }
-      if (!installOverlay || !installBar || !installValue || !installStatus) {
-        return;
-      }
-      installBar.style.width = '100%';
-      installValue.textContent = '100%';
-      installStatus.textContent = 'Votre espace est prêt.';
-    }
-
     async function finalizeWizard() {
       CrmForm.setLoading(nextBtn, true);
-      startInstallProgress();
 
       const stepSaved = await submitStep(false);
       if (!stepSaved) {
-        if (installOverlay) {
-          installOverlay.classList.remove('open');
-        }
         CrmForm.setLoading(nextBtn, false);
         return;
       }
 
       const completeResponse = await Http.post(completeUrl, {});
       if (!completeResponse.ok) {
-        if (installOverlay) {
-          installOverlay.classList.remove('open');
-        }
         CrmForm.setLoading(nextBtn, false);
         setAlert('error', completeResponse.data?.message || 'Impossible de finaliser votre inscription.');
         Toast.error('Erreur', completeResponse.data?.message || 'Impossible de finaliser votre inscription.');
         return;
       }
 
-      finishInstallProgress();
       setAlert('success', completeResponse.data?.message || 'Configuration terminée avec succès.');
       Toast.success('Succès', completeResponse.data?.message || 'Configuration terminée avec succès.');
 
