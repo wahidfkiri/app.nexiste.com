@@ -338,16 +338,7 @@
           </select>
         </div>
       </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-label">{{ $settingsPage['base_currency'] }}</label>
-          <select name="base_currency" class="form-control">
-            @foreach(config('invoice.currencies') as $code => $cfg)
-              <option value="{{ $code }}" {{ $code === 'EUR' ? 'selected' : '' }}>{{ $code }} — {{ $cfg['name'] }}</option>
-            @endforeach
-          </select>
-        </div>
-      </div>
+
       <div class="col-6">
         <div class="form-group">
           <label class="form-label">{{ $settingsPage['accounting_method'] }}</label>

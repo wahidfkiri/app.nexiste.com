@@ -455,20 +455,9 @@
               <label class="form-label">{{ __('invoice::invoices.fields.amount') }} <span class="required">*</span></label>
               <div class="input-group input-right">
                 <input type="number" name="amount" class="form-control" value="{{ $invoice->amount_due }}" min="0.01" step="any" required>
-                <i class="fas fa-euro-sign input-icon"></i>
+                <span class="input-icon" style="font-weight:700;font-size:14px;">{{ $invoice->currency_symbol }}</span>
               </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-group">
-              <label class="form-label">{{ __('invoice::invoices.fields.currency') }} <span class="required">*</span></label>
-              <select name="currency" class="form-control">
-                @foreach(config('invoice.currencies') as $code => $cfg)
-                  <option value="{{ $code }}" {{ $code === $invoice->currency ? 'selected' : '' }}>
-                    {{ $code }} {{ $cfg['symbol'] }}
-                  </option>
-                @endforeach
-              </select>
+              <input type="hidden" name="currency" value="{{ $invoice->currency }}">
             </div>
           </div>
           <div class="col-6">

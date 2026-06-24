@@ -19,7 +19,7 @@ class InvoiceRequest extends FormRequest
             'stock_order_id' => 'nullable|exists:stock_orders,id',
             'reference' => 'nullable|string|max:100',
             'status' => 'sometimes|in:draft,sent,viewed,partial,paid,overdue,cancelled,refunded',
-            'currency' => 'required|string|size:3',
+            'currency' => 'nullable|string|size:3',
             'exchange_rate' => 'nullable|numeric|min:0.000001',
             'issue_date' => 'required|date',
             'due_date' => 'nullable|date|after_or_equal:issue_date',

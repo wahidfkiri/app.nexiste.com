@@ -42,8 +42,8 @@
           <div class="col-4"><div class="form-group"><label class="form-label">{{ $common['reference'] }}</label><input type="text" name="reference" class="form-control" value="{{ $quote->reference }}"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.issue_date') }}</label><input type="date" name="issue_date" class="form-control" value="{{ optional($quote->issue_date)->format('Y-m-d') }}"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.valid_until') }}</label><input type="date" name="valid_until" class="form-control" value="{{ optional($quote->valid_until)->format('Y-m-d') }}"></div></div>
-          <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.currency') }}</label><select name="currency" id="currency" class="form-control">@foreach($currencies as $code => $cfg)<option value="{{ $code }}" {{ $quote->currency === $code ? 'selected' : '' }}>{{ __('invoice::invoices.common.currency_with_name', ['code' => $code, 'name' => $cfg['name']]) }}</option>@endforeach</select></div></div>
-          <div class="col-12"><div class="form-group"><label class="form-label">{{ $common['exchange_rate'] }}</label><input type="number" name="exchange_rate" class="form-control" step="any" min="0.000001" value="{{ $quote->exchange_rate ?? 1 }}"></div></div>
+          <input type="hidden" name="currency" value="{{ $quote->currency ?? auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
 

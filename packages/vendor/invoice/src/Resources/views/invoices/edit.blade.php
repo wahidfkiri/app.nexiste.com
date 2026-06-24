@@ -93,22 +93,8 @@
               </select>
             </div>
           </div>
-          <div class="col-6">
-            <div class="form-group">
-              <label class="form-label">{{ __('invoice::invoices.fields.currency') }} <span class="required">*</span></label>
-              <select name="currency" id="currency" class="form-control" required>
-                @foreach($currencies as $code => $cfg)
-                  <option value="{{ $code }}" {{ $invoice->currency === $code ? 'selected' : '' }}>{{ __('invoice::invoices.common.currency_with_name', ['code' => $code, 'name' => $cfg['name']]) }}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <div class="col-12">
-            <div class="form-group">
-              <label class="form-label">{{ $common['exchange_rate'] }}</label>
-              <input type="number" name="exchange_rate" class="form-control" step="any" min="0.000001" value="{{ $invoice->exchange_rate ?? 1 }}">
-            </div>
-          </div>
+          <input type="hidden" name="currency" value="{{ $invoice->currency ?? auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
 
@@ -229,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('withholding_tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
-  document.getElementById('currency')?.addEventListener('change', () => InvLineItems.recalc());
 
   InvLineItems.init({
     currency: '{{ $invoice->currency }}',

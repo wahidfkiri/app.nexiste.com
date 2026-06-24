@@ -46,6 +46,7 @@ class InvoicesImport implements ToCollection, WithHeadingRow, WithChunkReading, 
                 }
 
                 DB::transaction(function () use ($row, $client, $tenantId, $userId) {
+                    $tenant = \Vendor\CrmCore\Models\Tenant::find($tenantId);
                     $invoice = Invoice::create([
                         'tenant_id' => $tenantId,
                         'user_id' => $userId,
@@ -53,7 +54,7 @@ class InvoicesImport implements ToCollection, WithHeadingRow, WithChunkReading, 
                         'number' => $row['numero'] ?? null,
                         'reference' => $row['reference'] ?? null,
                         'status' => $row['statut'] ?? 'draft',
-                        'currency' => strtoupper($row['devise'] ?? 'EUR'),
+                        'currency' => $tenant->currency ?? 'EUR',
                         'issue_date' => $row['date_emission'] ?? now()->toDateString(),
                         'due_date' => $row['echeance'] ?? null,
                         'payment_terms' => (int) ($row['conditions_paiement'] ?? 30),

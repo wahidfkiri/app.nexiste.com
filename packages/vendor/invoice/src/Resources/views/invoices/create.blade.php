@@ -100,19 +100,8 @@
               </select>
             </div>
           </div>
-          <div class="col-6">
-            <div class="form-group">
-              <label class="form-label">{{ __('invoice::invoices.fields.currency') }} <span class="required">*</span></label>
-              <select name="currency" id="currency" class="form-control">
-                @foreach($currencies as $code => $cfg)
-                  <option value="{{ $code }}" {{ $code === 'EUR' ? 'selected' : '' }}>
-                    {{ __('invoice::invoices.common.currency_with_symbol', ['code' => $code, 'name' => $cfg['name'], 'symbol' => $cfg['symbol']]) }}
-                  </option>
-                @endforeach
-              </select>
-              <input type="hidden" name="exchange_rate" id="exchange_rate" value="1">
-            </div>
-          </div>
+          <input type="hidden" name="currency" value="{{ auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
 
@@ -286,7 +275,7 @@
 @push('scripts')
 <script>
 window.INVOICE_CURRENCIES    = @json($currencies);
-window.DEFAULT_CURRENCY      = '{{ 'EUR' }}';
+window.DEFAULT_CURRENCY      = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
 window.WITHHOLDING_COUNTRIES = @json(config('invoice.withholding_tax.countries', []));
 
 
@@ -355,9 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('withholding_tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
-  document.getElementById('currency')?.addEventListener('change', () => InvLineItems.recalc());
-
-  InvLineItems.init({ currency: 'EUR', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
+  InvLineItems.init({ currency: '{{ auth()->user()->tenant->currency ?? 'EUR' }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
 
   InvClientSearch.init('clientSearch', 'clientId', {
     suggestionsEl: 'clientSuggestions',

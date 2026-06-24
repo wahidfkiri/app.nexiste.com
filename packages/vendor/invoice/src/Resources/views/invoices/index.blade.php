@@ -243,7 +243,7 @@ window.CRM_ROUTES = {
   import:     '{{ route("invoices.import") }}',
 };
 window.INVOICE_CURRENCIES = @json(config('invoice.currencies'));
-window.DEFAULT_CURRENCY   = '{{ config('crm-core.formats.currency','EUR') ?? 'EUR' }}';
+window.DEFAULT_CURRENCY   = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
 
 document.addEventListener('DOMContentLoaded', () => {
   window._invTable = new InvTable({

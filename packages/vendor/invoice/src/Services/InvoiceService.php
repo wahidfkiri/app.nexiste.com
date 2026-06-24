@@ -11,6 +11,7 @@ use Vendor\Invoice\Models\InvoiceItem;
 use Vendor\Invoice\Models\Payment;
 use Vendor\Invoice\Models\Quote;
 use Vendor\Invoice\Models\QuoteItem;
+use Vendor\CrmCore\Models\Tenant;
 use Vendor\Invoice\Repositories\InvoiceRepository;
 
 class InvoiceService
@@ -77,6 +78,8 @@ class InvoiceService
     {
         return DB::transaction(function () use ($data) {
             $data['tenant_id'] = $data['tenant_id'] ?? auth()->user()->tenant_id;
+            $tenant = Tenant::find($data['tenant_id']);
+            $data['currency'] = $tenant->currency ?? 'EUR';
             $data['number']    = $this->generateInvoiceNumber($data['tenant_id']);
             $data['user_id']   = auth()->id();
 
@@ -102,6 +105,7 @@ class InvoiceService
         return DB::transaction(function () use ($invoice, $data) {
             $items = $data['items'] ?? [];
             unset($data['items']);
+            unset($data['currency'], $data['exchange_rate']);
 
             $invoice->update($data);
             $this->syncItems($invoice, $items);
@@ -120,6 +124,8 @@ class InvoiceService
     {
         return DB::transaction(function () use ($data) {
             $data['tenant_id'] = $data['tenant_id'] ?? auth()->user()->tenant_id;
+            $tenant = Tenant::find($data['tenant_id']);
+            $data['currency'] = $tenant->currency ?? 'EUR';
             $data['number']    = $this->generateQuoteNumber($data['tenant_id']);
             $data['user_id']   = auth()->id();
 
@@ -145,6 +151,7 @@ class InvoiceService
         return DB::transaction(function () use ($quote, $data) {
             $items = $data['items'] ?? [];
             unset($data['items']);
+            unset($data['currency'], $data['exchange_rate']);
 
             $quote->update($data);
             $this->syncQuoteItems($quote, $items);
@@ -227,10 +234,12 @@ class InvoiceService
 
     public function addPayment(Invoice $invoice, array $data): Payment
     {
+        $tenant = Tenant::find($invoice->tenant_id);
+        $data['currency'] = $tenant->currency ?? 'EUR';
         $data['tenant_id']  = $invoice->tenant_id;
         $data['invoice_id'] = $invoice->id;
         $data['user_id']    = auth()->id();
-        $data['amount_base_currency'] = $data['amount'] * ($data['exchange_rate'] ?? 1);
+        $data['amount_base_currency'] = $data['amount'];
 
         return Payment::create($data);
     }

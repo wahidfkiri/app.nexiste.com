@@ -42,17 +42,8 @@
           <div class="col-4"><div class="form-group"><label class="form-label">{{ $common['reference'] }}</label><input type="text" name="reference" class="form-control"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.issue_date') }} <span class="required">*</span></label><input type="date" name="issue_date" class="form-control" value="{{ date('Y-m-d') }}" required></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.valid_until') }}</label><input type="date" name="valid_until" class="form-control" value="{{ now()->addDays(config('invoice.quote_validity_days', 30))->format('Y-m-d') }}"></div></div>
-          <div class="col-4">
-            <div class="form-group">
-              <label class="form-label">{{ __('invoice::invoices.fields.currency') }} <span class="required">*</span></label>
-              <select name="currency" id="currency" class="form-control" required>
-                @foreach($currencies as $code => $cfg)
-                  <option value="{{ $code }}">{{ __('invoice::invoices.common.currency_with_name', ['code' => $code, 'name' => $cfg['name']]) }}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <div class="col-12"><div class="form-group"><label class="form-label">{{ $common['exchange_rate'] }}</label><input type="number" name="exchange_rate" class="form-control" value="1" step="any" min="0.000001"></div></div>
+          <input type="hidden" name="currency" value="{{ auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
 
@@ -116,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('withholding_tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
 
-  InvLineItems.init({ currency: 'EUR', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
+  InvLineItems.init({ currency: '{{ auth()->user()->tenant->currency ?? 'EUR' }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
   InvClientSearch.init('clientSearch', 'clientId', { suggestionsEl: 'clientSuggestions' });
   ajaxForm('quoteForm');
 });

@@ -17,7 +17,7 @@ class QuoteRequest extends FormRequest
             'client_id' => 'required|exists:clients,id',
             'reference' => 'nullable|string|max:100',
             'stock_order_id' => 'nullable|exists:stock_orders,id',
-            'currency' => 'required|string|size:3',
+            'currency' => 'nullable|string|size:3',
             'exchange_rate' => 'nullable|numeric|min:0.000001',
             'issue_date' => 'required|date',
             'valid_until' => 'nullable|date|after_or_equal:issue_date',

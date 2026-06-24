@@ -15,7 +15,7 @@ class PaymentRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0.01',
-            'currency' => 'required|string|size:3',
+            'currency' => 'nullable|string|size:3',
             'exchange_rate' => 'nullable|numeric|min:0.000001',
             'payment_date' => 'required|date',
             'payment_method' => 'required|string|in:' . implode(',', array_keys(config('invoice.payment_methods', []))),
