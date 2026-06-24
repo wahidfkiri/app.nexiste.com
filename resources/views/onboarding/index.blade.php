@@ -802,8 +802,9 @@
 
               <div class="ob-field" style="grid-column: 1 / -1;">
                 <label for="companyAddress">Adresse complète <span class="required-mark">*</span></label>
-                <textarea class="ob-textarea" id="companyAddress" name="company_address"
-                          data-label="Adresse complète" required minlength="5">{{ old('company_address', $tenant->address ?? '') }}</textarea>
+                <input type="text" class="ob-input" id="companyAddress" name="company_address"
+                       data-label="Adresse complète" required minlength="5"
+                       value="{{ old('company_address', $tenant->address ?? '') }}">
               </div>
 
               <div class="ob-field" style="grid-column: 1 / -1;">
