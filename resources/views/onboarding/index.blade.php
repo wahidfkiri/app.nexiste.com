@@ -639,7 +639,7 @@
        data-sector-url="{{ route('onboarding.sector') }}"
        data-apps-url="{{ route('onboarding.apps') }}">
     <div class="ob-head">
-      <h1>Finalisez votre espace CRM</h1>
+      <h1>Finalisez votre espace de travail</h1>
       <p>Quelques étapes simples pour lancer votre activité dans un espace prêt à l'emploi.</p>
     </div>
 
