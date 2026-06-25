@@ -59,8 +59,7 @@ Route::middleware('web')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->middleware('tenant.permission:dashboard.read')
             ->name('dashboard');
-        Route::get('/home', [HomeController::class, 'index'])
-            ->middleware('tenant.permission:home.read')
+        Route::redirect('/home', '/dashboard')
             ->name('home');
 
         Route::get('/onboarding', [OnboardingController::class, 'show'])->name('onboarding.show');
