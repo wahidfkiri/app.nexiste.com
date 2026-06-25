@@ -80,6 +80,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   window.StockLang = Object.assign(window.StockLang || {}, {
     unitPiece: @json(__('stock::stock.common.unit_piece')),
+    skuPlaceholder: @json(__('stock::stock.common.sku_placeholder')),
   });
   window.StockArticleOptionsHtml = @json('<option value="">-</option>' . collect($articles)->map(fn($article) => '<option value="' . $article->id . '" data-name="' . e($article->name) . '" data-unit="' . e($article->unit) . '" data-purchase-price="' . e($article->purchase_price) . '">' . e($article->name) . ' (' . e($article->sku) . ')</option>')->implode(''));
   Stock.bindAjaxForm('orderForm');

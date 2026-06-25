@@ -50,6 +50,7 @@ return [
         'quantity' => 'Quantité',
         'unit' => 'Unité',
         'unit_piece' => 'pièce',
+        'sku_placeholder' => 'SKU',
         'current_stock' => 'Stock courant',
         'opening_stock' => 'Stock initial',
         'starting_stock' => 'Stock de départ',

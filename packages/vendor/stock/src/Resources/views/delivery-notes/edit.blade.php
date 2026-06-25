@@ -86,6 +86,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   window.StockLang = Object.assign(window.StockLang || {}, {
     unitPiece: @json(__('stock::stock.common.unit_piece')),
+    skuPlaceholder: @json(__('stock::stock.common.sku_placeholder')),
   });
   window.StockArticleOptionsHtml = @json($articleOptionsHtml ?? '');
   @if($deliveryNote->status === 'draft')

@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const InvoiceLang = Object.assign({
+const _defaultInvoiceLang = {
   successTitle: 'Success',
   errorTitle: 'Error',
   warningTitle: 'Warning',
@@ -32,7 +32,16 @@ const InvoiceLang = Object.assign({
   deleteConfirmText: 'Delete',
   invoiceDeleteTitle: 'Delete invoice :number?',
   paymentDeleteTitle: 'Delete this payment?',
-}, window.InvoiceLang || {});
+};
+
+const InvoiceLang = new Proxy({}, {
+  get(_, key) {
+    const val = (window.InvoiceLang && window.InvoiceLang[key] !== undefined)
+      ? window.InvoiceLang[key]
+      : _defaultInvoiceLang[key];
+    return val !== undefined ? val : '';
+  }
+});
 
 function invoiceLang(key, replacements = {}) {
   let value = InvoiceLang[key] ?? '';

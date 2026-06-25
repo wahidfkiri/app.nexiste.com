@@ -76,7 +76,7 @@ window.Stock = {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><select name="items[${idx}][article_id]" class="form-control" onchange="Stock.fillDeliveryLineFromArticle(this)">${window.StockArticleOptionsHtml || '<option value="">-</option>'}</select></td>
-      <td><input type="text" name="items[${idx}][sku]" class="form-control" placeholder="SKU"></td>
+      <td><input type="text" name="items[${idx}][sku]" class="form-control" placeholder="${window.StockLang?.skuPlaceholder || 'SKU'}"></td>
       <td><input type="text" name="items[${idx}][name]" class="form-control" required></td>
       <td><input type="number" name="items[${idx}][quantity]" class="form-control" min="0.0001" step="any" value="1" required></td>
       <td><input type="text" name="items[${idx}][unit]" class="form-control" value="${window.StockLang?.unitPiece || ''}"></td>
