@@ -771,8 +771,9 @@ class InvoiceController extends Controller
 
     public function getExchangeRate(Request $request): JsonResponse
     {
-        $from = strtoupper($request->string('from', 'EUR'));
-        $to   = strtoupper($request->string('to', 'EUR'));
+        $defaultCurrency = \Vendor\Invoice\Services\InvoiceService::tenantCurrency();
+        $from = strtoupper($request->string('from', $defaultCurrency));
+        $to   = strtoupper($request->string('to', $defaultCurrency));
 
         $fromDef = config("invoice.currencies.{$from}");
         $toDef   = config("invoice.currencies.{$to}");

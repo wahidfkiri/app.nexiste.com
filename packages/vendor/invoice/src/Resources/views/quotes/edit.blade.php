@@ -3,7 +3,8 @@
 @php
   $page = trans('invoice::invoices.pages.quote_edit');
   $common = trans('invoice::invoices.common');
-  $currencySymbol = config('invoice.currencies.' . (auth()->user()->tenant->currency ?? 'EUR') . '.symbol', auth()->user()->tenant->currency ?? 'EUR');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
 @endphp
 
 @section('title', __('invoice::invoices.pages.quote_edit.title', ['number' => $quote->number]))
@@ -43,7 +44,7 @@
           <div class="col-4"><div class="form-group"><label class="form-label">{{ $common['reference'] }}</label><input type="text" name="reference" class="form-control" value="{{ $quote->reference }}"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.issue_date') }}</label><input type="date" name="issue_date" class="form-control" value="{{ optional($quote->issue_date)->format('Y-m-d') }}"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.valid_until') }}</label><input type="date" name="valid_until" class="form-control" value="{{ optional($quote->valid_until)->format('Y-m-d') }}"></div></div>
-          <input type="hidden" name="currency" value="{{ $quote->currency ?? auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="currency" value="{{ $quote->currency ?? $tenantCurrency }}">
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>

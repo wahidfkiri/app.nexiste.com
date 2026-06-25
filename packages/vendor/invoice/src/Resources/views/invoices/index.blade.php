@@ -3,6 +3,7 @@
 @php
   $page = trans('invoice::invoices.pages.invoices_index');
   $common = trans('invoice::invoices.common');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
 @endphp
 
 @section('title', __('invoice::invoices.invoices'))
@@ -243,7 +244,7 @@ window.CRM_ROUTES = {
   import:     '{{ route("invoices.import") }}',
 };
 window.INVOICE_CURRENCIES = @json(config('invoice.currencies'));
-window.DEFAULT_CURRENCY   = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
+window.DEFAULT_CURRENCY   = '{{ $tenantCurrency }}';
 
 document.addEventListener('DOMContentLoaded', () => {
   window._invTable = new InvTable({

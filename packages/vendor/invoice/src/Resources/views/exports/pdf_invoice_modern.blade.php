@@ -125,7 +125,7 @@
           </td>
           <td>
             <div class="meta-label">{{ __('invoice::invoices.fields.currency') }}</div>
-            <div class="meta-val">{{ $invoice->currency ?? 'EUR' }} {{ $invoice->currency_symbol ?? '' }}</div>
+            <div class="meta-val">{{ $invoice->currency ?? config('invoice.default_currency', 'EUR') }} {{ $invoice->currency_symbol ?? '' }}</div>
           </td>
           <td>
             <div class="meta-label">{{ __('invoice::invoices.fields.payment_method') }}</div>

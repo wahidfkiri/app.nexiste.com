@@ -3,7 +3,8 @@
 @php
   $page = trans('invoice::invoices.pages.quote_create');
   $common = trans('invoice::invoices.common');
-  $currencySymbol = config('invoice.currencies.' . (auth()->user()->tenant->currency ?? 'EUR') . '.symbol', auth()->user()->tenant->currency ?? 'EUR');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
 @endphp
 
 @section('title', __('invoice::invoices.actions.create_quote'))
@@ -43,7 +44,7 @@
           <div class="col-4"><div class="form-group"><label class="form-label">{{ $common['reference'] }}</label><input type="text" name="reference" class="form-control"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.issue_date') }} <span class="required">*</span></label><input type="date" name="issue_date" class="form-control" value="{{ date('Y-m-d') }}" required></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.valid_until') }}</label><input type="date" name="valid_until" class="form-control" value="{{ now()->addDays(config('invoice.quote_validity_days', 30))->format('Y-m-d') }}"></div></div>
-          <input type="hidden" name="currency" value="{{ auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="currency" value="{{ $tenantCurrency }}">
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('withholding_tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
 
-  InvLineItems.init({ currency: '{{ auth()->user()->tenant->currency ?? 'EUR' }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
+  InvLineItems.init({ currency: '{{ $tenantCurrency }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
   InvClientSearch.init('clientSearch', 'clientId', { suggestionsEl: 'clientSuggestions' });
   ajaxForm('quoteForm');
 });

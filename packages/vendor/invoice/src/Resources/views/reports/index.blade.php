@@ -3,8 +3,9 @@
 @php
   $reportsPage = trans('invoice::invoices.pages.reports_index');
   $common = trans('invoice::invoices.common');
-  $currencyCode = auth()->user()->tenant->currency ?? 'EUR';
-  $currencySymbol = config('invoice.currencies.' . $currencyCode . '.symbol', $currencyCode);
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencyCode = $tenantCurrency;
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
 @endphp
 
 @section('title', __('invoice::invoices.reports'))

@@ -102,6 +102,9 @@ return [
         'XOF' => ['name' => 'Franc CFA',        'symbol' => 'F',  'position' => 'after',  'decimals' => 0, 'thousands' => ' ',  'decimal_sep' => ','],
     ],
 
+    // Devise par défaut (fallback si le tenant n'a pas de devise configurée)
+    'default_currency' => 'EUR',
+
     // ─── RETENUE À LA SOURCE ───────────────────────────────────────────────
     'withholding_tax' => [
         'enabled'     => true,

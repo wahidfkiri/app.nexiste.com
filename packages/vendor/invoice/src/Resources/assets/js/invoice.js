@@ -451,14 +451,14 @@ window.InvCurrencyFmt = InvCurrencyFmt;
 const InvLineItems = (() => {
   let items   = [];
   let counter = 0;
-  let currency        = 'EUR';
+  let currency        = window.DEFAULT_CURRENCY || 'EUR';
   let globalDiscType  = 'none';
   let globalDiscVal   = 0;
   let taxRate         = 20;
   let withholdingRate = 0;
 
   function init(opts = {}) {
-    currency        = opts.currency        || 'EUR';
+    currency        = opts.currency        || window.DEFAULT_CURRENCY || 'EUR';
     taxRate         = parseFloat(opts.defaultTaxRate || 0);
     withholdingRate = parseFloat(opts.withholdingRate || 0);
 

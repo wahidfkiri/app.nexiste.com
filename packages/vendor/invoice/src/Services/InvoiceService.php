@@ -18,6 +18,22 @@ class InvoiceService
 {
     public function __construct(protected InvoiceRepository $repo) {}
 
+    /**
+     * Résoudre la devise du tenant depuis les paramètres généraux (globaux).
+     * Utilise la devise configurée dans le tenant, sinon la devise par défaut.
+     */
+    public static function tenantCurrency(?int $tenantId = null): string
+    {
+        $tenantId ??= auth()->user()?->tenant_id;
+        if ($tenantId) {
+            $currency = Tenant::whereKey($tenantId)->value('currency');
+            if ($currency) {
+                return strtoupper($currency);
+            }
+        }
+        return strtoupper((string) config('invoice.default_currency', 'EUR'));
+    }
+
     // Numerotation
 
     public function generateInvoiceNumber(int $tenantId): string
@@ -79,7 +95,7 @@ class InvoiceService
         return DB::transaction(function () use ($data) {
             $data['tenant_id'] = $data['tenant_id'] ?? auth()->user()->tenant_id;
             $tenant = Tenant::find($data['tenant_id']);
-            $data['currency'] = $tenant->currency ?? 'EUR';
+            $data['currency'] = $tenant->currency ?: self::tenantCurrency($data['tenant_id']);
             $data['number']    = $this->generateInvoiceNumber($data['tenant_id']);
             $data['user_id']   = auth()->id();
 
@@ -125,7 +141,7 @@ class InvoiceService
         return DB::transaction(function () use ($data) {
             $data['tenant_id'] = $data['tenant_id'] ?? auth()->user()->tenant_id;
             $tenant = Tenant::find($data['tenant_id']);
-            $data['currency'] = $tenant->currency ?? 'EUR';
+            $data['currency'] = $tenant->currency ?: self::tenantCurrency($data['tenant_id']);
             $data['number']    = $this->generateQuoteNumber($data['tenant_id']);
             $data['user_id']   = auth()->id();
 
@@ -235,7 +251,7 @@ class InvoiceService
     public function addPayment(Invoice $invoice, array $data): Payment
     {
         $tenant = Tenant::find($invoice->tenant_id);
-        $data['currency'] = $tenant->currency ?? 'EUR';
+        $data['currency'] = $tenant->currency ?: self::tenantCurrency($tenant->id);
         $data['tenant_id']  = $invoice->tenant_id;
         $data['invoice_id'] = $invoice->id;
         $data['user_id']    = auth()->id();

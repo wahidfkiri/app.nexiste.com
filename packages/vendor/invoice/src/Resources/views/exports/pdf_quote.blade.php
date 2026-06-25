@@ -112,7 +112,7 @@
             </td>
             <td>
                 <div class="meta-label">{{ __('invoice::invoices.fields.currency') }}</div>
-                <div class="meta-val">{{ $quote->currency ?? 'EUR' }}</div>
+                <div class="meta-val">{{ $quote->currency ?? config('invoice.default_currency', 'EUR') }}</div>
             </td>
             <td>
                 <div class="meta-label">{{ __('invoice::invoices.fields.status') }}</div>

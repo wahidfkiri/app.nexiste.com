@@ -3,7 +3,8 @@
 @php
   $page = trans('invoice::invoices.pages.invoice_edit');
   $common = trans('invoice::invoices.common');
-  $currencySymbol = config('invoice.currencies.' . (auth()->user()->tenant->currency ?? 'EUR') . '.symbol', auth()->user()->tenant->currency ?? 'EUR');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
 @endphp
 
 @section('title', __('invoice::invoices.pages.invoice_edit.title', ['number' => $invoice->number]))
@@ -94,7 +95,7 @@
               </select>
             </div>
           </div>
-          <input type="hidden" name="currency" value="{{ $invoice->currency ?? auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="currency" value="{{ $invoice->currency ?? $tenantCurrency }}">
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>

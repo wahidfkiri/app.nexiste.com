@@ -3,6 +3,7 @@
 @php
   $page = trans('invoice::invoices.pages.quotes_index');
   $common = trans('invoice::invoices.common');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
 @endphp
 
 @section('title', __('invoice::invoices.quotes'))
@@ -166,7 +167,7 @@ window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, {
   quoteDestroy: window.QUOTE_ROUTES.destroy,
 });
 window.INVOICE_CURRENCIES = @json(config('invoice.currencies'));
-window.DEFAULT_CURRENCY   = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
+window.DEFAULT_CURRENCY   = '{{ $tenantCurrency }}';
 const quoteRoute = (template, id) => String(template).replace('__QUOTE__', encodeURIComponent(String(id)));
 
 document.addEventListener('DOMContentLoaded', () => {

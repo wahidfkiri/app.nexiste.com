@@ -3,7 +3,8 @@
 @php
   $page = trans('invoice::invoices.pages.invoice_create');
   $common = trans('invoice::invoices.common');
-  $currencySymbol = config('invoice.currencies.' . (auth()->user()->tenant->currency ?? 'EUR') . '.symbol', auth()->user()->tenant->currency ?? 'EUR');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
 @endphp
 
 @section('title', __('invoice::invoices.actions.create_invoice'))
@@ -101,7 +102,7 @@
               </select>
             </div>
           </div>
-          <input type="hidden" name="currency" value="{{ auth()->user()->tenant->currency ?? 'EUR' }}">
+          <input type="hidden" name="currency" value="{{ $tenantCurrency }}">
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -276,7 +277,7 @@
 @push('scripts')
 <script>
 window.INVOICE_CURRENCIES    = @json($currencies);
-window.DEFAULT_CURRENCY      = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
+window.DEFAULT_CURRENCY      = '{{ $tenantCurrency }}';
 window.WITHHOLDING_COUNTRIES = @json(config('invoice.withholding_tax.countries', []));
 
 
@@ -345,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('withholding_tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
-  InvLineItems.init({ currency: '{{ auth()->user()->tenant->currency ?? 'EUR' }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
+  InvLineItems.init({ currency: '{{ $tenantCurrency }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
 
   InvClientSearch.init('clientSearch', 'clientId', {
     suggestionsEl: 'clientSuggestions',

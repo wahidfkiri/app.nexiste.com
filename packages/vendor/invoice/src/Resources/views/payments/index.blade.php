@@ -3,6 +3,7 @@
 @php
   $paymentsPage = trans('invoice::invoices.pages.payments_index');
   $common = trans('invoice::invoices.common');
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
 @endphp
 
 @section('title', __('invoice::invoices.payments'))
@@ -126,7 +127,7 @@
 @push('scripts')
 <script>
 window.INVOICE_CURRENCIES = @json(config('invoice.currencies'));
-window.DEFAULT_CURRENCY   = '{{ auth()->user()->tenant->currency ?? 'EUR' }}';
+window.DEFAULT_CURRENCY   = '{{ $tenantCurrency }}';
 
 document.addEventListener('DOMContentLoaded', () => {
   window._payTable = new InvTable({
