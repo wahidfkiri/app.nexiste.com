@@ -2,6 +2,7 @@
 
 namespace NexusExtensions\NotionWorkspace;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 use NexusExtensions\NotionWorkspace\Services\NotionPermissionService;
 
@@ -40,6 +41,11 @@ class NotionWorkspaceServiceProvider extends ServiceProvider
             __DIR__ . '/Resources/lang' => lang_path('vendor/notion-workspace'),
         ], 'notion-workspace-lang');
 
-        app(NotionPermissionService::class)->ensurePermissions();
+        // Idempotent mais coûteux : on évite de rejouer le seeding des
+        // permissions à chaque requête HTTP (voir ProjectsServiceProvider).
+        if ($this->app->runningInConsole() || ! Cache::has('notion:permissions:synced')) {
+            app(NotionPermissionService::class)->ensurePermissions();
+            Cache::put('notion:permissions:synced', true, now()->addHours(12));
+        }
     }
 }

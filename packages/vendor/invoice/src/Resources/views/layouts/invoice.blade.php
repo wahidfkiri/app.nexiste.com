@@ -19,7 +19,7 @@ window.InvoiceLang = Object.assign(window.InvoiceLang || {}, {
   settledLabel: @json(__('invoice::invoices.js.invoice_settled')),
   convertedBadge: @json(__('invoice::invoices.js.quote_converted_badge')),
   viewInvoiceTitle: @json(__('invoice::invoices.js.view_invoice_title')),
-  paginationInfo: @json(__('invoice::invoices.js.pagination_info', ['from' => ':from', 'to' => ':to', 'total' => ':total'])),
+  paginationInfo: {!! json_encode(__('invoice::invoices.js.pagination_info', ['from' => ':from', 'to' => ':to', 'total' => ':total']), 15, 512) !!},
   countLabel: @json(__('invoice::invoices.js.count_label', ['total' => ':total'])),
   irreversibleAction: @json(__('invoice::invoices.alerts.irreversible')),
   paymentRecalculation: @json(__('invoice::invoices.alerts.payment_recalculates_invoice')),

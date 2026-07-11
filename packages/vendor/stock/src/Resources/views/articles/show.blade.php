@@ -1,5 +1,10 @@
 @extends('layouts.global')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', __('stock::stock.pages.articles.show.title'))
 
 @section('breadcrumb')
@@ -23,7 +28,7 @@
   <div class="row">
     <div class="col-3"><strong>{{ __('stock::stock.common.sku') }}</strong><div>{{ $article->sku ?? __('stock::stock.common.none_short') }}</div></div>
     <div class="col-3"><strong>{{ __('stock::stock.common.current_stock') }}</strong><div>{{ $article->current_stock }}</div></div>
-    <div class="col-3"><strong>{{ __('stock::stock.common.sale_price') }}</strong><div>{{ $article->sale_price }}</div></div>
+    <div class="col-3"><strong>{{ __('stock::stock.common.sale_price') }}</strong><div>{{ number_format((float) $article->sale_price, 2, ',', ' ') }} {{ $currencySymbol }}</div></div>
     <div class="col-3"><strong>{{ __('stock::stock.common.supplier') }}</strong><div>{{ $article->supplier?->name ?? __('stock::stock.common.none_short') }}</div></div>
     <div class="col-3" style="margin-top:10px;"><strong>{{ __('stock::stock.common.minimum_stock') }}</strong><div>{{ $article->min_stock }}</div></div>
     <div class="col-3" style="margin-top:10px;"><strong>{{ __('stock::stock.common.status') }}</strong><div>{{ $article->status_label }}</div></div>

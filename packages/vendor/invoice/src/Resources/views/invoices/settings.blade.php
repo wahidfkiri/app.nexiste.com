@@ -30,6 +30,7 @@
 {{-- Tabs --}}
 <div style="display:flex;gap:4px;margin-bottom:24px;background:var(--surface-0);border:1px solid var(--c-ink-05);border-radius:var(--r-lg);padding:6px;width:fit-content;box-shadow:var(--shadow-xs);">
   @foreach([
+    ['id'=>'currency',    'icon'=>'fa-coins',               'label'=>__('invoice::invoices.settings_tabs.currency')],
     ['id'=>'numbering',   'icon'=>'fa-hashtag',             'label'=>__('invoice::invoices.settings_tabs.numbering')],
     ['id'=>'taxes',       'icon'=>'fa-percent',              'label'=>__('invoice::invoices.settings_tabs.taxes')],
     ['id'=>'withholding', 'icon'=>'fa-building-columns',     'label'=>__('invoice::invoices.settings_tabs.withholding')],
@@ -49,8 +50,36 @@
 @csrf
 @method('PUT')
 
+{{-- --- DEVISE --- --}}
+<div id="tab-currency" class="tab-panel">
+  <div class="form-section">
+    <h3 class="form-section-title">
+      <i class="fas fa-coins"></i> {{ $settingsPage['currency_configuration'] }}
+    </h3>
+
+    <div style="background:var(--c-accent-xl);border:1px solid var(--c-ink-05);border-radius:var(--r-sm);padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--c-ink-60);">
+      <i class="fas fa-circle-info" style="color:var(--c-accent);"></i>
+      {{ $settingsPage['currency_sync_notice'] }}
+    </div>
+
+    <div class="row">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="form-label">{{ $settingsPage['currency_label'] }} <span class="required">*</span></label>
+          <select name="tenant_currency" class="form-control">
+            @foreach(($currencies ?? []) as $code => $label)
+              <option value="{{ $code }}" {{ strtoupper($currentCurrency ?? 'EUR') === strtoupper($code) ? 'selected' : '' }}>{{ $label }}</option>
+            @endforeach
+          </select>
+          <span class="form-hint">{{ $settingsPage['currency_hint'] }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 {{-- --- NUMEROTATION --- --}}
-<div id="tab-numbering" class="tab-panel">
+<div id="tab-numbering" class="tab-panel" style="display:none;">
   <div class="form-section">
     <h3 class="form-section-title">
       <i class="fas fa-hashtag"></i> {{ $settingsPage['numbering_configuration'] }}

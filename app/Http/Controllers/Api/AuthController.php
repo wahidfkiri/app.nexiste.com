@@ -194,7 +194,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Merci de corriger les champs signales.',
+                'message' => 'Merci de corriger les champs signalés.',
                 'errors' => $validator->errors(),
             ], 422);
         }
@@ -204,7 +204,7 @@ class AuthController extends Controller
         ]);
 
         if ($status === Password::RESET_THROTTLED) {
-            $message = 'Un email de reinitialisation a deja ete envoye recemment. Merci de patienter un moment.';
+            $message = 'Un e-mail de réinitialisation a déjà été envoyé récemment. Merci de patienter un moment.';
 
             return response()->json([
                 'success' => false,
@@ -217,7 +217,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Si un compte existe avec cette adresse email, un lien de reinitialisation vient d etre envoye.',
+            'message' => 'Si un compte existe avec cette adresse e-mail, un lien de réinitialisation vient d’être envoyé.',
         ]);
     }
 
@@ -235,7 +235,7 @@ class AuthController extends Controller
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/',
             ],
         ], [
-            'token.required' => 'Le jeton de reinitialisation est obligatoire.',
+            'token.required' => 'Le jeton de réinitialisation est obligatoire.',
             'email.required' => 'L email est obligatoire.',
             'email.email' => 'Le format de l email est invalide.',
             'password.required' => 'Le mot de passe est obligatoire.',
@@ -247,7 +247,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Merci de corriger les champs signales.',
+                'message' => 'Merci de corriger les champs signalés.',
                 'errors' => $validator->errors(),
             ], 422);
         }
@@ -273,9 +273,9 @@ class AuthController extends Controller
 
         if ($status !== Password::PASSWORD_RESET) {
             $message = match ($status) {
-                Password::INVALID_TOKEN => 'Le lien de reinitialisation est invalide ou expire.',
+                Password::INVALID_TOKEN => 'Le lien de réinitialisation est invalide ou expiré.',
                 Password::INVALID_USER => 'Ce compte est introuvable.',
-                default => 'La reinitialisation du mot de passe a echoue. Merci de reessayer.',
+                default => 'La réinitialisation du mot de passe a échoué. Merci de réessayer.',
             };
 
             return response()->json([
@@ -289,7 +289,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Votre mot de passe a ete reinitialise. Vous pouvez maintenant vous connecter.',
+            'message' => 'Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.',
         ]);
     }
 

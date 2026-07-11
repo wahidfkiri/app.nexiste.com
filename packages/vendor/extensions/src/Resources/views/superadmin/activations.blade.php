@@ -208,7 +208,7 @@ class ExtensionActivationsPage {
     const from = total === 0 ? 0 : ((current - 1) * perPage) + 1;
     const to = Math.min(current * perPage, total);
 
-    info.textContent = total ? @json(__('extensions::extensions.superadmin.activations.displaying', ['from' => ':from', 'to' => ':to', 'total' => ':total'])).replace(':from', from).replace(':to', to).replace(':total', total) : @json(__('extensions::extensions.superadmin.activations.no_results'));
+    info.textContent = total ? {!! json_encode(__('extensions::extensions.superadmin.activations.displaying', ['from' => ':from', 'to' => ':to', 'total' => ':total']), 15, 512) !!}.replace(':from', from).replace(':to', to).replace(':total', total) : @json(__('extensions::extensions.superadmin.activations.no_results'));
 
     pages.innerHTML = '';
     if (last <= 1) return;

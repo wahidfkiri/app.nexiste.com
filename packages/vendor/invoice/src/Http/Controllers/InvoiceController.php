@@ -624,7 +624,11 @@ class InvoiceController extends Controller
     public function settingsIndex()
     {
         $settings = $this->getSettings();
-        return view('invoice::invoices.settings', compact('settings'));
+        $tenant = auth()->user()->tenant;
+        $currentCurrency = strtoupper((string) ($tenant->currency ?? config('invoice.default_currency', 'EUR')));
+        $currencies = (array) config('onboarding.currencies', []);
+
+        return view('invoice::invoices.settings', compact('settings', 'currentCurrency', 'currencies'));
     }
 
     public function settingsUpdate(Request $request)
@@ -643,6 +647,23 @@ class InvoiceController extends Controller
         $payload = $request->except(['_token', '_method']);
         foreach ($booleanKeys as $boolKey) {
             $payload[$boolKey] = $request->boolean($boolKey);
+        }
+
+        // La devise est une préférence globale du tenant (partagée par tous les
+        // modules), pas un réglage propre à la facturation : on l'écrit sur la
+        // colonne tenant.currency pour la synchroniser avec les paramètres généraux.
+        if (array_key_exists('tenant_currency', $payload)) {
+            $requested = strtoupper((string) $payload['tenant_currency']);
+            $allowed = array_map('strtoupper', array_keys((array) config('onboarding.currencies', [])));
+
+            if ($requested !== '' && in_array($requested, $allowed, true)) {
+                $tenant = auth()->user()->tenant;
+                if ($tenant && $tenant->currency !== $requested) {
+                    $tenant->update(['currency' => $requested]);
+                }
+            }
+
+            unset($payload['tenant_currency']);
         }
 
         if ($request->boolean('pdf_logo_remove')) {

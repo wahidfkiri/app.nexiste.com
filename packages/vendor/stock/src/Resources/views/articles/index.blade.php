@@ -1,5 +1,10 @@
 @extends('layouts.global')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', __('stock::stock.pages.articles.index.title'))
 
 @section('breadcrumb')
@@ -89,6 +94,12 @@ const STOCK_ARTICLE_ROUTES = {
   edit: @json(route('stock.articles.edit', ['article' => '__ARTICLE__'])),
 };
 const stockArticleRoute = (template, id) => String(template).replace('__ARTICLE__', encodeURIComponent(String(id)));
+const STOCK_CURRENCY_SYMBOL = @json($currencySymbol);
+const formatStockPrice = (value) => {
+  const n = Number(value);
+  if (!isFinite(n)) return '—';
+  return `${n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${STOCK_CURRENCY_SYMBOL}`;
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   Stock.loadStats('{{ route('stock.stats') }}');
@@ -104,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${article.supplier?.name ?? '—'}</td>
           <td><span style="font-weight:600;color:${isLow ? 'var(--c-danger)' : 'var(--c-ink)'};">${article.current_stock ?? 0}</span></td>
           <td>${article.min_stock ?? 0}</td>
-          <td>${article.sale_price}</td>
+          <td>${formatStockPrice(article.sale_price)}</td>
           <td><a class="btn-icon" href="${stockArticleRoute(STOCK_ARTICLE_ROUTES.edit, article.id)}"><i class="fas fa-pen"></i></a></td>
         </tr>`;
     },

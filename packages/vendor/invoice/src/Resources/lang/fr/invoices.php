@@ -101,6 +101,7 @@ return [
     ],
 
     'settings_tabs' => [
+        'currency' => 'Devise',
         'numbering' => 'Numérotation',
         'taxes' => 'TVA',
         'withholding' => 'Retenue à la source',
@@ -462,6 +463,10 @@ return [
             'title' => 'Paramètres Facturation',
             'breadcrumb_configuration' => 'Configuration',
             'subtitle' => 'Configurez TVA, signatures, retenues, numérotation et préférences',
+            'currency_configuration' => 'Devise principale',
+            'currency_label' => 'Devise par défaut',
+            'currency_hint' => 'Cette devise s’applique à tous les modules (facturation, stock, tableau de bord…). La modifier ici met aussi à jour les paramètres généraux de l’application.',
+            'currency_sync_notice' => 'La devise est unique pour tout votre espace. Ce réglage est synchronisé avec les paramètres généraux.',
             'numbering_configuration' => 'Configuration de la numérotation',
             'invoice_prefix' => 'Préfixe factures',
             'quote_prefix' => 'Préfixe devis',

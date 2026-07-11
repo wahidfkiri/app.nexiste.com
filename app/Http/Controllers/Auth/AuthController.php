@@ -72,7 +72,7 @@ class AuthController extends Controller
         ]);
 
         if ($status === Password::RESET_THROTTLED) {
-            $message = 'Un email de reinitialisation a deja ete envoye recemment. Merci de patienter un moment.';
+            $message = 'Un e-mail de réinitialisation a déjà été envoyé récemment. Merci de patienter un moment.';
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
@@ -89,7 +89,7 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        $successMessage = 'Si un compte existe avec cette adresse email, un lien de reinitialisation vient d etre envoye.';
+        $successMessage = 'Si un compte existe avec cette adresse e-mail, un lien de réinitialisation vient d’être envoyé.';
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
@@ -151,9 +151,9 @@ class AuthController extends Controller
 
         if ($status !== Password::PASSWORD_RESET) {
             $message = match ($status) {
-                Password::INVALID_TOKEN => 'Le lien de reinitialisation est invalide ou expire.',
+                Password::INVALID_TOKEN => 'Le lien de réinitialisation est invalide ou expiré.',
                 Password::INVALID_USER => 'Ce compte est introuvable.',
-                default => 'La reinitialisation du mot de passe a echoue. Merci de reessayer.',
+                default => 'La réinitialisation du mot de passe a échoué. Merci de réessayer.',
             };
 
             if ($request->expectsJson() || $request->ajax()) {
@@ -171,7 +171,7 @@ class AuthController extends Controller
             ])->withInput($request->except('password', 'password_confirmation'));
         }
 
-        $successMessage = 'Votre mot de passe a ete reinitialise. Vous pouvez maintenant vous connecter.';
+        $successMessage = 'Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.';
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
@@ -237,7 +237,7 @@ class AuthController extends Controller
             }
 
             return back()->withErrors([
-                'email' => 'Compte non active. Un email d activation vient d etre renvoye.',
+                'email' => 'Compte non activé. Un e-mail d’activation vient d’être renvoyé.',
             ])->withInput();
         }
 
@@ -407,7 +407,7 @@ class AuthController extends Controller
             ], 201);
         }
 
-        return redirect()->route('login')->with('success', 'Compte cree. Verifiez votre email pour activer votre acces.');
+        return redirect()->route('login')->with('success', 'Compte créé. Vérifiez votre e-mail pour activer votre accès.');
     }
 
     public function redirectToGoogle(Request $request)
@@ -639,7 +639,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
         $request->session()->put('current_tenant_id', (int) $user->tenant_id);
 
-        return redirect($this->afterAuthRedirect($user))->with('success', 'Compte active avec succes.');
+        return redirect($this->afterAuthRedirect($user))->with('success', 'Compte activé avec succès.');
     }
 
     public function resendVerification(ResendVerificationRequest $request)
@@ -666,7 +666,7 @@ class AuthController extends Controller
                     'message' => 'Ce compte est déjà actif.',
                 ]);
             }
-            return back()->with('success', 'Ce compte est deja actif.');
+            return back()->with('success', 'Ce compte est déjà actif.');
         }
 
         $user->sendEmailVerificationNotification();
@@ -678,7 +678,7 @@ class AuthController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Email d activation renvoye.');
+        return back()->with('success', 'E-mail d’activation renvoyé.');
     }
 
     public function logout(Request $request)

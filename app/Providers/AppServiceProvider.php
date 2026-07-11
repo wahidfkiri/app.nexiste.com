@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Notifications\DraftReminderNotification;
 use App\Notifications\DraftSavedNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -35,11 +36,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Le seeding du catalogue d'extensions est idempotent mais coûteux :
+        // inutile de le rejouer (et d'interroger information_schema) à chaque
+        // requête HTTP. On le réserve à la console et à une passe web mise en cache.
         if (
             class_exists(ExtensionService::class)
+            && ($this->app->runningInConsole() || ! Cache::has('extensions:catalog:seeded'))
             && Schema::hasTable('extensions')
         ) {
             app(ExtensionService::class)->ensureCatalogSeeded();
+            Cache::put('extensions:catalog:seeded', true, now()->addHours(12));
         }
 
         View::composer('layouts.global', function ($view): void {

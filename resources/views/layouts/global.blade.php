@@ -436,17 +436,15 @@
     .crm-layout .sidebar-nav a{
       position:relative;
       color:#cbd5e1;
-      border:1px solid transparent;
+      border:0;
       overflow:hidden;
     }
     .crm-layout .sidebar-nav a:hover{
-      background:rgba(255,255,255,.06);
-      border-color:rgba(255,255,255,.08);
+      background:rgba(255,255,255,.05);
       color:#f8fafc;
     }
     .crm-layout .sidebar-nav a.active{
-      background:rgba(255,255,255,.08);
-      border-color:rgba(255,255,255,.10);
+      background:rgba(37,99,235,.16);
       color:#fff;
       box-shadow:none;
     }
@@ -454,11 +452,11 @@
       content:'';
       position:absolute;
       left:0;
-      top:10px;
-      bottom:10px;
+      top:8px;
+      bottom:8px;
       width:3px;
       border-radius:0 999px 999px 0;
-      background:#2563eb;
+      background:#60a5fa;
     }
     .crm-layout .sidebar-nav a i{color:#93c5fd}
     .crm-layout .sidebar-nav a.active i{color:#60a5fa}
@@ -525,6 +523,8 @@
       background:rgba(239,68,68,.16);
       color:#fff;
     }
+    body.sidebar-preload .crm-sidebar,
+    body.sidebar-preload .crm-sidebar *{transition:none !important}
     body.sidebar-collapsed .crm-layout{--sidebar-w:92px}
     body.sidebar-collapsed .sidebar-brand{
       justify-content:center;
@@ -594,6 +594,20 @@
   @stack('styles')
 </head>
 <body class="@yield('body_class')">
+<script>
+  /* Applique l'état réduit du menu AVANT le premier rendu du sidebar pour
+     éviter le flash « étendu → réduit » au rechargement de la page. */
+  (function () {
+    try {
+      if (window.localStorage.getItem('crm.sidebar.compact') === '1' && window.innerWidth > 1024) {
+        document.body.classList.add('sidebar-collapsed', 'sidebar-preload');
+        window.addEventListener('load', function () {
+          requestAnimationFrame(function () { document.body.classList.remove('sidebar-preload'); });
+        });
+      }
+    } catch (e) {}
+  })();
+</script>
 <div class="crm-layout @yield('layout_class')">
   <aside class="crm-sidebar" id="sidebar">
     <div class="sidebar-brand">

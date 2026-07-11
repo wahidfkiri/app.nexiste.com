@@ -1,5 +1,10 @@
 @extends('layouts.global')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', __('stock::stock.pages.orders.show.title'))
 
 @section('breadcrumb')
@@ -26,14 +31,14 @@
     <div class="col-3"><strong>{{ __('stock::stock.common.supplier') }}</strong><div>{{ $order->supplier?->name }}</div></div>
     <div class="col-3"><strong>{{ __('stock::stock.common.date_order') }}</strong><div>{{ optional($order->order_date)->format('Y-m-d') }}</div></div>
     <div class="col-3"><strong>{{ __('stock::stock.common.status') }}</strong><div>{{ $order->status_label }}</div></div>
-    <div class="col-3"><strong>{{ __('stock::stock.common.total') }}</strong><div>{{ $order->total }}</div></div>
+    <div class="col-3"><strong>{{ __('stock::stock.common.total') }}</strong><div>{{ number_format((float) $order->total, 2, ',', ' ') }} {{ $currencySymbol }}</div></div>
   </div>
 </div>
 
 <div class="table-wrapper" style="margin-bottom:18px;">
   <table class="crm-table">
     <thead><tr><th>{{ __('stock::stock.common.article') }}</th><th>{{ __('stock::stock.common.quantity') }}</th><th>{{ __('stock::stock.common.unit') }}</th><th>{{ __('stock::stock.common.purchase_price') }}</th><th>{{ __('stock::stock.common.total') }}</th></tr></thead>
-    <tbody>@foreach($order->items as $item)<tr><td>{{ $item->name }}</td><td>{{ $item->quantity }}</td><td>{{ $item->unit }}</td><td>{{ $item->unit_price }}</td><td>{{ $item->total }}</td></tr>@endforeach</tbody>
+    <tbody>@foreach($order->items as $item)<tr><td>{{ $item->name }}</td><td>{{ $item->quantity }}</td><td>{{ $item->unit }}</td><td>{{ number_format((float) $item->unit_price, 2, ',', ' ') }} {{ $currencySymbol }}</td><td>{{ number_format((float) $item->total, 2, ',', ' ') }} {{ $currencySymbol }}</td></tr>@endforeach</tbody>
   </table>
 </div>
 

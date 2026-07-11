@@ -99,7 +99,9 @@ return [
         'CAD' => ['name' => 'Dollar Canadien',  'symbol' => '$',  'position' => 'before', 'decimals' => 2, 'thousands' => ' ',  'decimal_sep' => ','],
         'AED' => ['name' => 'Dirham EAU',       'symbol' => 'AED','position' => 'before', 'decimals' => 2, 'thousands' => ',',  'decimal_sep' => '.'],
         'SAR' => ['name' => 'Riyal Saoudien',   'symbol' => 'SR', 'position' => 'before', 'decimals' => 2, 'thousands' => ',',  'decimal_sep' => '.'],
-        'XOF' => ['name' => 'Franc CFA',        'symbol' => 'F',  'position' => 'after',  'decimals' => 0, 'thousands' => ' ',  'decimal_sep' => ','],
+        'XOF' => ['name' => 'Franc CFA BCEAO',  'symbol' => 'F',  'position' => 'after',  'decimals' => 0, 'thousands' => ' ',  'decimal_sep' => ','],
+        'XAF' => ['name' => 'Franc CFA BEAC',   'symbol' => 'FCFA','position' => 'after', 'decimals' => 0, 'thousands' => ' ',  'decimal_sep' => ','],
+        'EGP' => ['name' => 'Livre Égyptienne', 'symbol' => 'E£', 'position' => 'after',  'decimals' => 2, 'thousands' => ' ',  'decimal_sep' => ','],
     ],
 
     // Devise par défaut (fallback si le tenant n'a pas de devise configurée)

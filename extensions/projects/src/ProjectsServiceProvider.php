@@ -2,6 +2,7 @@
 
 namespace NexusExtensions\Projects;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 use NexusExtensions\Projects\Services\ProjectPermissionService;
 
@@ -41,6 +42,13 @@ class ProjectsServiceProvider extends ServiceProvider
             __DIR__ . '/Resources/lang' => lang_path('vendor/projects'),
         ], 'projects-lang');
 
-        app(ProjectPermissionService::class)->ensurePermissions();
+        // Le seeding des permissions est idempotent mais coûteux (plusieurs
+        // requêtes information_schema + boucles d'insertion). Le lancer à chaque
+        // requête HTTP ralentit tout le CRM : on le limite donc à la console
+        // (déploiements/migrations) et à une exécution mise en cache côté web.
+        if ($this->app->runningInConsole() || ! Cache::has('projects:permissions:synced')) {
+            app(ProjectPermissionService::class)->ensurePermissions();
+            Cache::put('projects:permissions:synced', true, now()->addHours(12));
+        }
     }
 }

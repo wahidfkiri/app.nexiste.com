@@ -1,5 +1,10 @@
 @extends('layouts.global')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', __('stock::stock.pages.orders.index.title'))
 
 @section('breadcrumb')
@@ -48,12 +53,18 @@ const STOCK_ORDER_ROUTES = {
   edit: @json(route('stock.orders.edit', ['order' => '__ORDER__'])),
 };
 const stockOrderRoute = (template, id) => String(template).replace('__ORDER__', encodeURIComponent(String(id)));
+const STOCK_CURRENCY_SYMBOL = @json($currencySymbol);
+const formatStockPrice = (value) => {
+  const n = Number(value);
+  if (!isFinite(n)) return '—';
+  return `${n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${STOCK_CURRENCY_SYMBOL}`;
+};
 
 document.addEventListener('DOMContentLoaded', () => {
  window._stockOrdersTable = new CrmTable({
   tbodyId:'ordersTableBody',
   dataUrl:'{{ route('stock.orders.data') }}',
-  renderRow:(order)=>`<tr><td><a href="${stockOrderRoute(STOCK_ORDER_ROUTES.show, order.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${order.number}</a></td><td>${order.supplier?.name ?? '—'}</td><td>${Stock.formatDate(order.order_date)}</td><td>${order.total}</td><td><span class="badge badge-${order.status==='received'?'paid':(order.status==='cancelled'?'cancelled':'sent')}">${order.status_label ?? order.status}</span></td><td><a class="btn-icon" href="${stockOrderRoute(STOCK_ORDER_ROUTES.edit, order.id)}"><i class="fas fa-pen"></i></a></td></tr>`
+  renderRow:(order)=>`<tr><td><a href="${stockOrderRoute(STOCK_ORDER_ROUTES.show, order.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${order.number}</a></td><td>${order.supplier?.name ?? '—'}</td><td>${Stock.formatDate(order.order_date)}</td><td>${formatStockPrice(order.total)}</td><td><span class="badge badge-${order.status==='received'?'paid':(order.status==='cancelled'?'cancelled':'sent')}">${order.status_label ?? order.status}</span></td><td><a class="btn-icon" href="${stockOrderRoute(STOCK_ORDER_ROUTES.edit, order.id)}"><i class="fas fa-pen"></i></a></td></tr>`
  });
 });
 </script>
