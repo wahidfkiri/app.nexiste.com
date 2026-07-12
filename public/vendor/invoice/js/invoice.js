@@ -251,16 +251,16 @@ class InvTable {
   }
 
   _rowInvoice(inv) {
-    const cur = inv.currency || 'EUR';
+    const cur = window.DEFAULT_CURRENCY || inv.currency || 'EUR';
     const fmtCur = (n) => InvCurrencyFmt.format(n, cur);
     const statusColors = { draft:'var(--c-ink-20)', sent:'var(--c-info)', viewed:'var(--c-purple)', partial:'var(--c-warning)', paid:'var(--c-success)', overdue:'var(--c-danger)', cancelled:'var(--c-ink-20)', refunded:'var(--c-warning)' };
     const dot = `<span style="width:6px;height:6px;border-radius:50%;background:${statusColors[inv.status]||'var(--c-ink-20)'};display:inline-block;margin-right:5px;"></span>`;
     const isOverdue = inv.is_overdue;
     const isPaid = String(inv.status || '').toLowerCase() === 'paid';
     const paidLockTitle = InvoiceLang.paidLockTitle;
-    const showUrl = invoiceRoute('show', { invoice: inv.id });
-    const editUrl = invoiceRoute('edit', { invoice: inv.id });
-    const pdfUrl = invoiceRoute('pdf', { invoice: inv.id });
+    const showUrl = invoiceRoute('show', { invoice: inv.uuid ?? inv.id });
+    const editUrl = invoiceRoute('edit', { invoice: inv.uuid ?? inv.id });
+    const pdfUrl = invoiceRoute('pdf', { invoice: inv.uuid ?? inv.id });
     const editAction = isPaid
       ? `<button type="button" class="btn-icon is-disabled" aria-disabled="true" title="${paidLockTitle}"><i class="fas fa-pen"></i></button>`
       : `<a href="${editUrl}" class="btn-icon" title="Modifier"><i class="fas fa-pen"></i></a>`;
@@ -296,12 +296,12 @@ class InvTable {
   }
 
   _rowQuote(q) {
-    const cur = q.currency || 'EUR';
+    const cur = window.DEFAULT_CURRENCY || q.currency || 'EUR';
     const expired = q.is_expired;
     const dot = `<span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;margin-right:5px;opacity:.7;"></span>`;
-    const showUrl = invoiceRoute('quoteShow', { quote: q.id });
-    const editUrl = invoiceRoute('quoteEdit', { quote: q.id });
-    const pdfUrl = invoiceRoute('quotePdf', { quote: q.id });
+    const showUrl = invoiceRoute('quoteShow', { quote: q.uuid ?? q.id });
+    const editUrl = invoiceRoute('quoteEdit', { quote: q.uuid ?? q.id });
+    const pdfUrl = invoiceRoute('quotePdf', { quote: q.uuid ?? q.id });
     return `
       <tr data-id="${q.id}" class="${this.selectedIds.has(q.id)?'selected':''}">
         <td style="width:40px"><input type="checkbox" class="row-check" data-id="${q.id}" ${this.selectedIds.has(q.id)?'checked':''}></td>
@@ -331,7 +331,7 @@ class InvTable {
   }
 
   _rowPayment(p) {
-    const cur = p.currency || 'EUR';
+    const cur = window.DEFAULT_CURRENCY || p.currency || 'EUR';
     const invoiceUrl = invoiceRoute('show', { invoice: p.invoice_id });
     return `
       <tr data-id="${p.id}">

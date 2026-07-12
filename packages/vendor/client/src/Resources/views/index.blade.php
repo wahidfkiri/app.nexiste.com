@@ -80,7 +80,7 @@
     </div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:#f3e8ff;color:#7c3aed"><i class="fas fa-circle-euro-sign"></i></div>
+    <div class="stat-icon" style="background:#f3e8ff;color:#7c3aed"><i class="fas fa-coins"></i></div>
     <div class="stat-body">
       <div class="stat-value" id="totalRevenue">—</div>
       <div class="stat-label">{{ __('client::clients.stats.revenue') }}</div>
@@ -208,6 +208,7 @@
 
 @push('scripts')
 <script>
+window.DEFAULT_CURRENCY = '{{ strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR'))) }}';
 window.CRM_ROUTES = {
   data: '{{ route("clients.data") }}',
   stats: '{{ route("clients.stats") }}',

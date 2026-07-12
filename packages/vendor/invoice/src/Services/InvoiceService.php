@@ -121,7 +121,12 @@ class InvoiceService
         return DB::transaction(function () use ($invoice, $data) {
             $items = $data['items'] ?? [];
             unset($data['items']);
-            unset($data['currency'], $data['exchange_rate']);
+            unset($data['exchange_rate']);
+            // Devise unique liée au tenant : on réaligne toujours la facture sur
+            // la devise principale (paramètres généraux) au lieu de la figer à
+            // la création. Ainsi l'affichage, le stockage et le PDF restent cohérents.
+            $tenant = Tenant::find($invoice->tenant_id);
+            $data['currency'] = $tenant?->currency ?: self::tenantCurrency($invoice->tenant_id);
 
             $invoice->update($data);
             $this->syncItems($invoice, $items);
@@ -167,7 +172,10 @@ class InvoiceService
         return DB::transaction(function () use ($quote, $data) {
             $items = $data['items'] ?? [];
             unset($data['items']);
-            unset($data['currency'], $data['exchange_rate']);
+            unset($data['exchange_rate']);
+            // Devise unique liée au tenant (voir updateInvoice).
+            $tenant = Tenant::find($quote->tenant_id);
+            $data['currency'] = $tenant?->currency ?: self::tenantCurrency($quote->tenant_id);
 
             $quote->update($data);
             $this->syncQuoteItems($quote, $items);

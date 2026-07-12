@@ -30,11 +30,11 @@ Route::middleware(['web', 'auth', 'tenant'])
         Route::post('/invitations/{invitation}/resend', [UserController::class, 'resendInvitation'])->middleware('tenant.permission:users.invite')->whereNumber('invitation')->name('invitations.resend');
         Route::delete('/invitations/{invitation}', [UserController::class, 'revokeInvitation'])->middleware('tenant.permission:users.invite')->whereNumber('invitation')->name('invitations.revoke');
 
-        Route::get('/{user}', [UserController::class, 'show'])->middleware('tenant.permission:users.read')->whereNumber('user')->name('show');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->middleware('tenant.permission:users.update')->whereNumber('user')->name('edit');
-        Route::put('/{user}', [UserController::class, 'update'])->middleware('tenant.permission:users.update')->whereNumber('user')->name('update');
-        Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('tenant.permission:users.delete')->whereNumber('user')->name('destroy');
-        Route::post('/{user}/suspend', [UserController::class, 'suspend'])->middleware('tenant.permission:users.update')->whereNumber('user')->name('suspend');
-        Route::post('/{user}/activate', [UserController::class, 'activate'])->middleware('tenant.permission:users.update')->whereNumber('user')->name('activate');
-        Route::post('/{user}/avatar', [UserController::class, 'uploadAvatar'])->middleware('tenant.permission:users.update')->whereNumber('user')->name('avatar');
+        Route::get('/{user}', [UserController::class, 'show'])->middleware('tenant.permission:users.read')->where('user', '[0-9a-fA-F-]+')->name('show');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->middleware('tenant.permission:users.update')->where('user', '[0-9a-fA-F-]+')->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->middleware('tenant.permission:users.update')->where('user', '[0-9a-fA-F-]+')->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('tenant.permission:users.delete')->where('user', '[0-9a-fA-F-]+')->name('destroy');
+        Route::post('/{user}/suspend', [UserController::class, 'suspend'])->middleware('tenant.permission:users.update')->where('user', '[0-9a-fA-F-]+')->name('suspend');
+        Route::post('/{user}/activate', [UserController::class, 'activate'])->middleware('tenant.permission:users.update')->where('user', '[0-9a-fA-F-]+')->name('activate');
+        Route::post('/{user}/avatar', [UserController::class, 'uploadAvatar'])->middleware('tenant.permission:users.update')->where('user', '[0-9a-fA-F-]+')->name('avatar');
     });

@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User;
 use Vendor\CrmCore\Models\Tenant;
 use Vendor\CrmCore\Traits\MultiTenantTrait;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 use Vendor\Client\Models\Client;
 
 class Invoice extends Model
 {
-    use SoftDeletes, MultiTenantTrait;
+    use SoftDeletes, MultiTenantTrait, HasPublicUuid;
 
     protected $table = 'invoices';
 

@@ -5,10 +5,11 @@ namespace NexusExtensions\Projects\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Vendor\CrmCore\Traits\MultiTenantTrait;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 
 class ProjectTask extends Model
 {
-    use SoftDeletes, MultiTenantTrait;
+    use SoftDeletes, MultiTenantTrait, HasPublicUuid;
 
     protected $table = 'project_tasks';
 

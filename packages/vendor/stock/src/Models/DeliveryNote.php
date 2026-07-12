@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Lang;
 use Vendor\Client\Models\Client;
 use Vendor\CrmCore\Traits\MultiTenantTrait;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 use Vendor\Invoice\Models\Invoice;
 
 class DeliveryNote extends Model
 {
-    use SoftDeletes, MultiTenantTrait;
+    use SoftDeletes, MultiTenantTrait, HasPublicUuid;
 
     protected $table = 'stock_delivery_notes';
 

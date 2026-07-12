@@ -111,12 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return `
         <tr>
           <td>${article.sku ?? '—'}</td>
-          <td><a href="${stockArticleRoute(STOCK_ARTICLE_ROUTES.show, article.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${article.name}</a></td>
+          <td><a href="${stockArticleRoute(STOCK_ARTICLE_ROUTES.show, article.uuid ?? article.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${article.name}</a></td>
           <td>${article.supplier?.name ?? '—'}</td>
           <td><span style="font-weight:600;color:${isLow ? 'var(--c-danger)' : 'var(--c-ink)'};">${article.current_stock ?? 0}</span></td>
           <td>${article.min_stock ?? 0}</td>
           <td>${formatStockPrice(article.sale_price)}</td>
-          <td><a class="btn-icon" href="${stockArticleRoute(STOCK_ARTICLE_ROUTES.edit, article.id)}"><i class="fas fa-pen"></i></a></td>
+          <td><a class="btn-icon" href="${stockArticleRoute(STOCK_ARTICLE_ROUTES.edit, article.uuid ?? article.id)}"><i class="fas fa-pen"></i></a></td>
         </tr>`;
     },
   });

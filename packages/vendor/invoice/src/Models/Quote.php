@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User;
 use Vendor\CrmCore\Models\Tenant;
 use Vendor\CrmCore\Traits\MultiTenantTrait;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 use Vendor\Client\Models\Client;
 
 class Quote extends Model
 {
-    use SoftDeletes, MultiTenantTrait;
+    use SoftDeletes, MultiTenantTrait, HasPublicUuid;
 
     protected $table = 'quotes';
 
@@ -135,6 +136,10 @@ class Quote extends Model
     }
     public function getIsExpiredAttribute(): bool { return $this->valid_until && $this->valid_until->isPast() && !in_array($this->status, ['accepted','declined']); }
     public function getIsConvertedAttribute(): bool { return !is_null($this->converted_to_invoice_id); }
+    public function getCurrencySymbolAttribute(): string
+    {
+        return config("invoice.currencies.{$this->currency}.symbol", $this->currency);
+    }
 
     // ===================== METHODS =====================
 

@@ -5,10 +5,11 @@ namespace Vendor\Stock\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Vendor\CrmCore\Traits\MultiTenantTrait;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 
 class Order extends Model
 {
-    use SoftDeletes, MultiTenantTrait;
+    use SoftDeletes, MultiTenantTrait, HasPublicUuid;
 
     protected $table = 'stock_orders';
 

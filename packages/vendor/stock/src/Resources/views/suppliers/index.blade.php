@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
  window._stockSuppliersTable = new CrmTable({
   tbodyId:'suppliersTableBody',
   dataUrl:'{{ route('stock.suppliers.data') }}',
-  renderRow:(supplier)=>`<tr><td><a href="${stockSupplierRoute(STOCK_SUPPLIER_ROUTES.show, supplier.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${supplier.name}</a></td><td>${supplier.contact_name ?? '—'}</td><td>${supplier.email ?? '—'}</td><td>${supplier.phone ?? '—'}</td><td><a class="btn-icon" href="${stockSupplierRoute(STOCK_SUPPLIER_ROUTES.edit, supplier.id)}"><i class="fas fa-pen"></i></a></td></tr>`
+  renderRow:(supplier)=>`<tr><td><a href="${stockSupplierRoute(STOCK_SUPPLIER_ROUTES.show, supplier.uuid ?? supplier.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${supplier.name}</a></td><td>${supplier.contact_name ?? '—'}</td><td>${supplier.email ?? '—'}</td><td>${supplier.phone ?? '—'}</td><td><a class="btn-icon" href="${stockSupplierRoute(STOCK_SUPPLIER_ROUTES.edit, supplier.uuid ?? supplier.id)}"><i class="fas fa-pen"></i></a></td></tr>`
  });
 });
 </script>

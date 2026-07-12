@@ -9,10 +9,11 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use Vendor\CrmCore\Models\Tenant;
 use Vendor\CrmCore\Traits\MultiTenantTrait;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 
 class Client extends Model
 {
-    use SoftDeletes, MultiTenantTrait;
+    use SoftDeletes, MultiTenantTrait, HasPublicUuid;
 
     private const DELETED_EMAIL_DOMAIN = 'archived.local';
 

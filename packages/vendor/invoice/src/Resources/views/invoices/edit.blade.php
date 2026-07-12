@@ -95,7 +95,7 @@
               </select>
             </div>
           </div>
-          <input type="hidden" name="currency" value="{{ $invoice->currency ?? $tenantCurrency }}">
+          <input type="hidden" name="currency" value="{{ $tenantCurrency }}">
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
 
   InvLineItems.init({
-    currency: '{{ $invoice->currency }}',
+    currency: '{{ $tenantCurrency }}',
     defaultTaxRate: {{ (float) $invoice->tax_rate }},
     withholdingRate: {{ (float) $invoice->withholding_tax_rate }},
     items: existingItems

@@ -25,8 +25,8 @@ Route::middleware(['web', 'auth', 'tenant', 'extension.active:clients', 'tenant.
         Route::post('/import', [ClientController::class, 'import'])->middleware('tenant.permission:clients.import')->name('import');
         Route::get('/import/template', [ClientController::class, 'downloadTemplate'])->middleware('tenant.permission:clients.import')->name('import.template');
 
-        Route::get('/{client}', [ClientController::class, 'show'])->whereNumber('client')->name('show');
-        Route::get('/{client}/edit', [ClientController::class, 'edit'])->middleware('tenant.permission:clients.update')->whereNumber('client')->name('edit');
-        Route::put('/{client}', [ClientController::class, 'update'])->middleware('tenant.permission:clients.update')->whereNumber('client')->name('update');
-        Route::delete('/{client}', [ClientController::class, 'destroy'])->middleware('tenant.permission:clients.delete')->whereNumber('client')->name('destroy');
+        Route::get('/{client}', [ClientController::class, 'show'])->where('client', '[0-9a-fA-F-]+')->name('show');
+        Route::get('/{client}/edit', [ClientController::class, 'edit'])->middleware('tenant.permission:clients.update')->where('client', '[0-9a-fA-F-]+')->name('edit');
+        Route::put('/{client}', [ClientController::class, 'update'])->middleware('tenant.permission:clients.update')->where('client', '[0-9a-fA-F-]+')->name('update');
+        Route::delete('/{client}', [ClientController::class, 'destroy'])->middleware('tenant.permission:clients.delete')->where('client', '[0-9a-fA-F-]+')->name('destroy');
     });

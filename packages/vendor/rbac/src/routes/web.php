@@ -26,6 +26,6 @@ Route::middleware(['web', 'auth', 'tenant'])
 
         Route::post('/users/{user}/assign-role', [RbacController::class, 'assignRole'])
             ->middleware('tenant.permission:roles.manage')
-            ->whereNumber('user')
+            ->where('user', '[0-9a-fA-F-]+')
             ->name('users.assign-role');
     });

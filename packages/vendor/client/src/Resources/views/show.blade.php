@@ -1,5 +1,10 @@
 @extends('client::layouts.crm')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', $client->company_name)
 
 @section('breadcrumb')
@@ -47,8 +52,8 @@
 </div>
 
 <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
-  <div class="stat-card"><div class="stat-icon" style="background:var(--c-accent-lt);color:var(--c-accent)"><i class="fas fa-euro-sign"></i></div><div class="stat-body"><div class="stat-value">{{ number_format($client->revenue ?? 0, 0, ',', ' ') }} €</div><div class="stat-label">{{ __('client::clients.stats.revenue') }}</div></div></div>
-  <div class="stat-card"><div class="stat-icon" style="background:#f3e8ff;color:#7c3aed"><i class="fas fa-star"></i></div><div class="stat-body"><div class="stat-value">{{ number_format($client->potential_value ?? 0, 0, ',', ' ') }} €</div><div class="stat-label">{{ __('client::clients.stats.potential') }}</div></div></div>
+  <div class="stat-card"><div class="stat-icon" style="background:var(--c-accent-lt);color:var(--c-accent)"><i class="fas fa-coins"></i></div><div class="stat-body"><div class="stat-value">{{ number_format($client->revenue ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div><div class="stat-label">{{ __('client::clients.stats.revenue') }}</div></div></div>
+  <div class="stat-card"><div class="stat-icon" style="background:#f3e8ff;color:#7c3aed"><i class="fas fa-star"></i></div><div class="stat-body"><div class="stat-value">{{ number_format($client->potential_value ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div><div class="stat-label">{{ __('client::clients.stats.potential') }}</div></div></div>
   <div class="stat-card"><div class="stat-icon" style="background:var(--c-success-lt);color:var(--c-success)"><i class="fas fa-users"></i></div><div class="stat-body"><div class="stat-value">{{ $client->employee_count ?? '—' }}</div><div class="stat-label">{{ __('client::clients.stats.employees') }}</div></div></div>
   <div class="stat-card"><div class="stat-icon" style="background:var(--c-warning-lt);color:var(--c-warning)"><i class="fas fa-calendar-check"></i></div><div class="stat-body"><div class="stat-value" style="font-size:16px;">{{ $client->next_follow_up_at ? $client->next_follow_up_at->format('d M') : '—' }}</div><div class="stat-label">{{ __('client::clients.stats.next_follow_up') }}</div>@if($client->next_follow_up_at && $client->next_follow_up_at->isPast())<span class="stat-trend down"><i class="fas fa-exclamation"></i> {{ __('client::clients.stats.late') }}</span>@elseif($client->next_follow_up_at)<span class="stat-trend up"><i class="fas fa-clock"></i> {{ __('client::clients.stats.in', ['time' => $client->next_follow_up_at->diffForHumans()]) }}</span>@endif</div></div>
 </div>

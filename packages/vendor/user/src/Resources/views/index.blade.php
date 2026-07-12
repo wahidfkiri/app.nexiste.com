@@ -351,8 +351,8 @@ class UserTable {
         <td style="font-size:13px;color:var(--c-ink-60);">${lastLogin}</td>
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
-            <a href="${userRoute(window.USER_ROUTES.show, user.id)}" class="btn-icon" title="${window.USER_I18N.view}"><i class="fas fa-eye"></i></a>
-            <a href="${userRoute(window.USER_ROUTES.edit, user.id)}" class="btn-icon" title="${window.USER_I18N.edit}"><i class="fas fa-pen"></i></a>
+            <a href="${userRoute(window.USER_ROUTES.show, user.uuid ?? user.id)}" class="btn-icon" title="${window.USER_I18N.view}"><i class="fas fa-eye"></i></a>
+            <a href="${userRoute(window.USER_ROUTES.edit, user.uuid ?? user.id)}" class="btn-icon" title="${window.USER_I18N.edit}"><i class="fas fa-pen"></i></a>
             ${!isOwner && !isSelf ? `
             <button class="btn-icon" title="${user.status === 'active' ? window.USER_I18N.suspend : window.USER_I18N.activate}" onclick="UserTable.toggleStatus(${user.id}, '${user.status}', '${this._esc(user.name)}')"><i class="fas fa-${user.status === 'active' ? 'ban' : 'check-circle'}"></i></button>
             <button class="btn-icon danger" onclick="UserTable.deleteUser(${user.id}, '${this._esc(user.name)}')" title="${window.USER_I18N.delete}"><i class="fas fa-trash"></i></button>` : ''}

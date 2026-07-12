@@ -10,7 +10,7 @@ Route::middleware(['api', 'auth:sanctum', 'tenant'])
         Route::get('/', [UserApiController::class, 'index'])->middleware('tenant.permission:users.read')->name('index');
         Route::get('/stats', [UserApiController::class, 'stats'])->middleware('tenant.permission:users.read')->name('stats');
         Route::post('/invite', [UserApiController::class, 'invite'])->middleware('tenant.permission:users.invite')->name('invite');
-        Route::get('/{user}', [UserApiController::class, 'show'])->middleware('tenant.permission:users.read')->whereNumber('user')->name('show');
-        Route::put('/{user}', [UserApiController::class, 'update'])->middleware('tenant.permission:users.update')->whereNumber('user')->name('update');
-        Route::delete('/{user}', [UserApiController::class, 'destroy'])->middleware('tenant.permission:users.delete')->whereNumber('user')->name('destroy');
+        Route::get('/{user}', [UserApiController::class, 'show'])->middleware('tenant.permission:users.read')->where('user', '[0-9a-fA-F-]+')->name('show');
+        Route::put('/{user}', [UserApiController::class, 'update'])->middleware('tenant.permission:users.update')->where('user', '[0-9a-fA-F-]+')->name('update');
+        Route::delete('/{user}', [UserApiController::class, 'destroy'])->middleware('tenant.permission:users.delete')->where('user', '[0-9a-fA-F-]+')->name('destroy');
     });

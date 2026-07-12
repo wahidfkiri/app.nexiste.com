@@ -180,27 +180,27 @@
     <table class="totals">
         <tr>
             <td class="label">{{ __('invoice::invoices.common.subtotal_ht') }}</td>
-            <td class="right"><strong>{{ number_format((float) $quote->subtotal, 2, ',', ' ') }} {{ $quote->currency }}</strong></td>
+            <td class="right"><strong>{{ number_format((float) $quote->subtotal, 2, ',', ' ') }} {{ $quote->currency_symbol }}</strong></td>
         </tr>
         @if((float) $quote->discount_amount > 0)
             <tr>
                 <td class="label">{{ __('invoice::invoices.fields.discount') }}</td>
-                <td class="right">-{{ number_format((float) $quote->discount_amount, 2, ',', ' ') }} {{ $quote->currency }}</td>
+                <td class="right">-{{ number_format((float) $quote->discount_amount, 2, ',', ' ') }} {{ $quote->currency_symbol }}</td>
             </tr>
         @endif
         <tr>
             <td class="label">{{ __('invoice::invoices.common.vat') }}</td>
-            <td class="right">{{ number_format((float) $quote->tax_amount, 2, ',', ' ') }} {{ $quote->currency }}</td>
+            <td class="right">{{ number_format((float) $quote->tax_amount, 2, ',', ' ') }} {{ $quote->currency_symbol }}</td>
         </tr>
         @if((float) $quote->withholding_tax_rate > 0)
             <tr>
                 <td class="label">{{ __('invoice::invoices.withholding.label') }}</td>
-                <td class="right">-{{ number_format((float) $quote->withholding_tax_amount, 2, ',', ' ') }} {{ $quote->currency }}</td>
+                <td class="right">-{{ number_format((float) $quote->withholding_tax_amount, 2, ',', ' ') }} {{ $quote->currency_symbol }}</td>
             </tr>
         @endif
         <tr class="grand">
             <td>{{ __('invoice::invoices.common.total_ttc') }}</td>
-            <td class="right">{{ number_format((float) $quote->total, 2, ',', ' ') }} {{ $quote->currency }}</td>
+            <td class="right">{{ number_format((float) $quote->total, 2, ',', ' ') }} {{ $quote->currency_symbol }}</td>
         </tr>
     </table>
 

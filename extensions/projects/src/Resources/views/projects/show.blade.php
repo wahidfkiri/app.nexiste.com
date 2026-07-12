@@ -1,5 +1,10 @@
 @extends('projects::layouts.projects')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', 'Projet: ' . $project->name)
 
 @section('projects_breadcrumb')
@@ -69,7 +74,7 @@
     <div class="info-card-body">
       <div class="info-row"><span class="info-row-label">Debut</span><span class="info-row-value">{{ optional($project->start_date)->format('d/m/Y') ?: '-' }}</span></div>
       <div class="info-row"><span class="info-row-label">Echeance</span><span class="info-row-value">{{ optional($project->due_date)->format('d/m/Y') ?: '-' }}</span></div>
-      <div class="info-row"><span class="info-row-label">Budget</span><span class="info-row-value">{{ $project->budget ? number_format((float)$project->budget, 2, ',', ' ') . ' EUR' : '-' }}</span></div>
+      <div class="info-row"><span class="info-row-label">Budget</span><span class="info-row-value">{{ $project->budget ? number_format((float)$project->budget, 2, ',', ' ') . ' ' . $currencySymbol : '-' }}</span></div>
       <div class="info-row"><span class="info-row-label">Membres</span><span class="info-row-value" id="projectMembersCount">{{ $project->members->count() }}</span></div>
     </div>
   </div>

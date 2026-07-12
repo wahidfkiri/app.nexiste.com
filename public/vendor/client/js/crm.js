@@ -788,7 +788,7 @@ class CrmTable {
   }
 
   _formatCurrency(n) {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n || 0);
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: (window.DEFAULT_CURRENCY || 'EUR'), maximumFractionDigits: 0 }).format(n || 0);
   }
 
   _showSkeletons(count = 5) {
@@ -837,7 +837,7 @@ class CrmTable {
     const initials = (c.company_name || '??').substring(0, 2).toUpperCase();
     const statusBadge = `<span class="badge badge-${c.status}"><span class="badge-dot" style="background:currentColor"></span>${this._statusLabel(c.status)}</span>`;
     const typeBadge   = `<span class="badge badge-${c.type}">${this._typeLabel(c.type)}</span>`;
-    const revenue = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(c.revenue || 0);
+    const revenue = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: (window.DEFAULT_CURRENCY || 'EUR'), maximumFractionDigits: 0 }).format(c.revenue || 0);
 
     return `
       <tr data-id="${c.id}" class="${this.selectedIds.has(c.id) ? 'selected' : ''}">
@@ -860,8 +860,8 @@ class CrmTable {
         <td style="font-weight:500">${revenue}</td>
         <td>
           <div class="row-actions">
-            <a href="${crmRoute('show', { client: c.id })}" class="btn-icon" title="Voir"><i class="fas fa-eye"></i></a>
-            <a href="${crmRoute('edit', { client: c.id })}" class="btn-icon" title="Modifier"><i class="fas fa-pen"></i></a>
+            <a href="${crmRoute('show', { client: c.uuid ?? c.id })}" class="btn-icon" title="Voir"><i class="fas fa-eye"></i></a>
+            <a href="${crmRoute('edit', { client: c.uuid ?? c.id })}" class="btn-icon" title="Modifier"><i class="fas fa-pen"></i></a>
             <button class="btn-icon danger" onclick="CrmTable.deleteClient(${c.id},'${this._esc(c.company_name)}')" title="Supprimer">
               <i class="fas fa-trash"></i>
             </button>

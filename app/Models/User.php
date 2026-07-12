@@ -15,11 +15,12 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Vendor\CrmCore\Models\Tenant;
+use Vendor\CrmCore\Traits\HasPublicUuid;
 use Vendor\User\Traits\TenantUserTrait;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, TenantUserTrait;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes, TenantUserTrait, HasPublicUuid;
 
     protected $fillable = [
         'name',

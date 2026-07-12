@@ -692,8 +692,11 @@ class AuthController extends Controller
 
     private function buildGoogleClient(): GoogleClient
     {
-        $clientId = (string) env('GOOGLE_CLIENT_ID');
-        $clientSecret = (string) env('GOOGLE_CLIENT_SECRET');
+        // Lecture via config() (et non env() directement) : indispensable pour que
+        // les identifiants restent disponibles après `php artisan config:cache`
+        // en production — sinon env() renvoie null et la connexion Google échoue.
+        $clientId = (string) config('services.google.client_id');
+        $clientSecret = (string) config('services.google.client_secret');
 
         if (!$clientId || !$clientSecret) {
             throw new RuntimeException('Google OAuth non configure dans .env.');
@@ -702,7 +705,7 @@ class AuthController extends Controller
         $client = new GoogleClient();
         $client->setClientId($clientId);
         $client->setClientSecret($clientSecret);
-        $redirect = (string) env('GOOGLE_AUTH_REDIRECT_URI');
+        $redirect = (string) config('services.google.redirect');
         if (!str_starts_with($redirect, 'http')) {
             $redirect = url($redirect ?: '/auth/google/callback');
         }

@@ -16,7 +16,7 @@ Route::middleware(['api', 'auth:sanctum', 'tenant', 'extension.active:clients'])
         Route::get('/search', [ClientApiController::class, 'search'])->middleware('tenant.permission:clients.read')->name('search');
         Route::get('/filter', [ClientApiController::class, 'filter'])->middleware('tenant.permission:clients.read')->name('filter');
         Route::get('/stats/summary', [ClientApiController::class, 'getStats'])->middleware('tenant.permission:clients.read')->name('stats');
-        Route::get('/{client}', [ClientApiController::class, 'show'])->middleware('tenant.permission:clients.read')->whereNumber('client')->name('show');
-        Route::put('/{client}', [ClientApiController::class, 'update'])->middleware('tenant.permission:clients.update')->whereNumber('client')->name('update');
-        Route::delete('/{client}', [ClientApiController::class, 'destroy'])->middleware('tenant.permission:clients.delete')->whereNumber('client')->name('destroy');
+        Route::get('/{client}', [ClientApiController::class, 'show'])->middleware('tenant.permission:clients.read')->where('client', '[0-9a-fA-F-]+')->name('show');
+        Route::put('/{client}', [ClientApiController::class, 'update'])->middleware('tenant.permission:clients.update')->where('client', '[0-9a-fA-F-]+')->name('update');
+        Route::delete('/{client}', [ClientApiController::class, 'destroy'])->middleware('tenant.permission:clients.delete')->where('client', '[0-9a-fA-F-]+')->name('destroy');
     });

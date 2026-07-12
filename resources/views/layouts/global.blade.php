@@ -787,7 +787,6 @@
                 <strong>Notifications</strong>
                 <span>Vos rappels et actions a reprendre</span>
               </div>
-              <span class="header-notif-counter">{{ (int) ($layoutNotificationsUnreadCount ?? 0) }}</span>
             </div>
             <div class="header-notif-list">
               @forelse(($layoutNotifications ?? collect()) as $notification)

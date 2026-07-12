@@ -1,5 +1,10 @@
 @extends('client::layouts.crm')
 
+@php
+  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+@endphp
+
 @section('title', __('client::clients.pages.create.title'))
 
 @section('breadcrumb')
@@ -157,12 +162,12 @@
           <span class="form-section-badge">{{ __('client::clients.steps.finance') }}</span>
         </h3>
         <div class="form-group">
-          <label class="form-label">{{ __('client::clients.fields.revenue') }} (€)</label>
-          <div class="input-group input-right"><input type="number" name="revenue" class="form-control" placeholder="{{ __('client::clients.placeholders.revenue') }}" min="0" step="100"><i class="fas fa-euro-sign input-icon"></i></div>
+          <label class="form-label">{{ __('client::clients.fields.revenue') }} ({{ $currencySymbol }})</label>
+          <div class="input-group input-right"><input type="number" name="revenue" class="form-control" placeholder="{{ __('client::clients.placeholders.revenue') }}" min="0" step="100"><span class="input-icon">{{ $currencySymbol }}</span></div>
         </div>
         <div class="form-group">
-          <label class="form-label">{{ __('client::clients.fields.potential_value') }} (€)</label>
-          <div class="input-group input-right"><input type="number" name="potential_value" class="form-control" placeholder="{{ __('client::clients.placeholders.potential_value') }}" min="0" step="100"><i class="fas fa-euro-sign input-icon"></i></div>
+          <label class="form-label">{{ __('client::clients.fields.potential_value') }} ({{ $currencySymbol }})</label>
+          <div class="input-group input-right"><input type="number" name="potential_value" class="form-control" placeholder="{{ __('client::clients.placeholders.potential_value') }}" min="0" step="100"><span class="input-icon">{{ $currencySymbol }}</span></div>
         </div>
         <div class="form-group">
           <label class="form-label">{{ __('client::clients.fields.payment_term') }}</label>

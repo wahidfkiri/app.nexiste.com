@@ -74,13 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const badgeTone = note.status === 'validated' ? 'paid' : (note.status === 'cancelled' ? 'cancelled' : 'sent');
       return `
         <tr>
-          <td><a href="${stockDeliveryNoteRoute(STOCK_DELIVERY_NOTE_ROUTES.show, note.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${note.number}</a><div style="font-size:11px;color:var(--c-ink-40);">${note.reference ?? '—'}</div></td>
+          <td><a href="${stockDeliveryNoteRoute(STOCK_DELIVERY_NOTE_ROUTES.show, note.uuid ?? note.id)}" style="color:var(--c-accent);font-weight:600;text-decoration:none;">${note.number}</a><div style="font-size:11px;color:var(--c-ink-40);">${note.reference ?? '—'}</div></td>
           <td>${typeLabel}</td>
           <td>${partner}</td>
           <td>${Stock.formatDate(note.issue_date)}</td>
           <td><span class="badge badge-${badgeTone}">${note.status_label ?? note.status}</span></td>
           <td>${note.items?.length ?? 0}</td>
-          <td><a class="btn-icon" href="${stockDeliveryNoteRoute(STOCK_DELIVERY_NOTE_ROUTES.edit, note.id)}"><i class="fas fa-pen"></i></a></td>
+          <td><a class="btn-icon" href="${stockDeliveryNoteRoute(STOCK_DELIVERY_NOTE_ROUTES.edit, note.uuid ?? note.id)}"><i class="fas fa-pen"></i></a></td>
         </tr>`;
     },
   });

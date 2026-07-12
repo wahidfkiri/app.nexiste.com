@@ -26,12 +26,12 @@ Route::middleware(['web', 'auth', 'tenant', 'extension.active:invoice'])->group(
             Route::get('/data/table', [InvoiceController::class, 'quotesGetData'])->middleware('tenant.permission:quotes.read')->name('data');
             Route::get('/export/csv', [InvoiceController::class, 'quotesExportCsv'])->middleware('tenant.permission:quotes.export')->name('export.csv');
             Route::get('/export/excel', [InvoiceController::class, 'quotesExportExcel'])->middleware('tenant.permission:quotes.export')->name('export.excel');
-            Route::get('/{quote}', [InvoiceController::class, 'quotesShow'])->middleware('tenant.permission:quotes.read')->whereNumber('quote')->name('show');
-            Route::get('/{quote}/edit', [InvoiceController::class, 'quotesEdit'])->middleware('tenant.permission:quotes.update')->whereNumber('quote')->name('edit');
-            Route::put('/{quote}', [InvoiceController::class, 'quotesUpdate'])->middleware('tenant.permission:quotes.update')->whereNumber('quote')->name('update');
-            Route::delete('/{quote}', [InvoiceController::class, 'quotesDestroy'])->middleware('tenant.permission:quotes.delete')->whereNumber('quote')->name('destroy');
-            Route::post('/{quote}/convert', [InvoiceController::class, 'quotesConvert'])->middleware('tenant.permission:quotes.convert')->whereNumber('quote')->name('convert');
-            Route::get('/{quote}/pdf', [InvoiceController::class, 'quotesDownloadPdf'])->middleware('tenant.permission:quotes.export')->whereNumber('quote')->name('pdf');
+            Route::get('/{quote}', [InvoiceController::class, 'quotesShow'])->middleware('tenant.permission:quotes.read')->where('quote', '[0-9a-fA-F-]+')->name('show');
+            Route::get('/{quote}/edit', [InvoiceController::class, 'quotesEdit'])->middleware('tenant.permission:quotes.update')->where('quote', '[0-9a-fA-F-]+')->name('edit');
+            Route::put('/{quote}', [InvoiceController::class, 'quotesUpdate'])->middleware('tenant.permission:quotes.update')->where('quote', '[0-9a-fA-F-]+')->name('update');
+            Route::delete('/{quote}', [InvoiceController::class, 'quotesDestroy'])->middleware('tenant.permission:quotes.delete')->where('quote', '[0-9a-fA-F-]+')->name('destroy');
+            Route::post('/{quote}/convert', [InvoiceController::class, 'quotesConvert'])->middleware('tenant.permission:quotes.convert')->where('quote', '[0-9a-fA-F-]+')->name('convert');
+            Route::get('/{quote}/pdf', [InvoiceController::class, 'quotesDownloadPdf'])->middleware('tenant.permission:quotes.export')->where('quote', '[0-9a-fA-F-]+')->name('pdf');
         });
 
         Route::prefix('payments')->name('payments.')->group(function () {
@@ -54,14 +54,14 @@ Route::middleware(['web', 'auth', 'tenant', 'extension.active:invoice'])->group(
 
         Route::get('/currencies/rate', [InvoiceController::class, 'getExchangeRate'])->middleware('tenant.permission:invoices.read,quotes.read')->name('currencies.rate');
 
-        Route::get('/{invoice}', [InvoiceController::class, 'show'])->middleware('tenant.permission:invoices.read')->whereNumber('invoice')->name('show');
-        Route::get('/{invoice}/edit', [InvoiceController::class, 'edit'])->middleware('tenant.permission:invoices.update')->whereNumber('invoice')->name('edit');
-        Route::put('/{invoice}', [InvoiceController::class, 'update'])->middleware('tenant.permission:invoices.update')->whereNumber('invoice')->name('update');
-        Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->middleware('tenant.permission:invoices.delete')->whereNumber('invoice')->name('destroy');
-        Route::post('/{invoice}/send', [InvoiceController::class, 'send'])->middleware('tenant.permission:invoices.send')->whereNumber('invoice')->name('send');
-        Route::post('/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->middleware('tenant.permission:invoices.create')->whereNumber('invoice')->name('duplicate');
-        Route::post('/{invoice}/payments', [InvoiceController::class, 'addPayment'])->middleware('tenant.permission:payments.create')->whereNumber('invoice')->name('payments.store');
-        Route::delete('/payments/{payment}', [InvoiceController::class, 'deletePayment'])->middleware('tenant.permission:payments.delete')->whereNumber('payment')->name('payments.destroy');
-        Route::get('/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->middleware('tenant.permission:invoices.export')->whereNumber('invoice')->name('pdf');
+        Route::get('/{invoice}', [InvoiceController::class, 'show'])->middleware('tenant.permission:invoices.read')->where('invoice', '[0-9a-fA-F-]+')->name('show');
+        Route::get('/{invoice}/edit', [InvoiceController::class, 'edit'])->middleware('tenant.permission:invoices.update')->where('invoice', '[0-9a-fA-F-]+')->name('edit');
+        Route::put('/{invoice}', [InvoiceController::class, 'update'])->middleware('tenant.permission:invoices.update')->where('invoice', '[0-9a-fA-F-]+')->name('update');
+        Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->middleware('tenant.permission:invoices.delete')->where('invoice', '[0-9a-fA-F-]+')->name('destroy');
+        Route::post('/{invoice}/send', [InvoiceController::class, 'send'])->middleware('tenant.permission:invoices.send')->where('invoice', '[0-9a-fA-F-]+')->name('send');
+        Route::post('/{invoice}/duplicate', [InvoiceController::class, 'duplicate'])->middleware('tenant.permission:invoices.create')->where('invoice', '[0-9a-fA-F-]+')->name('duplicate');
+        Route::post('/{invoice}/payments', [InvoiceController::class, 'addPayment'])->middleware('tenant.permission:payments.create')->where('invoice', '[0-9a-fA-F-]+')->name('payments.store');
+        Route::delete('/payments/{payment}', [InvoiceController::class, 'deletePayment'])->middleware('tenant.permission:payments.delete')->where('payment', '[0-9a-fA-F-]+')->name('payments.destroy');
+        Route::get('/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->middleware('tenant.permission:invoices.export')->where('invoice', '[0-9a-fA-F-]+')->name('pdf');
     });
 });
