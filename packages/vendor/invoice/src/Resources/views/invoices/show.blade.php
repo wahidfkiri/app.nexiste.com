@@ -43,7 +43,7 @@
     </div>
   </div>
   <div class="page-header-actions">
-    <a href="{{ route('invoices.pdf', $invoice) }}" class="btn btn-secondary" target="_blank">
+    <a href="{{ route('invoices.pdf', $invoice) }}" data-pdf-export data-pdf-filename="facture-{{ $invoice->number }}.pdf" class="btn btn-secondary">
       <i class="fas fa-file-pdf"></i> PDF
     </a>
     @if(!in_array($invoice->status, ['paid','cancelled']))
@@ -405,7 +405,7 @@
         <h3>{{ __('invoice::invoices.pages.invoice_show.quick_actions') }}</h3>
       </div>
       <div class="info-card-body" style="display:flex;flex-direction:column;gap:8px;">
-        <a href="{{ route('invoices.pdf', $invoice) }}" target="_blank" class="btn btn-secondary" style="justify-content:flex-start;">
+        <a href="{{ route('invoices.pdf', $invoice) }}" data-pdf-export data-pdf-filename="facture-{{ $invoice->number }}.pdf" class="btn btn-secondary" style="justify-content:flex-start;">
           <i class="fas fa-file-pdf"></i> {{ __('invoice::invoices.pages.invoice_show.download_pdf') }}
         </a>
         @if(!in_array($invoice->status, ['paid','cancelled']))

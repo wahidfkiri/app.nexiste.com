@@ -287,7 +287,7 @@ class InvTable {
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
             <a href="${showUrl}" class="btn-icon" title="Voir"><i class="fas fa-eye"></i></a>
-            <a href="${pdfUrl}" target="_blank" class="btn-icon" title="PDF"><i class="fas fa-file-pdf"></i></a>
+            <a href="${pdfUrl}" data-pdf-export class="btn-icon" title="PDF"><i class="fas fa-file-pdf"></i></a>
             ${editAction}
             ${deleteAction}
           </div>
@@ -321,7 +321,7 @@ class InvTable {
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
             <a href="${showUrl}" class="btn-icon" title="Voir"><i class="fas fa-eye"></i></a>
-            ${q.status==='accepted'?`<a href="${pdfUrl}" target="_blank" class="btn-icon" title="PDF"><i class="fas fa-file-pdf"></i></a>`:''}
+            ${q.status==='accepted'?`<a href="${pdfUrl}" data-pdf-export class="btn-icon" title="PDF"><i class="fas fa-file-pdf"></i></a>`:''}
             ${!['accepted','declined'].includes(q.status)?`<a href="${editUrl}" class="btn-icon" title="Modifier"><i class="fas fa-pen"></i></a>`:''}
             ${!q.is_converted&&q.status==='sent'?`<button class="btn btn-sm btn-success" onclick="convertQuote(${q.id},'${this._esc(q.number)}')" title="Convertir"><i class="fas fa-arrow-right"></i> FAC</button>`:''}
             <button class="btn-icon danger" onclick="deleteQuote(${q.id})" title="Supprimer"><i class="fas fa-trash"></i></button>

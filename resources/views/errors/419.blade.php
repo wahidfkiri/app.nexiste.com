@@ -1,9 +1,11 @@
 @extends('errors.layout')
 
 @section('status_code', '419')
-@section('title', 'Session expiree')
-@section('subtitle', 'Votre session a expire ou le jeton de securite n est plus valide.')
-@section('hint', 'Redirection automatique vers la page de connexion en cours.')
+@section('icon', 'fa-clock-rotate-left')
+@section('tone', 'info')
+@section('title', 'Session expirée')
+@section('subtitle', 'Votre session a expiré pour des raisons de sécurité.')
+@section('hint', 'Reconnexion en cours… vous allez être redirigé vers la page de connexion.')
 
 @section('head')
 @if(Route::has('login'))
@@ -16,7 +18,7 @@
 <script>
 setTimeout(function () {
     window.location.replace(@json(route('login')));
-}, 180);
+}, 1200);
 </script>
 @endif
 @endsection

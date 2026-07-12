@@ -48,7 +48,7 @@
       </button>
       <div class="dropdown-menu">
         <a href="{{ route('invoices.reports.export', ['format'=>'excel']) }}" class="dropdown-item"><i class="fas fa-file-excel"></i> Excel</a>
-        <a href="{{ route('invoices.reports.export', ['format'=>'pdf']) }}"   class="dropdown-item"><i class="fas fa-file-pdf"></i>   PDF</a>
+        <a href="{{ route('invoices.reports.export', ['format'=>'pdf']) }}" data-pdf-export data-pdf-filename="rapport-facturation.pdf" class="dropdown-item"><i class="fas fa-file-pdf"></i>   PDF</a>
       </div>
     </div>
   </div>

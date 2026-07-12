@@ -12,7 +12,7 @@
 <div class="page-header">
   <div class="page-header-left">
     <h1>Page introuvable</h1>
-    <p>La page demandee n'existe pas ou a ete deplacee.</p>
+    <p>La page demandée n’existe pas ou a été déplacée.</p>
   </div>
   <div class="page-header-actions">
     <span class="badge badge-inactif"><i class="fas fa-circle-exclamation"></i> 404</span>
@@ -21,12 +21,12 @@
 
 <div class="info-card" style="max-width:880px;">
   <div class="info-card-header">
-    <i class="fas fa-map-signs"></i>
-    <h3>Impossible d'afficher cette page</h3>
+    <i class="fas fa-compass"></i>
+    <h3>Impossible d’afficher cette page</h3>
   </div>
   <div class="info-card-body">
     <p style="margin-top:0;color:var(--c-ink-60);font-size:14px;line-height:1.7;">
-      Verifiez l'adresse URL ou revenez a la page precedente.
+      Vérifiez l’adresse saisie ou revenez à la page précédente.
     </p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <a href="{{ url()->previous() }}" class="btn btn-secondary">

@@ -1,182 +1,217 @@
 @php
     $statusCode = trim($__env->yieldContent('status_code', (string) (($exception->getStatusCode() ?? 500))));
     $title = trim($__env->yieldContent('title', 'Une erreur est survenue'));
-    $subtitle = trim($__env->yieldContent('subtitle', 'La requete n a pas pu etre traitee pour le moment.'));
-    $hint = trim($__env->yieldContent('hint', 'Merci de reessayer ou de revenir a votre espace.'));
+    $subtitle = trim($__env->yieldContent('subtitle', 'La demande n’a pas pu être traitée pour le moment.'));
+    $hint = trim($__env->yieldContent('hint', 'Vous pouvez réessayer ou revenir à votre espace de travail.'));
+    $icon = trim($__env->yieldContent('icon', 'fa-triangle-exclamation'));
+    $tone = trim($__env->yieldContent('tone', 'info'));
     $homeUrl = url('/');
     $dashboardUrl = \Illuminate\Support\Facades\Route::has('dashboard') ? route('dashboard') : $homeUrl;
+    $loginUrl = \Illuminate\Support\Facades\Route::has('login') ? route('login') : $homeUrl;
     $previousUrl = url()->previous();
-    $canGoBack = $previousUrl && $previousUrl !== url()->current();
+    $canGoBack = $previousUrl && $previousUrl !== url()->current() && $previousUrl !== url()->full();
+    $isAuth = auth()->check();
+    $reference = strtoupper($statusCode) . '-' . now()->format('ymd-Hi');
+    $tones = [
+        'info'    => ['#2563eb', '#eff6ff', '#bfdbfe'],
+        'warning' => ['#b45309', '#fffbeb', '#fcd34d'],
+        'danger'  => ['#b91c1c', '#fef2f2', '#fecaca'],
+        'neutral' => ['#334155', '#f1f5f9', '#e2e8f0'],
+    ];
+    [$toneColor, $toneBg, $toneBorder] = $tones[$tone] ?? $tones['info'];
 @endphp
 <!doctype html>
 <html lang="fr">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $statusCode }} - {{ $title }}</title>
+    <meta name="robots" content="noindex,nofollow">
+    <title>{{ $statusCode }} · {{ $title }}</title>
     <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('vendor/client/css/crm.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/invoice/css/invoice.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/global-font.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/stock/css/stock.css') }}">
     @yield('head')
     <style>
-        html, body { height: 100%; }
-        body.crm-error-body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(900px 600px at 0 -10%, #dbeafe 0%, transparent 70%),
-                radial-gradient(900px 700px at 100% 0, #e0e7ff 0%, transparent 72%),
-                var(--surface-1);
-            overflow-x: hidden;
+        :root {
+            --err-color: {{ $toneColor }};
+            --err-bg: {{ $toneBg }};
+            --err-border: {{ $toneBorder }};
         }
-        .crm-error-content {
-            min-height: 100vh;
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; }
+        body {
+            font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            background:
+                radial-gradient(820px 520px at 8% -10%, #e0e7ff 0%, transparent 68%),
+                radial-gradient(820px 620px at 100% 0, #dbeafe 0%, transparent 70%),
+                #f8fafc;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 32px;
+            min-height: 100vh;
+            padding: 28px;
         }
-        .crm-error-shell {
-            width: min(980px, 100%);
+        .err-card {
+            width: min(560px, 100%);
+            background: #fff;
+            border: 1px solid #eef2f7;
+            border-radius: 22px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, .10);
+            padding: 40px 36px 32px;
+            text-align: center;
         }
-        .crm-error-status {
+        .err-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: var(--c-accent-lt);
-            color: var(--c-accent);
-            border: 1px solid #bfdbfe;
-            border-radius: var(--r-full);
+            gap: 7px;
             font-size: 12px;
             font-weight: 700;
-            padding: 8px 14px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: var(--err-color);
+            background: var(--err-bg);
+            border: 1px solid var(--err-border);
+            border-radius: 999px;
+            padding: 6px 13px;
         }
-        .crm-error-hero {
-            background: linear-gradient(135deg, #1e3a8a, #2563eb);
-            color: #fff;
-            border-radius: var(--r-lg);
-            border: 1px solid rgba(255,255,255,.18);
-            box-shadow: var(--shadow-xl);
-            padding: 24px;
-            margin-bottom: 16px;
+        .err-icon {
+            width: 84px;
+            height: 84px;
+            margin: 22px auto 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            color: var(--err-color);
+            background: var(--err-bg);
+            border: 1px solid var(--err-border);
         }
-        .crm-error-code {
-            font-size: clamp(52px, 11vw, 100px);
-            line-height: .9;
-            font-weight: 800;
-            letter-spacing: -2px;
-            margin: 0 0 8px;
-        }
-        .crm-error-hero p {
-            margin: 0;
-            color: rgba(255,255,255,.88);
+        .err-code {
             font-size: 15px;
-            max-width: 620px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: .18em;
+            margin: 14px 0 4px;
         }
-        .crm-error-actions {
+        .err-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 10px;
+            letter-spacing: -.3px;
+            color: #0f172a;
+        }
+        .err-subtitle {
+            font-size: 15px;
+            line-height: 1.65;
+            color: #475569;
+            margin: 0 auto 6px;
+            max-width: 42ch;
+        }
+        .err-hint {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin: 0 auto 24px;
+            max-width: 44ch;
+        }
+        .err-actions {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-top: 14px;
+            justify-content: center;
         }
-        .crm-error-actions .btn {
+        .err-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 11px 18px;
+            border-radius: 11px;
+            border: 1px solid transparent;
+            transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+            cursor: pointer;
         }
-        .crm-error-meta {
-            margin-top: 12px;
-            color: var(--c-ink-40);
-            font-size: 12px;
+        .err-btn:active { transform: translateY(1px); }
+        .err-btn-primary {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, .28);
         }
-        .crm-error-divider {
+        .err-btn-primary:hover { background: #1d4ed8; }
+        .err-btn-ghost {
+            background: #fff;
+            color: #334155;
+            border-color: #e2e8f0;
+        }
+        .err-btn-ghost:hover { background: #f8fafc; }
+        .err-support {
+            margin-top: 26px;
+            padding-top: 18px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 12.5px;
+            color: #94a3b8;
+        }
+        .err-support a { color: #2563eb; text-decoration: none; font-weight: 600; }
+        .err-ref {
             display: inline-block;
-            margin: 0 7px;
-            color: var(--c-ink-20);
+            margin-top: 6px;
+            font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+            font-size: 11px;
+            color: #cbd5e1;
+            letter-spacing: .05em;
         }
-        @media (max-width: 768px) {
-            .crm-error-content { padding: 18px; }
-            .page-header { margin-bottom: 16px; }
-            .crm-error-hero { padding: 18px; }
+        @media (max-width: 520px) {
+            .err-card { padding: 30px 22px 26px; border-radius: 18px; }
+            .err-btn { flex: 1 1 auto; justify-content: center; }
+        }
+        @media (prefers-color-scheme: dark) {
+            body { color: #e2e8f0; background: #0b1120; }
+            .err-card { background: #131c2e; border-color: #1e293b; box-shadow: 0 24px 60px rgba(0,0,0,.5); }
+            .err-title { color: #f8fafc; }
+            .err-subtitle { color: #cbd5e1; }
+            .err-btn-ghost { background: #1e293b; color: #e2e8f0; border-color: #334155; }
+            .err-btn-ghost:hover { background: #263447; }
+            .err-support, .err-code { color: #64748b; }
+            .err-support { border-top-color: #1e293b; }
         }
     </style>
 </head>
-<body class="crm-error-body">
-    <main class="crm-content crm-error-content">
-        <section class="crm-error-shell" role="alert" aria-live="assertive">
-            <div class="page-header">
-                <div class="page-header-left">
-                    <h1>{{ $title }}</h1>
-                    <p>{{ $subtitle }}</p>
-                </div>
-                <div class="page-header-actions">
-                    <span class="crm-error-status"><i class="fas fa-circle-exclamation"></i> HTTP {{ $statusCode }}</span>
-                </div>
-            </div>
+<body>
+    <main class="err-card" role="alert" aria-live="assertive">
+        <span class="err-badge"><i class="fas fa-circle-info"></i> {{ config('app.name', 'CRM') }}</span>
 
-            <div class="crm-error-hero">
-                <p class="crm-error-code">{{ $statusCode }}</p>
-                <p>{{ $hint }}</p>
-            </div>
+        <div class="err-icon"><i class="fas {{ $icon }}"></i></div>
 
-            <div class="stats-grid" style="margin-bottom:16px;">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:var(--c-accent-lt);color:var(--c-accent)">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <div class="stat-body">
-                        <div class="stat-value">{{ strtoupper(request()->method()) }}</div>
-                        <div class="stat-label">Methode HTTP</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:var(--c-info-lt);color:var(--c-info)">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <div class="stat-body">
-                        <div class="stat-value" style="font-size:16px;">{{ request()->getHost() }}</div>
-                        <div class="stat-label">Serveur</div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:var(--c-warning-lt);color:var(--c-warning)">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-body">
-                        <div class="stat-value" style="font-size:16px;">{{ now()->format('d/m/Y H:i') }}</div>
-                        <div class="stat-label">Horodatage</div>
-                    </div>
-                </div>
-            </div>
+        <div class="err-code">ERREUR {{ $statusCode }}</div>
+        <h1 class="err-title">{{ $title }}</h1>
+        <p class="err-subtitle">{{ $subtitle }}</p>
+        <p class="err-hint">{{ $hint }}</p>
 
-            <div class="info-card">
-                <div class="info-card-header">
-                    <i class="fas fa-compass"></i>
-                    <h3>Actions recommandees</h3>
-                </div>
-                <div class="info-card-body">
-                    <div class="crm-error-actions">
-                        <a href="{{ $dashboardUrl }}" class="btn btn-primary">
-                            <i class="fas fa-gauge-high"></i> Tableau de bord
-                        </a>
-                        @if($canGoBack)
-                            <a href="{{ $previousUrl }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Page precedente
-                            </a>
-                        @endif
-                        <a href="{{ $homeUrl }}" class="btn btn-ghost">
-                            <i class="fas fa-house"></i> Accueil
-                        </a>
-                    </div>
-                    <div class="crm-error-meta">
-                        Statut {{ $statusCode }}
-                        <span class="crm-error-divider">|</span>
-                        URL {{ request()->path() ?: '/' }}
-                    </div>
-                </div>
-            </div>
-        </section>
+        <div class="err-actions">
+            @if($isAuth)
+                <a href="{{ $dashboardUrl }}" class="err-btn err-btn-primary">
+                    <i class="fas fa-gauge-high"></i> Retour au tableau de bord
+                </a>
+            @else
+                <a href="{{ $homeUrl }}" class="err-btn err-btn-primary">
+                    <i class="fas fa-house"></i> Retour à l’accueil
+                </a>
+            @endif
+            @if($canGoBack)
+                <a href="{{ $previousUrl }}" class="err-btn err-btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Page précédente
+                </a>
+            @endif
+        </div>
+
+        <div class="err-support">
+            Le problème persiste ? Contactez notre support en précisant la référence ci-dessous.
+            <br>
+            <span class="err-ref">RÉF. {{ $reference }}</span>
+        </div>
     </main>
     @yield('scripts')
 </body>

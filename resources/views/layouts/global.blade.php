@@ -1051,6 +1051,80 @@ window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, @json($invoic
 <script src="{{ asset('vendor/client/js/secure-form.js') }}"></script>
 <script src="{{ asset('vendor/invoice/js/invoice.js') }}"></script>
 <script src="{{ asset('vendor/stock/js/stock.js') }}"></script>
+
+{{-- Export PDF global : overlay de chargement AJAX réutilisable par tous les modules et extensions.
+     Tout lien/bouton <a data-pdf-export href="..."> déclenche le téléchargement avec indicateur. --}}
+<style>
+  #pdfExportOverlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);}
+  #pdfExportOverlay.is-visible{display:flex;}
+  #pdfExportOverlay .pdf-export-box{background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(2,6,23,.35);padding:26px 34px;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:220px;}
+  #pdfExportOverlay .pdf-export-spinner{width:44px;height:44px;border-radius:50%;border:4px solid #e2e8f0;border-top-color:#2563eb;animation:pdfExportSpin .8s linear infinite;}
+  #pdfExportOverlay .pdf-export-text{font-size:14px;font-weight:600;color:#334155;font-family:'DM Sans',sans-serif;}
+  #pdfExportOverlay .pdf-export-sub{font-size:12px;color:#94a3b8;margin-top:-8px;}
+  @keyframes pdfExportSpin{to{transform:rotate(360deg);}}
+</style>
+<script>
+(function () {
+  if (window.PdfExport) return;
+
+  function overlay() {
+    var el = document.getElementById('pdfExportOverlay');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'pdfExportOverlay';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      el.innerHTML = '<div class="pdf-export-box"><div class="pdf-export-spinner"></div>'
+        + '<div class="pdf-export-text">Génération du PDF…</div>'
+        + '<div class="pdf-export-sub">Merci de patienter un instant.</div></div>';
+      document.body.appendChild(el);
+    }
+    return el;
+  }
+  function show() { overlay().classList.add('is-visible'); }
+  function hide() { var el = document.getElementById('pdfExportOverlay'); if (el) el.classList.remove('is-visible'); }
+
+  function filenameFrom(res, fallback) {
+    var cd = res.headers.get('Content-Disposition') || '';
+    var m = /filename\*?=(?:UTF-8'')?["']?([^"';]+)/i.exec(cd);
+    try { return m ? decodeURIComponent(m[1]) : (fallback || 'export.pdf'); }
+    catch (e) { return m ? m[1] : (fallback || 'export.pdf'); }
+  }
+
+  window.PdfExport = {
+    download: function (url, opts) {
+      opts = opts || {};
+      show();
+      return fetch(url, { headers: { 'Accept': 'application/pdf' }, credentials: 'same-origin' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.blob().then(function (blob) {
+            var name = opts.filename || filenameFrom(res, 'export.pdf');
+            var href = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = href; a.download = name;
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(href); }, 4000);
+          });
+        })
+        .catch(function () {
+          if (window.Toast && Toast.error) Toast.error('Export PDF', 'La génération du PDF a échoué. Merci de réessayer.');
+          else alert('La génération du PDF a échoué. Merci de réessayer.');
+        })
+        .finally(hide);
+    }
+  };
+
+  document.addEventListener('click', function (ev) {
+    var trigger = ev.target.closest ? ev.target.closest('[data-pdf-export]') : null;
+    if (!trigger) return;
+    var url = trigger.getAttribute('href') || trigger.getAttribute('data-pdf-url');
+    if (!url || url === '#') return;
+    ev.preventDefault();
+    PdfExport.download(url, { filename: trigger.getAttribute('data-pdf-filename') || null });
+  });
+})();
+</script>
 @php
   $globalSearchInstalledAppsMeta = ($layoutInstalledApps ?? collect())
     ->map(function ($app) {

@@ -12,7 +12,7 @@
 <div class="page-header">
   <div class="page-header-left"><h1>{{ $deliveryNote->number }}</h1><p>{{ $deliveryNote->type_label }} - {{ $deliveryNote->status_label }}</p></div>
   <div class="page-header-actions">
-    <a href="{{ route('stock.delivery-notes.pdf', $deliveryNote) }}" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> {{ __('stock::stock.common.pdf') }}</a>
+    <a href="{{ route('stock.delivery-notes.pdf', $deliveryNote) }}" data-pdf-export data-pdf-filename="bon-livraison-{{ $deliveryNote->number }}.pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> {{ __('stock::stock.common.pdf') }}</a>
     @if($deliveryNote->status === 'draft')
       <button class="btn btn-secondary" onclick="validateDeliveryNote()"><i class="fas fa-circle-check"></i> {{ __('stock::stock.common.validate') }}</button>
       <a href="{{ route('stock.delivery-notes.edit', $deliveryNote) }}" class="btn btn-primary"><i class="fas fa-pen"></i> {{ __('stock::stock.common.edit') }}</a>

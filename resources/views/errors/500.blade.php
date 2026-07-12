@@ -1,6 +1,8 @@
 @extends('errors.layout')
 
 @section('status_code', '500')
-@section('title', 'Erreur interne')
-@section('subtitle', 'Une erreur serveur est survenue pendant le traitement de votre demande.')
-@section('hint', 'Notre equipe a ete notifiee. Merci de reessayer dans quelques minutes.')
+@section('icon', 'fa-triangle-exclamation')
+@section('tone', 'danger')
+@section('title', 'Une erreur est survenue')
+@section('subtitle', 'Un incident technique nous empêche d’afficher cette page.')
+@section('hint', 'Nos équipes ont été informées. Merci de réessayer dans quelques minutes.')

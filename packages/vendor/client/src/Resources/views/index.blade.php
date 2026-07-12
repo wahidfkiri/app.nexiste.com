@@ -26,7 +26,7 @@
       <div class="dropdown-menu">
         <a href="{{ route('clients.export.csv') }}" class="dropdown-item"><i class="fas fa-file-csv"></i> CSV</a>
         <a href="{{ route('clients.export.excel') }}" class="dropdown-item"><i class="fas fa-file-excel"></i> Excel</a>
-        <a href="{{ route('clients.export.pdf') }}" class="dropdown-item"><i class="fas fa-file-pdf"></i> PDF</a>
+        <a href="{{ route('clients.export.pdf') }}" data-pdf-export data-pdf-filename="clients.pdf" class="dropdown-item"><i class="fas fa-file-pdf"></i> PDF</a>
       </div>
     </div>
     <button class="btn btn-secondary" data-modal-open="importModal">

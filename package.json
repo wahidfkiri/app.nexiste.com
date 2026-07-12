@@ -7,7 +7,11 @@
         "desktop:tauri:dev": "powershell -ExecutionPolicy Bypass -File .\\desktop\\tauri\\scripts\\tauri-env.ps1 dev",
         "desktop:tauri:build": "powershell -ExecutionPolicy Bypass -File .\\desktop\\tauri\\scripts\\tauri-env.ps1 build",
         "desktop:tauri:build:no-bundle": "powershell -ExecutionPolicy Bypass -File .\\desktop\\tauri\\scripts\\tauri-env.ps1 build-no-bundle",
-        "desktop:tauri:frontend:build": "npm --prefix desktop/tauri run build"
+        "desktop:tauri:frontend:build": "npm --prefix desktop/tauri run build",
+        "desktop:electron:install": "npm --prefix desktop/electron install",
+        "desktop:electron:dev": "npm --prefix desktop/electron run start",
+        "desktop:electron:build": "npm --prefix desktop/electron run build:win",
+        "desktop:electron:build:portable": "npm --prefix desktop/electron run build:portable"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",

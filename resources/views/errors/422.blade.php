@@ -1,6 +1,8 @@
 @extends('errors.layout')
 
 @section('status_code', '422')
-@section('title', 'Donnees invalides')
-@section('subtitle', 'La requete contient des donnees qui ne peuvent pas etre traitees.')
-@section('hint', 'Corrigez les champs concernes puis soumettez de nouveau.')
+@section('icon', 'fa-circle-exclamation')
+@section('tone', 'warning')
+@section('title', 'Informations incorrectes')
+@section('subtitle', 'Certaines informations envoyées ne sont pas valides.')
+@section('hint', 'Corrigez les champs signalés, puis validez de nouveau.')

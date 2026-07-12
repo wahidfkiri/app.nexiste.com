@@ -23,7 +23,7 @@
     </p>
   </div>
   <div class="page-header-actions">
-    <a href="{{ route('invoices.quotes.pdf', $quote) }}" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> PDF</a>
+    <a href="{{ route('invoices.quotes.pdf', $quote) }}" data-pdf-export data-pdf-filename="devis-{{ $quote->number }}.pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> PDF</a>
     @if(!$quote->is_converted && !in_array($quote->status, ['declined']))
       @if($canConvertQuote)
         <button class="btn btn-success" onclick="convertQuote({{ $quote->id }}, '{{ $quote->number }}')"><i class="fas fa-arrow-right"></i> {{ __('invoice::invoices.actions.convert') }}</button>
