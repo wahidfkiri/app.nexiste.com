@@ -84,7 +84,7 @@ Route::middleware('web')->group(function () {
 
     Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->middleware(['subscription.active', 'tenant.permission:dashboard.read'])
+            ->middleware('tenant.permission:dashboard.read')
             ->name('dashboard');
         Route::redirect('/home', '/dashboard')
             ->name('home');
@@ -96,11 +96,14 @@ Route::middleware('web')->group(function () {
         Route::post('/onboarding/apps', [OnboardingController::class, 'saveApps'])->name('onboarding.apps');
         Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
 
-        // Abonnement : choix du forfait / page de paiement (accessible sans abonnement actif).
+        // Abonnement : parcours forfait -> paiement -> succès (accessible sans abonnement actif).
         Route::get('/subscription', [\App\Http\Controllers\Billing\SubscriptionController::class, 'plans'])->name('subscription.plans');
-        Route::post('/subscription/subscribe', [\App\Http\Controllers\Billing\SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
+        Route::post('/subscription/free', [\App\Http\Controllers\Billing\SubscriptionController::class, 'activateFree'])->name('subscription.free');
+        Route::get('/subscription/checkout', [\App\Http\Controllers\Billing\SubscriptionController::class, 'checkout'])->name('subscription.checkout');
+        Route::post('/subscription/pay', [\App\Http\Controllers\Billing\SubscriptionController::class, 'pay'])->name('subscription.pay');
         Route::get('/subscription/paypal/return', [\App\Http\Controllers\Billing\SubscriptionController::class, 'paypalReturn'])->name('subscription.paypal.return');
         Route::get('/subscription/paypal/cancel', [\App\Http\Controllers\Billing\SubscriptionController::class, 'paypalCancel'])->name('subscription.paypal.cancel');
+        Route::get('/subscription/success', [\App\Http\Controllers\Billing\SubscriptionController::class, 'success'])->name('subscription.success');
 
         Route::get('/applications', fn () => redirect()->route('marketplace.index'))
             ->middleware('tenant.permission:marketplace.read')

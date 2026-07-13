@@ -84,6 +84,36 @@ return [
         'total_due' => 'Montant à régler',
         'success' => 'Abonnement activé. Une facture vous a été envoyée par e-mail.',
         'trial_success' => 'Votre essai gratuit est activé. Bienvenue !',
+        'most_popular' => 'Le plus populaire',
+        'activate_free' => 'Activer gratuitement',
+        'choose_plan' => 'Choisir ce forfait',
+        'from' => 'À partir de',
+        'billed_period' => 'facturé pour :months mois',
+        'free_forever' => 'Sans engagement',
+    ],
+
+    // Page de paiement (checkout)
+    'checkout' => [
+        'title' => 'Finaliser votre abonnement',
+        'subtitle' => 'Vérifiez votre commande et choisissez votre moyen de paiement.',
+        'summary' => 'Récapitulatif',
+        'plan' => 'Forfait',
+        'period' => 'Période',
+        'total' => 'Total à payer',
+        'choose_method' => 'Moyen de paiement',
+        'pay_now' => 'Payer maintenant',
+        'pay_with_paypal' => 'Payer avec PayPal',
+        'secure_notice' => 'Paiement sécurisé. Vos informations bancaires ne transitent jamais par nos serveurs.',
+        'back' => 'Retour aux forfaits',
+    ],
+
+    // Page de succès
+    'success' => [
+        'title' => 'Paiement réussi',
+        'message' => 'Votre abonnement est activé. Merci de votre confiance !',
+        'invoice_sent' => 'Une facture (PDF) vient de vous être envoyée par e-mail.',
+        'go_dashboard' => 'Aller au tableau de bord',
+        'valid_until' => 'Votre abonnement est valable jusqu’au :date.',
     ],
 
     // Facture d’abonnement
