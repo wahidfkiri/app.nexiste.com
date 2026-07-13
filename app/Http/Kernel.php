@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
         'superadmin' => \App\Http\Middleware\EnsureSuperAdmin::class,
         'extension.active' => \App\Http\Middleware\EnsureMarketplaceExtensionActive::class,
         'onboarding.completed' => \App\Http\Middleware\EnsureOnboardingCompleted::class,
+        'subscription.active' => \App\Http\Middleware\EnsureActiveSubscription::class,
         'idempotency' => \App\Http\Middleware\EnsureIdempotency::class,
     ];
 }

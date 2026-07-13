@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('drafts:remind')->hourly();
         $schedule->command('drafts:cleanup')->dailyAt('02:30');
         $schedule->command('google-gmail:sync-realtime')->everyMinute()->withoutOverlapping();
+        $schedule->command('subscriptions:remind-expiry')->dailyAt('08:00');
     }
 
     /**

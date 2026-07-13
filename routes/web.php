@@ -84,7 +84,7 @@ Route::middleware('web')->group(function () {
 
     Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->middleware('tenant.permission:dashboard.read')
+            ->middleware(['subscription.active', 'tenant.permission:dashboard.read'])
             ->name('dashboard');
         Route::redirect('/home', '/dashboard')
             ->name('home');
@@ -95,6 +95,12 @@ Route::middleware('web')->group(function () {
         Route::post('/onboarding/sector', [OnboardingController::class, 'saveSector'])->name('onboarding.sector');
         Route::post('/onboarding/apps', [OnboardingController::class, 'saveApps'])->name('onboarding.apps');
         Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+
+        // Abonnement : choix du forfait / page de paiement (accessible sans abonnement actif).
+        Route::get('/subscription', [\App\Http\Controllers\Billing\SubscriptionController::class, 'plans'])->name('subscription.plans');
+        Route::post('/subscription/subscribe', [\App\Http\Controllers\Billing\SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
+        Route::get('/subscription/paypal/return', [\App\Http\Controllers\Billing\SubscriptionController::class, 'paypalReturn'])->name('subscription.paypal.return');
+        Route::get('/subscription/paypal/cancel', [\App\Http\Controllers\Billing\SubscriptionController::class, 'paypalCancel'])->name('subscription.paypal.cancel');
 
         Route::get('/applications', fn () => redirect()->route('marketplace.index'))
             ->middleware('tenant.permission:marketplace.read')

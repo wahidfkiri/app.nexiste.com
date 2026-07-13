@@ -44,6 +44,27 @@
 @endpush
 
 @section('content')
+@php
+  $subEndsAt = auth()->user()?->tenant?->subscription_ends_at;
+  $subDaysLeft = $subEndsAt ? now()->startOfDay()->diffInDays($subEndsAt->copy()->startOfDay(), false) : null;
+  $subExpired = $subEndsAt !== null && $subEndsAt->isPast();
+  $subSoon = $subDaysLeft !== null && $subDaysLeft >= 0 && $subDaysLeft <= 7;
+@endphp
+@if($subExpired || $subSoon)
+  <div role="alert" style="margin-bottom:16px;padding:14px 16px;border-radius:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;{{ $subExpired ? 'background:#fef2f2;border:1px solid #fecaca;color:#991b1b;' : 'background:#fffbeb;border:1px solid #fcd34d;color:#92400e;' }}">
+    <i class="fas {{ $subExpired ? 'fa-circle-exclamation' : 'fa-clock' }}" style="font-size:18px;"></i>
+    <span style="flex:1;min-width:220px;font-size:14px;font-weight:500;">
+      @if($subExpired)
+        {{ __('billing.reminder.dashboard_expired') }}
+      @else
+        {{ __('billing.reminder.dashboard_alert', ['date' => $subEndsAt->format('d/m/Y'), 'days' => (int) $subDaysLeft]) }}
+      @endif
+    </span>
+    <a href="{{ url('/subscription') }}" class="btn btn-sm" style="background:{{ $subExpired ? '#b91c1c' : '#b45309' }};color:#fff;text-decoration:none;">
+      <i class="fas fa-rotate"></i> {{ __('billing.reminder.renew') }}
+    </a>
+  </div>
+@endif
 <div class="nexus-dashboard">
   <section class="nd-welcome-bar">
     <div class="nd-welcome-copy">
