@@ -37,4 +37,17 @@ return [
         'redirect' => env('GOOGLE_AUTH_REDIRECT_URI'),
     ],
 
+    // Abonnements — PayPal (mode sandbox par défaut, clés dans .env).
+    'paypal' => [
+        'mode' => env('PAYPAL_MODE', 'sandbox'),
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+        'currency' => env('PAYPAL_CURRENCY', 'EUR'),
+    ],
+
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+
 ];

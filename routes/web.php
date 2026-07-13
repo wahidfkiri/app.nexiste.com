@@ -55,6 +55,33 @@ Route::middleware('web')->group(function () {
             Route::post('/{tenant}/status', [TenantAdminController::class, 'updateStatus'])->name('status');
         });
 
+    // Abonnements — forfaits (superadmin)
+    Route::middleware(['auth', 'superadmin'])
+        ->prefix('superadmin/plans')
+        ->name('superadmin.plans.')
+        ->group(function () {
+            Route::get('/', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'store'])->name('store');
+            Route::get('/{plan}/edit', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'edit'])->name('edit')->where('plan', '[0-9a-fA-F-]+');
+            Route::put('/{plan}', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'update'])->name('update')->where('plan', '[0-9a-fA-F-]+');
+            Route::post('/{plan}/toggle', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'toggle'])->name('toggle')->where('plan', '[0-9a-fA-F-]+');
+            Route::delete('/{plan}', [\App\Http\Controllers\SuperAdmin\SubscriptionPlanController::class, 'destroy'])->name('destroy')->where('plan', '[0-9a-fA-F-]+');
+        });
+
+    // Abonnements — moyens de paiement (superadmin)
+    Route::middleware(['auth', 'superadmin'])
+        ->prefix('superadmin/payment-methods')
+        ->name('superadmin.payment-methods.')
+        ->group(function () {
+            Route::get('/', [\App\Http\Controllers\SuperAdmin\PaymentMethodController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\SuperAdmin\PaymentMethodController::class, 'store'])->name('store');
+            Route::put('/{paymentMethod}', [\App\Http\Controllers\SuperAdmin\PaymentMethodController::class, 'update'])->name('update')->where('paymentMethod', '[0-9a-fA-F-]+');
+            Route::post('/{paymentMethod}/toggle', [\App\Http\Controllers\SuperAdmin\PaymentMethodController::class, 'toggle'])->name('toggle')->where('paymentMethod', '[0-9a-fA-F-]+');
+            Route::post('/{paymentMethod}/default', [\App\Http\Controllers\SuperAdmin\PaymentMethodController::class, 'setDefault'])->name('default')->where('paymentMethod', '[0-9a-fA-F-]+');
+            Route::post('/{paymentMethod}/test', [\App\Http\Controllers\SuperAdmin\PaymentMethodController::class, 'test'])->name('test')->where('paymentMethod', '[0-9a-fA-F-]+');
+        });
+
     Route::middleware(['auth', 'tenant'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->middleware('tenant.permission:dashboard.read')
