@@ -46,7 +46,6 @@
                 </div> -->
 
                 <div class="login-copy">
-                    <p class="login-eyebrow">{{ __('auth-ui.login.eyebrow') }}</p>
                     <h1 id="loginTitle">{{ __('auth-ui.login.title') }}</h1>
                     <p class="login-description">
                         {{ __('auth-ui.login.description') }}

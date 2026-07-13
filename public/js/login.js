@@ -20,6 +20,8 @@
     });
   }
 
+  let redirecting = false;
+
   function setLoading(isLoading) {
     if (!loginBtn) return;
     loginBtn.disabled = isLoading;
@@ -27,6 +29,19 @@
     const label = loginBtn.querySelector('.btn-login-label');
     if (label) {
       label.textContent = isLoading ? 'Connexion en cours...' : 'Se connecter';
+    }
+  }
+
+  // Etat "succes" : bouton verrouille avec libelle "Redirection..." + spinner,
+  // conserve jusqu'a la bascule vers le tableau de bord.
+  function setRedirecting() {
+    if (!loginBtn) return;
+    redirecting = true;
+    loginBtn.disabled = true;
+    loginBtn.classList.add('is-loading');
+    const label = loginBtn.querySelector('.btn-login-label');
+    if (label) {
+      label.textContent = 'Redirection...';
     }
   }
 
@@ -98,10 +113,11 @@
       const data = await response.json().catch(() => ({}));
 
       if (response.ok && data?.success) {
-        showFeedback('success', data.message || 'Connexion reussie.');
+        showFeedback('success', data.message || 'Connexion réussie.');
+        setRedirecting();
         window.setTimeout(() => {
           window.location.href = data.redirect || window.LoginPage?.defaultRedirect || '/dashboard';
-        }, 120);
+        }, 800);
         return;
       }
 
@@ -113,7 +129,7 @@
     } catch (error) {
       showFeedback('error', 'La connexion a echoue. Verifiez votre reseau puis reessayez.');
     } finally {
-      setLoading(false);
+      if (!redirecting) setLoading(false);
     }
   }
 
