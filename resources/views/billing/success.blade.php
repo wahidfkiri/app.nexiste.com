@@ -1,10 +1,6 @@
-@extends('layouts.global')
+@extends('layouts.billing')
 
 @section('title', __('billing.success.title'))
-
-@section('breadcrumb')
-  <span>{{ __('billing.success.title') }}</span>
-@endsection
 
 @section('content')
 <div style="max-width:560px;margin:40px auto 0;">

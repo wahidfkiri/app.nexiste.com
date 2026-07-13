@@ -1,19 +1,13 @@
-@extends('layouts.global')
+@extends('layouts.billing')
 
 @section('title', __('billing.checkout.title'))
 
-@section('breadcrumb')
-  <a href="{{ route('subscription.plans') }}">{{ __('billing.onboarding.title') }}</a>
-  <i class="fas fa-chevron-right" style="font-size:10px;color:var(--c-ink-20)"></i>
-  <span style="color:var(--c-ink)">{{ __('billing.checkout.title') }}</span>
-@endsection
-
 @section('content')
-<div style="max-width:640px;margin:0 auto;">
-  <div class="page-header"><div class="page-header-left">
-    <h1>{{ __('billing.checkout.title') }}</h1>
-    <p>{{ __('billing.checkout.subtitle') }}</p>
-  </div></div>
+<div style="max-width:560px;margin:0 auto;">
+  <div style="text-align:center;margin-bottom:22px;">
+    <h1 style="font-size:24px;font-weight:800;margin:0 0 6px;">{{ __('billing.checkout.title') }}</h1>
+    <p style="margin:0;color:var(--c-ink-50,#64748b);font-size:14px;">{{ __('billing.checkout.subtitle') }}</p>
+  </div>
 
   @if($errors->any())
     <div style="margin-bottom:14px;padding:12px 14px;border-radius:10px;background:#fee2e2;color:#991b1b;"><i class="fas fa-triangle-exclamation"></i> {{ $errors->first() }}</div>

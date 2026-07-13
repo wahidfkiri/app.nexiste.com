@@ -37,11 +37,16 @@ return [
         'redirect' => env('GOOGLE_AUTH_REDIRECT_URI'),
     ],
 
-    // Abonnements — PayPal (mode sandbox par défaut, clés dans .env).
+    // Abonnements — PayPal. Les clés diffèrent selon le mode (sandbox / live).
     'paypal' => [
         'mode' => env('PAYPAL_MODE', 'sandbox'),
-        'client_id' => env('PAYPAL_CLIENT_ID'),
-        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+        'client_id' => env('PAYPAL_MODE', 'sandbox') === 'live'
+            ? env('PAYPAL_LIVE_CLIENT_ID')
+            : env('PAYPAL_SANDBOX_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_MODE', 'sandbox') === 'live'
+            ? env('PAYPAL_LIVE_CLIENT_SECRET')
+            : env('PAYPAL_SANDBOX_CLIENT_SECRET'),
+        'webhook_id' => env('PAYPAL_WEBHOOK_ID'),
         'currency' => env('PAYPAL_CURRENCY', 'EUR'),
     ],
 
