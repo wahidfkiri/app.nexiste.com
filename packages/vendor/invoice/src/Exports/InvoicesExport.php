@@ -42,7 +42,9 @@ class InvoicesExport implements FromQuery, WithHeadings, WithMapping, WithStyles
             number_format($invoice->total, 2, ',', ' '),
             number_format($invoice->amount_paid, 2, ',', ' '),
             number_format($invoice->amount_due, 2, ',', ' '),
-            $invoice->payment_method,
+            $invoice->payment_method
+                ? (config("invoice.payment_methods.{$invoice->payment_method}") ?? $invoice->payment_method)
+                : '',
             $invoice->payment_date?->format('d/m/Y'),
         ];
     }
