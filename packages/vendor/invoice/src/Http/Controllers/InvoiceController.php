@@ -326,7 +326,7 @@ class InvoiceController extends Controller
 
         $pdf = app('dompdf.wrapper')
             ->loadView($view, compact('invoice', 'signature', 'branding'))
-            ->setPaper($settings['pdf_paper'] ?? 'A4');
+            ->setPaper('A4');
         return $pdf->download("facture-{$invoice->number}.pdf");
     }
 
@@ -488,7 +488,7 @@ class InvoiceController extends Controller
 
         $pdf = app('dompdf.wrapper')
             ->loadView($view, compact('quote', 'signature', 'branding'))
-            ->setPaper($settings['pdf_paper'] ?? 'A4');
+            ->setPaper('A4');
         return $pdf->download("devis-{$quote->number}.pdf");
     }
 
@@ -500,6 +500,18 @@ class InvoiceController extends Controller
     public function quotesExportExcel()
     {
         return Excel::download(new QuotesExport, 'devis_' . date('Y-m-d') . '.xlsx');
+    }
+
+    public function quotesExportPdf()
+    {
+        $quotes = Quote::with('client')->get();
+        $pdf = app('dompdf.wrapper')->loadView('invoice::exports.pdf_quotes', compact('quotes'))->setPaper('A4');
+        return $pdf->download('devis_' . date('Y-m-d') . '.pdf');
+    }
+
+    public function importTemplate()
+    {
+        return Excel::download(new \Vendor\Invoice\Exports\ImportTemplateExport, 'modele-import-factures.xlsx');
     }
 
     public function paymentsIndex()
@@ -746,10 +758,120 @@ class InvoiceController extends Controller
         return $settings;
     }
 
+    /**
+     * Aperçu réel d'un modèle PDF (facture ou devis) avec des données d'exemple,
+     * afin que le client visualise le vrai rendu avant de sélectionner un modèle.
+     */
+    public function previewTemplate(Request $request)
+    {
+        $type = $request->query('type') === 'quote' ? 'quote' : 'invoice';
+        $template = in_array($request->query('template'), ['modern', 'minimal'], true)
+            ? (string) $request->query('template')
+            : 'classic';
+
+        $settings = $this->getSettings();
+        $tenant = auth()->user()->tenant;
+        $branding = $this->resolvePdfBranding($settings, $tenant);
+        $signature = [
+            'enabled' => filter_var($settings['signature_enabled'] ?? false, FILTER_VALIDATE_BOOL),
+            'data' => $settings['signature_data'] ?? null,
+            'name' => $settings['signer_name'] ?? null,
+            'title' => $settings['signer_title'] ?? null,
+            'show_on_invoice' => filter_var($settings['signature_on_invoice'] ?? true, FILTER_VALIDATE_BOOL),
+            'show_on_quote' => filter_var($settings['signature_on_quote'] ?? true, FILTER_VALIDATE_BOOL),
+        ];
+        $currency = InvoiceService::tenantCurrency($tenant?->id);
+
+        if ($type === 'quote') {
+            $quote = $this->sampleQuote($tenant, $currency);
+            $view = match ($template) {
+                'modern' => 'invoice::exports.pdf_quote_modern',
+                'minimal' => 'invoice::exports.pdf_quote_minimal',
+                default => 'invoice::exports.pdf_quote',
+            };
+            $pdf = app('dompdf.wrapper')->loadView($view, compact('quote', 'signature', 'branding'))->setPaper('A4');
+            return $pdf->stream("apercu-devis-{$template}.pdf");
+        }
+
+        $invoice = $this->sampleInvoice($tenant, $currency);
+        $view = match ($template) {
+            'modern' => 'invoice::exports.pdf_invoice_modern',
+            'minimal' => 'invoice::exports.pdf_invoice_minimal',
+            default => 'invoice::exports.pdf_invoice',
+        };
+        $pdf = app('dompdf.wrapper')->loadView($view, compact('invoice', 'signature', 'branding'))->setPaper('A4');
+        return $pdf->stream("apercu-facture-{$template}.pdf");
+    }
+
+    private function sampleClient(): \Vendor\Client\Models\Client
+    {
+        return (new \Vendor\Client\Models\Client())->forceFill([
+            'company_name' => 'Société Exemple SARL',
+            'contact_name' => 'Jean Dupont',
+            'full_address' => '12 rue des Lilas, 75011 Paris',
+            'email' => 'contact@exemple.fr',
+            'vat_number' => 'FR12345678901',
+        ]);
+    }
+
+    private function sampleInvoice(mixed $tenant, string $currency): Invoice
+    {
+        $invoice = (new Invoice())->forceFill([
+            'number' => 'FAC-' . date('Y') . '-0001',
+            'reference' => 'APERÇU',
+            'status' => 'sent',
+            'currency' => $currency,
+            'issue_date' => now(),
+            'due_date' => now()->addDays(30),
+            'payment_method' => 'transfer',
+            'tax_rate' => 20,
+            'subtotal' => 1500, 'discount_amount' => 0, 'tax_amount' => 300,
+            'withholding_tax_rate' => 0, 'withholding_tax_amount' => 0,
+            'amount_paid' => 0, 'amount_due' => 1800, 'total' => 1800,
+            'notes' => 'Merci de votre confiance.',
+            'terms' => 'Paiement à 30 jours par virement bancaire.',
+        ]);
+        $invoice->setRelation('tenant', $tenant);
+        $invoice->setRelation('client', $this->sampleClient());
+        $invoice->setRelation('items', collect([
+            (new \Vendor\Invoice\Models\InvoiceItem())->forceFill(['description' => 'Prestation de conseil', 'reference' => 'SRV-01', 'quantity' => 10, 'unit' => 'h', 'unit_price' => 120, 'discount_amount' => 0, 'tax_rate' => 20, 'total' => 1200]),
+            (new \Vendor\Invoice\Models\InvoiceItem())->forceFill(['description' => 'Licence logicielle', 'reference' => 'LIC-02', 'quantity' => 1, 'unit' => 'u', 'unit_price' => 300, 'discount_amount' => 0, 'tax_rate' => 20, 'total' => 300]),
+        ]));
+
+        return $invoice;
+    }
+
+    private function sampleQuote(mixed $tenant, string $currency): Quote
+    {
+        $quote = (new Quote())->forceFill([
+            'number' => 'DEV-' . date('Y') . '-0001',
+            'reference' => 'APERÇU',
+            'status' => 'sent',
+            'currency' => $currency,
+            'issue_date' => now(),
+            'valid_until' => now()->addDays(30),
+            'tax_rate' => 20,
+            'subtotal' => 1500, 'discount_amount' => 0, 'tax_amount' => 300,
+            'withholding_tax_rate' => 0, 'withholding_tax_amount' => 0,
+            'total' => 1800,
+            'notes' => 'Proposition commerciale valable 30 jours.',
+            'terms' => 'Devis sans engagement.',
+        ]);
+        $quote->setRelation('tenant', $tenant);
+        $quote->setRelation('client', $this->sampleClient());
+        $quote->setRelation('items', collect([
+            (new \Vendor\Invoice\Models\QuoteItem())->forceFill(['description' => 'Prestation de conseil', 'reference' => 'SRV-01', 'quantity' => 10, 'unit' => 'h', 'unit_price' => 120, 'discount_amount' => 0, 'tax_rate' => 20, 'total' => 1200]),
+            (new \Vendor\Invoice\Models\QuoteItem())->forceFill(['description' => 'Licence logicielle', 'reference' => 'LIC-02', 'quantity' => 1, 'unit' => 'u', 'unit_price' => 300, 'discount_amount' => 0, 'tax_rate' => 20, 'total' => 300]),
+        ]));
+
+        return $quote;
+    }
+
     protected function resolvePdfBranding(array $settings, mixed $tenant): array
     {
         return [
             'theme' => $settings['pdf_theme'] ?? 'ocean',
+            'primary_color' => $this->normalizeHexColor($settings['pdf_primary_color'] ?? null),
             'show_logo' => filter_var($settings['pdf_show_logo'] ?? true, FILTER_VALIDATE_BOOL),
             'show_footer' => filter_var($settings['pdf_show_footer'] ?? true, FILTER_VALIDATE_BOOL),
             'footer_text' => $settings['pdf_footer'] ?? '',
@@ -758,7 +880,37 @@ class InvoiceController extends Controller
         ];
     }
 
+    /**
+     * Retourne le logo sous forme de data URI base64 : garantit son affichage
+     * dans le PDF quelle que soit la configuration chroot de dompdf (le chemin
+     * storage/ est souvent bloqué). Renvoie null si aucun logo valable.
+     */
     protected function resolveLogoPath(array $settings, mixed $tenant): ?string
+    {
+        $file = $this->locateLogoFile($settings, $tenant);
+        if (!$file || !is_file($file)) {
+            return null;
+        }
+
+        $data = @file_get_contents($file);
+        if ($data === false) {
+            return null;
+        }
+
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        $mime = match ($ext) {
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'svg' => 'image/svg+xml',
+            default => 'image/png',
+        };
+
+        return 'data:' . $mime . ';base64,' . base64_encode($data);
+    }
+
+    private function locateLogoFile(array $settings, mixed $tenant): ?string
     {
         $logoSetting = $settings['pdf_logo'] ?? null;
         if (!empty($logoSetting)) {
@@ -786,6 +938,13 @@ class InvoiceController extends Controller
         }
 
         return null;
+    }
+
+    private function normalizeHexColor(?string $value): ?string
+    {
+        $value = trim((string) $value);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $value) ? strtolower($value) : null;
     }
 
     /* Devise Ajax */

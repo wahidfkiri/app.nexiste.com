@@ -31,8 +31,9 @@
         <i class="fas fa-chevron-down" style="font-size:10px;margin-left:2px;"></i>
       </button>
       <div class="dropdown-menu">
-        <a href="{{ route('invoices.quotes.export.csv') }}"   class="dropdown-item"><i class="fas fa-file-csv"></i>   CSV</a>
-        <a href="{{ route('invoices.quotes.export.excel') }}" class="dropdown-item"><i class="fas fa-file-excel"></i> Excel</a>
+        <a href="{{ route('invoices.quotes.export.csv') }}" data-file-export data-file-filename="devis.csv" class="dropdown-item"><i class="fas fa-file-csv"></i>   CSV</a>
+        <a href="{{ route('invoices.quotes.export.excel') }}" data-file-export data-file-filename="devis.xlsx" class="dropdown-item"><i class="fas fa-file-excel"></i> Excel</a>
+        <a href="{{ route('invoices.quotes.export.pdf') }}" data-pdf-export data-pdf-filename="devis.pdf" class="dropdown-item"><i class="fas fa-file-pdf"></i>   PDF</a>
       </div>
     </div>
     <a href="{{ route('invoices.index') }}" class="btn btn-secondary">

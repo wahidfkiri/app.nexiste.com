@@ -31,8 +31,8 @@
         <i class="fas fa-chevron-down" style="font-size:10px;margin-left:2px;"></i>
       </button>
       <div class="dropdown-menu">
-        <a href="{{ route('invoices.export.csv') }}"   class="dropdown-item"><i class="fas fa-file-csv"></i>   CSV</a>
-        <a href="{{ route('invoices.export.excel') }}" class="dropdown-item"><i class="fas fa-file-excel"></i> Excel</a>
+        <a href="{{ route('invoices.export.csv') }}" data-file-export data-file-filename="factures.csv" class="dropdown-item"><i class="fas fa-file-csv"></i>   CSV</a>
+        <a href="{{ route('invoices.export.excel') }}" data-file-export data-file-filename="factures.xlsx" class="dropdown-item"><i class="fas fa-file-excel"></i> Excel</a>
         <a href="{{ route('invoices.export.pdf') }}" data-pdf-export data-pdf-filename="factures.pdf" class="dropdown-item"><i class="fas fa-file-pdf"></i>   PDF</a>
       </div>
     </div>
@@ -91,7 +91,7 @@
     </div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:#f3e8ff;color:#7c3aed"><i class="fas fa-circle-euro-sign"></i></div>
+    <div class="stat-icon" style="background:#f3e8ff;color:#7c3aed"><i class="fas fa-euro-sign"></i></div>
     <div class="stat-body">
       <div class="stat-value" id="statRevenue">—</div>
       <div class="stat-label">{{ __('invoice::invoices.stats.paid') }}</div>
@@ -210,6 +210,10 @@
           <i class="fas fa-info-circle" style="color:var(--c-accent)"></i>
           {{ $page['import_template_help'] }}
         </div>
+        <a href="{{ route('invoices.import.template') }}" data-file-export data-file-filename="modele-import-factures.xlsx"
+           class="btn btn-secondary btn-sm" style="margin-top:12px;">
+          <i class="fas fa-download"></i> {{ $page['import_download_template'] ?? 'Télécharger le modèle (gabarit)' }}
+        </a>
       </form>
     </div>
     <div class="modal-footer">

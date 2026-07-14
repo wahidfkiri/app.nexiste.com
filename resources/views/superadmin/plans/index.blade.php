@@ -3,7 +3,9 @@
 @section('title', __('billing.plans.title'))
 
 @section('breadcrumb')
-  <span>{{ __('billing.plans.title') }}</span>
+  <a href="{{ route('superadmin.tenants.index') }}">Administration</a>
+  <i class="fas fa-chevron-right" style="font-size:10px;color:var(--c-ink-20)"></i>
+  <span style="color:var(--c-ink)">{{ __('billing.plans.title') }}</span>
 @endsection
 
 @section('content')

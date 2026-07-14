@@ -18,6 +18,7 @@ Route::middleware(['web', 'auth', 'tenant', 'extension.active:invoice'])->group(
         Route::get('/export/excel', [InvoiceController::class, 'exportExcel'])->middleware('tenant.permission:invoices.export')->name('export.excel');
         Route::get('/export/pdf', [InvoiceController::class, 'exportPdf'])->middleware('tenant.permission:invoices.export')->name('export.pdf');
         Route::post('/import', [InvoiceController::class, 'import'])->middleware('tenant.permission:invoices.import')->name('import');
+        Route::get('/import/template', [InvoiceController::class, 'importTemplate'])->middleware('tenant.permission:invoices.import')->name('import.template');
 
         Route::prefix('quotes')->name('quotes.')->group(function () {
             Route::get('/', [InvoiceController::class, 'quotesIndex'])->middleware('tenant.permission:quotes.read')->name('index');
@@ -26,6 +27,7 @@ Route::middleware(['web', 'auth', 'tenant', 'extension.active:invoice'])->group(
             Route::get('/data/table', [InvoiceController::class, 'quotesGetData'])->middleware('tenant.permission:quotes.read')->name('data');
             Route::get('/export/csv', [InvoiceController::class, 'quotesExportCsv'])->middleware('tenant.permission:quotes.export')->name('export.csv');
             Route::get('/export/excel', [InvoiceController::class, 'quotesExportExcel'])->middleware('tenant.permission:quotes.export')->name('export.excel');
+            Route::get('/export/pdf', [InvoiceController::class, 'quotesExportPdf'])->middleware('tenant.permission:quotes.export')->name('export.pdf');
             Route::get('/{quote}', [InvoiceController::class, 'quotesShow'])->middleware('tenant.permission:quotes.read')->where('quote', '[0-9a-fA-F-]+')->name('show');
             Route::get('/{quote}/edit', [InvoiceController::class, 'quotesEdit'])->middleware('tenant.permission:quotes.update')->where('quote', '[0-9a-fA-F-]+')->name('edit');
             Route::put('/{quote}', [InvoiceController::class, 'quotesUpdate'])->middleware('tenant.permission:quotes.update')->where('quote', '[0-9a-fA-F-]+')->name('update');
@@ -50,6 +52,7 @@ Route::middleware(['web', 'auth', 'tenant', 'extension.active:invoice'])->group(
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [InvoiceController::class, 'settingsIndex'])->middleware('tenant.permission:settings.read')->name('index');
             Route::put('/', [InvoiceController::class, 'settingsUpdate'])->middleware('tenant.permission:settings.update')->name('update');
+            Route::get('/preview', [InvoiceController::class, 'previewTemplate'])->middleware('tenant.permission:settings.read')->name('preview');
         });
 
         Route::get('/currencies/rate', [InvoiceController::class, 'getExchangeRate'])->middleware('tenant.permission:invoices.read,quotes.read')->name('currencies.rate');

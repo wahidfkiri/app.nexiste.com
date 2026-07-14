@@ -5,6 +5,7 @@
   <title>Devis {{ $quote->number }}</title>
   @php
     $status = (string) ($quote->status ?? 'draft');
+    $primary = $branding['primary_color'] ?? '#0f172a';
   @endphp
   <style>
     * { box-sizing: border-box; }
@@ -25,13 +26,13 @@
     .addr-title { font-size: 7.5pt; text-transform: uppercase; letter-spacing: .08em; color: #64748b; margin-bottom: 6px; }
     .addr-name { font-size: 11pt; font-weight: 800; margin-bottom: 4px; }
     .items { width: 100%; border-collapse: collapse; margin-top: 16px; }
-    .items thead th { border-bottom: 2px solid #0f172a; padding: 9px 8px; font-size: 7.8pt; text-transform: uppercase; letter-spacing: .05em; text-align:left; }
+    .items thead th { border-bottom: 2px solid {{ $primary }}; padding: 9px 8px; font-size: 7.8pt; text-transform: uppercase; letter-spacing: .05em; text-align:left; }
     .items tbody td { border-bottom: 1px solid #e5e7eb; padding: 8px; font-size: 8.9pt; vertical-align: top; }
     .right { text-align: right; }
     .totals { width: 44%; margin-left: auto; border-collapse: collapse; margin-top: 12px; }
     .totals td { border-bottom: 1px solid #e5e7eb; padding: 7px 10px; font-size: 9pt; }
     .totals .label { color: #64748b; }
-    .totals .grand td { border-top: 2px solid #0f172a; font-size: 11pt; font-weight: 800; }
+    .totals .grand td { border-top: 2px solid {{ $primary }}; font-size: 11pt; font-weight: 800; }
     .signature { margin-top: 14px; text-align: right; }
     .signature img { max-height: 70px; max-width: 220px; display: block; margin-left: auto; }
     .footer { position: fixed; left: 36px; right: 36px; bottom: 18px; padding-top: 10px; border-top: 1px solid #e5e7eb; font-size: 7.8pt; color: #64748b; text-align: center; line-height: 1.5; }

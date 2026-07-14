@@ -8,7 +8,7 @@
   <title>@yield('title', 'CRM') - {{ config('app.name') }}</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="{{ asset('vendor/client/css/crm.css') }}">
+  <link rel="stylesheet" href="{{ asset('vendor/client/css/crm.css') }}?v={{ @filemtime(public_path('vendor/client/css/crm.css')) ?: '1' }}">
   <link rel="stylesheet" href="{{ asset('vendor/invoice/css/invoice.css') }}">
   <link rel="stylesheet" href="{{ asset('vendor/stock/css/stock.css') }}">
   <link rel="stylesheet" href="{{ asset('css/global-font.css') }}">
@@ -596,10 +596,13 @@
 <body class="@yield('body_class')">
 <script>
   /* Applique l'état réduit du menu AVANT le premier rendu du sidebar pour
-     éviter le flash « étendu → réduit » au rechargement de la page. */
+     éviter le flash « étendu → réduit » au rechargement de la page.
+     Par défaut le menu est réduit (collapsed) tant que l'utilisateur n'a pas
+     explicitement choisi de l'étendre. */
   (function () {
     try {
-      if (window.localStorage.getItem('crm.sidebar.compact') === '1' && window.innerWidth > 1024) {
+      var pref = window.localStorage.getItem('crm.sidebar.compact');
+      if ((pref === '1' || pref === null) && window.innerWidth > 1024) {
         document.body.classList.add('sidebar-collapsed', 'sidebar-preload');
         window.addEventListener('load', function () {
           requestAnimationFrame(function () { document.body.classList.remove('sidebar-preload'); });
@@ -1047,7 +1050,7 @@ window.CLIENT_ROUTES = Object.assign(window.CLIENT_ROUTES || {}, @json($clientJs
 window.CLIENT_EXTENSION_ROUTES = Object.assign(window.CLIENT_EXTENSION_ROUTES || {}, @json($clientExtensionRoutes));
 window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, @json($invoiceJsRoutes));
 </script>
-<script src="{{ asset('vendor/client/js/crm.js') }}"></script>
+<script src="{{ asset('vendor/client/js/crm.js') }}?v={{ @filemtime(public_path('vendor/client/js/crm.js')) ?: '1' }}"></script>
 <script src="{{ asset('vendor/client/js/secure-form.js') }}"></script>
 <script src="{{ asset('vendor/invoice/js/invoice.js') }}"></script>
 <script src="{{ asset('vendor/stock/js/stock.js') }}"></script>
@@ -1094,12 +1097,15 @@ window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, @json($invoic
   window.PdfExport = {
     download: function (url, opts) {
       opts = opts || {};
+      var box = overlay();
+      var textEl = box.querySelector('.pdf-export-text');
+      if (textEl) textEl.textContent = opts.label || 'Génération du PDF…';
       show();
-      return fetch(url, { headers: { 'Accept': 'application/pdf' }, credentials: 'same-origin' })
+      return fetch(url, { headers: { 'Accept': '*/*' }, credentials: 'same-origin' })
         .then(function (res) {
           if (!res.ok) throw new Error('HTTP ' + res.status);
           return res.blob().then(function (blob) {
-            var name = opts.filename || filenameFrom(res, 'export.pdf');
+            var name = opts.filename || filenameFrom(res, 'export');
             var href = URL.createObjectURL(blob);
             var a = document.createElement('a');
             a.href = href; a.download = name;
@@ -1108,20 +1114,25 @@ window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, @json($invoic
           });
         })
         .catch(function () {
-          if (window.Toast && Toast.error) Toast.error('Export PDF', 'La génération du PDF a échoué. Merci de réessayer.');
-          else alert('La génération du PDF a échoué. Merci de réessayer.');
+          if (window.Toast && Toast.error) Toast.error('Export', 'L’export a échoué. Merci de réessayer.');
+          else alert('L’export a échoué. Merci de réessayer.');
         })
         .finally(hide);
     }
   };
+  window.FileExport = window.PdfExport;
 
   document.addEventListener('click', function (ev) {
-    var trigger = ev.target.closest ? ev.target.closest('[data-pdf-export]') : null;
+    var trigger = ev.target.closest ? ev.target.closest('[data-pdf-export], [data-file-export]') : null;
     if (!trigger) return;
-    var url = trigger.getAttribute('href') || trigger.getAttribute('data-pdf-url');
+    var url = trigger.getAttribute('href') || trigger.getAttribute('data-pdf-url') || trigger.getAttribute('data-file-url');
     if (!url || url === '#') return;
     ev.preventDefault();
-    PdfExport.download(url, { filename: trigger.getAttribute('data-pdf-filename') || null });
+    var isFile = trigger.hasAttribute('data-file-export');
+    PdfExport.download(url, {
+      filename: trigger.getAttribute('data-pdf-filename') || trigger.getAttribute('data-file-filename') || null,
+      label: isFile ? 'Préparation du fichier…' : 'Génération du PDF…',
+    });
   });
 })();
 </script>

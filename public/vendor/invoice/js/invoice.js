@@ -283,7 +283,7 @@ class InvTable {
         <td><span style="background:var(--c-ink-02);border:1px solid var(--c-ink-05);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:var(--fw-semi);">${cur}</span></td>
         <td style="text-align:right;font-weight:var(--fw-semi);font-family:var(--ff-display);">${fmtCur(inv.total)}</td>
         <td style="text-align:right;font-weight:var(--fw-semi);font-family:var(--ff-display);${+inv.amount_due>0?'color:var(--c-danger);':'color:var(--c-success);'}">${+inv.amount_due>0?fmtCur(inv.amount_due):InvoiceLang.settledLabel}</td>
-        <td><span class="badge badge-${inv.status}">${dot}${this._esc(inv.status_label||inv.status)}</span></td>
+        <td><span class="badge badge-${inv.status}">${dot}${this._esc((window.INVOICE_STATUS_LABELS && window.INVOICE_STATUS_LABELS[inv.status]) || inv.status_label || inv.status)}</span></td>
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
             <a href="${showUrl}" class="btn-icon" title="Voir"><i class="fas fa-eye"></i></a>
@@ -317,7 +317,7 @@ class InvTable {
         <td style="${expired?'color:var(--c-danger);font-weight:var(--fw-medium);':''}">${q.valid_until ? this._fmtDate(q.valid_until) : '—'}</td>
         <td><span style="background:var(--c-ink-02);border:1px solid var(--c-ink-05);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:var(--fw-semi);">${cur}</span></td>
         <td style="text-align:right;font-weight:var(--fw-semi);font-family:var(--ff-display);">${InvCurrencyFmt.format(q.total, cur)}</td>
-        <td><span class="badge badge-${q.status}">${dot}${this._esc(q.status_label||q.status)}</span>${q.is_converted?`<span class="badge badge-paid" style="margin-left:6px;">${InvoiceLang.convertedBadge}</span>`:''}</td>
+        <td><span class="badge badge-${q.status}">${dot}${this._esc((window.QUOTE_STATUS_LABELS && window.QUOTE_STATUS_LABELS[q.status]) || q.status_label || q.status)}</span>${q.is_converted?`<span class="badge badge-paid" style="margin-left:6px;">${InvoiceLang.convertedBadge}</span>`:''}</td>
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
             <a href="${showUrl}" class="btn-icon" title="Voir"><i class="fas fa-eye"></i></a>

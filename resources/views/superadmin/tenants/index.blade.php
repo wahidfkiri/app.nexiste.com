@@ -43,6 +43,12 @@
       <p>Consultez et gérez les entreprises actives de la plateforme depuis un espace super-admin dédié.</p>
     </div>
     <div class="page-header-actions">
+      <a href="{{ route('superadmin.plans.index') }}" class="btn btn-secondary">
+        <i class="fas fa-layer-group"></i> Forfaits
+      </a>
+      <a href="{{ route('superadmin.payment-methods.index') }}" class="btn btn-secondary">
+        <i class="fas fa-credit-card"></i> Moyens de paiement
+      </a>
       <button class="btn btn-primary" data-modal-open="createTenantModal">
         <i class="fas fa-plus"></i> Nouveau tenant
       </button>

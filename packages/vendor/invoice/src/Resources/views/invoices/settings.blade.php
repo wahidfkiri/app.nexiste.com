@@ -530,8 +530,12 @@
             <div class="template-preview-grid" id="invoiceTemplatePreview">
               <button type="button" class="template-card" data-template-value="classic" data-template-select="pdf_invoice_template">
                 <div class="template-card-mini classic">
-                  <div class="mini-band"></div>
-                  <div class="mini-lines"></div>
+                  <div class="md-accent"></div>
+                  <div class="md-top"><span class="md-logo"></span><span class="md-num"></span></div>
+                  <div class="md-parties"><span></span><span></span></div>
+                  <div class="md-thead"></div>
+                  <div class="md-row"></div><div class="md-row"></div>
+                  <div class="md-total"></div>
                 </div>
                 <div class="template-card-meta">
                   <strong>{{ $settingsPage['template_classic_short'] }}</strong>
@@ -540,8 +544,11 @@
               </button>
               <button type="button" class="template-card" data-template-value="modern" data-template-select="pdf_invoice_template">
                 <div class="template-card-mini modern">
-                  <div class="mini-topline"></div>
-                  <div class="mini-block"></div>
+                  <div class="md-header"><span class="md-hnum"></span></div>
+                  <div class="md-parties"><span></span><span></span></div>
+                  <div class="md-thead dark"></div>
+                  <div class="md-row"></div><div class="md-row"></div>
+                  <div class="md-total"></div>
                 </div>
                 <div class="template-card-meta">
                   <strong>{{ $settingsPage['template_modern_short'] }}</strong>
@@ -550,8 +557,11 @@
               </button>
               <button type="button" class="template-card" data-template-value="minimal" data-template-select="pdf_invoice_template">
                 <div class="template-card-mini minimal">
-                  <div class="mini-thin"></div>
-                  <div class="mini-lines"></div>
+                  <div class="md-thin"></div>
+                  <div class="md-top"><span class="md-logo ghost"></span><span class="md-num dark"></span></div>
+                  <div class="md-parties ghost"><span></span><span></span></div>
+                  <div class="md-row"></div><div class="md-row"></div>
+                  <div class="md-total ghost"></div>
                 </div>
                 <div class="template-card-meta">
                   <strong>{{ $settingsPage['template_minimal_short'] }}</strong>
@@ -566,8 +576,12 @@
             <div class="template-preview-grid" id="quoteTemplatePreview">
               <button type="button" class="template-card" data-template-value="classic" data-template-select="pdf_quote_template">
                 <div class="template-card-mini classic">
-                  <div class="mini-band"></div>
-                  <div class="mini-lines"></div>
+                  <div class="md-accent"></div>
+                  <div class="md-top"><span class="md-logo"></span><span class="md-num"></span></div>
+                  <div class="md-parties"><span></span><span></span></div>
+                  <div class="md-thead"></div>
+                  <div class="md-row"></div><div class="md-row"></div>
+                  <div class="md-total"></div>
                 </div>
                 <div class="template-card-meta">
                   <strong>{{ $settingsPage['template_classic_short'] }}</strong>
@@ -576,8 +590,11 @@
               </button>
               <button type="button" class="template-card" data-template-value="modern" data-template-select="pdf_quote_template">
                 <div class="template-card-mini modern">
-                  <div class="mini-topline"></div>
-                  <div class="mini-block"></div>
+                  <div class="md-header"><span class="md-hnum"></span></div>
+                  <div class="md-parties"><span></span><span></span></div>
+                  <div class="md-thead dark"></div>
+                  <div class="md-row"></div><div class="md-row"></div>
+                  <div class="md-total"></div>
                 </div>
                 <div class="template-card-meta">
                   <strong>{{ $settingsPage['template_modern_short'] }}</strong>
@@ -586,8 +603,11 @@
               </button>
               <button type="button" class="template-card" data-template-value="minimal" data-template-select="pdf_quote_template">
                 <div class="template-card-mini minimal">
-                  <div class="mini-thin"></div>
-                  <div class="mini-lines"></div>
+                  <div class="md-thin"></div>
+                  <div class="md-top"><span class="md-logo ghost"></span><span class="md-num dark"></span></div>
+                  <div class="md-parties ghost"><span></span><span></span></div>
+                  <div class="md-row"></div><div class="md-row"></div>
+                  <div class="md-total ghost"></div>
                 </div>
                 <div class="template-card-meta">
                   <strong>{{ $settingsPage['template_minimal_short'] }}</strong>
@@ -598,27 +618,22 @@
           </div>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12">
         <div class="form-group">
           <label class="form-label">{{ $settingsPage['primary_color'] }}</label>
           @php($pdfPrimary = $settings['pdf_primary_color'] ?? '#2563eb')
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="color" name="pdf_primary_color" value="{{ $pdfPrimary }}" style="width:44px;height:38px;border-radius:var(--r-sm);border:1.5px solid var(--c-ink-10);cursor:pointer;padding:2px;">
-            <input type="text" name="pdf_primary_color_hex" class="form-control font-mono" value="{{ $pdfPrimary }}" style="max-width:100px;" placeholder="#2563eb">
+          <div class="pdf-color-field">
+            @foreach(['#2563eb','#0ea5e9','#16a34a','#0f766e','#7c3aed','#dc2626','#ea580c','#0f172a'] as $sw)
+              <button type="button" class="pdf-swatch" data-color="{{ $sw }}" style="--sw:{{ $sw }};" title="{{ $sw }}"></button>
+            @endforeach
+            <span class="pdf-color-sep"></span>
+            <input type="color" name="pdf_primary_color" value="{{ $pdfPrimary }}" style="width:42px;height:38px;border-radius:var(--r-sm);border:1.5px solid var(--c-ink-10);cursor:pointer;padding:2px;">
+            <input type="text" name="pdf_primary_color_hex" class="form-control font-mono" value="{{ $pdfPrimary }}" style="max-width:110px;" placeholder="#2563eb">
           </div>
+          <span class="form-hint">{{ $settingsPage['primary_color_hint'] ?? 'Cette couleur principale est appliquée aux PDF de factures et devis.' }}</span>
         </div>
       </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-label">{{ $settingsPage['paper_format'] }}</label>
-          @php($pdfPaper = $settings['pdf_paper'] ?? 'A4')
-          <select name="pdf_paper" class="form-control">
-            <option value="A4" {{ $pdfPaper === 'A4' ? 'selected' : '' }}>A4 (210 x 297 mm)</option>
-            <option value="Letter" {{ $pdfPaper === 'Letter' ? 'selected' : '' }}>Letter (216 x 279 mm)</option>
-            <option value="Legal" {{ $pdfPaper === 'Legal' ? 'selected' : '' }}>Legal (216 x 356 mm)</option>
-          </select>
-        </div>
-      </div>
+      {{-- Format papier retiré : les PDF sont toujours générés en A4. --}}
       <div class="col-12">
         <div class="form-group">
           <label class="form-label">{{ $settingsPage['legal_mentions'] }}</label>
@@ -667,26 +682,31 @@
         </select>
       </div>
     </div>
-    <div class="col-6">
-      <div class="form-group">
-        <label class="form-label">{{ $settingsPage['pdf_logo'] }}</label>
-        <input type="file" name="pdf_logo" class="form-control" accept=".png,.jpg,.jpeg,.svg,.webp">
-        <span class="form-hint">{{ $settingsPage['pdf_logo_hint'] }}</span>
-      </div>
-    </div>
-    @if(!empty($settings['pdf_logo']))
     <div class="col-12">
       <div class="form-group">
-        <label class="form-label">{{ $settingsPage['current_logo'] }}</label>
-        <div style="display:flex;align-items:center;gap:14px;padding:10px;border:1px solid var(--c-ink-05);border-radius:var(--r-md);background:var(--surface-1);">
-          <img src="{{ asset('storage/' . ltrim($settings['pdf_logo'], '/')) }}" alt="{{ $settingsPage['pdf_logo'] }}" style="max-height:56px;max-width:220px;">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--c-ink-60);cursor:pointer;">
-            <input type="checkbox" name="pdf_logo_remove" value="1"> {{ $settingsPage['remove_logo'] }}
+        <label class="form-label">{{ $settingsPage['pdf_logo'] }}</label>
+        <div class="logo-uploader">
+          <div class="logo-uploader-preview" id="logoPreview">
+            @if(!empty($settings['pdf_logo']))
+              <img src="{{ asset('storage/' . ltrim($settings['pdf_logo'], '/')) }}?v={{ time() }}" alt="logo">
+            @else
+              <i class="fas fa-image"></i>
+            @endif
+          </div>
+          <label class="logo-uploader-drop" id="logoDrop">
+            <i class="fas fa-cloud-arrow-up"></i>
+            <strong>{{ $settingsPage['logo_dropzone'] ?? 'Cliquez ou glissez une image ici' }}</strong>
+            <span>{{ $settingsPage['pdf_logo_hint'] }}</span>
+            <input type="file" name="pdf_logo" id="logoInput" accept=".png,.jpg,.jpeg,.svg,.webp" hidden>
           </label>
         </div>
+        @if(!empty($settings['pdf_logo']))
+          <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--c-ink-60);cursor:pointer;margin-top:10px;">
+            <input type="checkbox" name="pdf_logo_remove" value="1"> {{ $settingsPage['remove_logo'] }}
+          </label>
+        @endif
       </div>
     </div>
-    @endif
     <div class="col-12">
       <div class="form-group">
         <label class="form-label">{{ $settingsPage['pdf_footer_text'] }}</label>
@@ -786,49 +806,35 @@
 }
 .template-card-mini{
   border:1px solid var(--c-ink-05);
-  border-radius:10px;
-  height:92px;
+  border-radius:9px;
+  height:126px;
   background:#fff;
   position:relative;
   overflow:hidden;
   margin-bottom:8px;
+  padding:9px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
-.template-card-mini::before{
-  content:'';
-  position:absolute;
-  left:8px;
-  right:8px;
-  bottom:8px;
-  height:12px;
-  border-top:1px solid var(--c-ink-10);
-}
-.template-card-mini .mini-band{
-  height:18px;
-  background:#1d4ed8;
-}
-.template-card-mini .mini-lines{
-  margin:10px 8px 0;
-  height:36px;
-  background:repeating-linear-gradient(180deg,#e2e8f0 0,#e2e8f0 2px,transparent 2px,transparent 8px);
-}
-.template-card-mini.modern{background:#f8fafc}
-.template-card-mini .mini-topline{height:8px;background:#0f172a}
-.template-card-mini .mini-block{
-  margin:10px 8px 0;
-  height:46px;
-  border:1px solid #cbd5e1;
-  border-radius:8px;
-  background:linear-gradient(180deg,#fff 0%,#eef2ff 100%);
-}
-.template-card-mini.minimal{
-  background:#fff;
-  border-color:#d1d5db;
-}
-.template-card-mini .mini-thin{
-  height:2px;
-  background:#0f172a;
-  margin-top:10px;
-}
+.template-card-mini.minimal{border-color:#e5e7eb;}
+.template-card-mini .md-accent{height:6px;margin:-9px -9px 5px;background:var(--c-accent,#2563eb);}
+.template-card-mini .md-header{height:24px;margin:-9px -9px 5px;background:#0f172a;display:flex;align-items:center;padding:0 9px;}
+.template-card-mini .md-header .md-hnum{width:40px;height:6px;border-radius:2px;background:rgba(255,255,255,.72);}
+.template-card-mini .md-thin{height:2px;background:#0f172a;margin:2px 0 5px;}
+.template-card-mini .md-top{display:flex;align-items:center;justify-content:space-between;}
+.template-card-mini .md-logo{width:22px;height:13px;border-radius:3px;background:#e2e8f0;}
+.template-card-mini .md-logo.ghost{background:#f1f5f9;}
+.template-card-mini .md-num{width:36px;height:8px;border-radius:2px;background:var(--c-accent,#2563eb);}
+.template-card-mini .md-num.dark{background:#0f172a;}
+.template-card-mini .md-parties{display:flex;gap:5px;}
+.template-card-mini .md-parties span{flex:1;height:17px;border-radius:3px;background:#eff6ff;}
+.template-card-mini .md-parties.ghost span{background:#f1f5f9;}
+.template-card-mini .md-thead{height:7px;border-radius:2px;background:var(--c-accent,#2563eb);opacity:.9;}
+.template-card-mini .md-thead.dark{background:#0f172a;opacity:1;}
+.template-card-mini .md-row{height:5px;border-radius:2px;background:#e2e8f0;}
+.template-card-mini .md-total{align-self:flex-end;width:48px;height:9px;border-radius:2px;background:var(--c-accent,#2563eb);margin-top:2px;}
+.template-card-mini .md-total.ghost{background:#cbd5e1;}
 .template-card-meta{
   display:flex;
   flex-direction:column;
@@ -845,6 +851,22 @@
 @media (max-width: 992px){
   .template-preview-grid{grid-template-columns:1fr}
 }
+/* Palette couleur principale */
+.pdf-color-field{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.pdf-swatch{width:30px;height:30px;border-radius:9px;border:2px solid #fff;box-shadow:0 0 0 1px var(--c-ink-10);background:var(--sw);cursor:pointer;padding:0;transition:transform .12s ease;}
+.pdf-swatch:hover{transform:scale(1.1);}
+.pdf-swatch.is-active{box-shadow:0 0 0 2px var(--sw);}
+.pdf-color-sep{width:1px;height:26px;background:var(--c-ink-10);margin:0 4px;}
+/* Uploader logo */
+.logo-uploader{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;}
+.logo-uploader-preview{flex:0 0 160px;min-height:96px;display:flex;align-items:center;justify-content:center;border:1px solid var(--c-ink-08);border-radius:14px;background:var(--surface-1);padding:12px;}
+.logo-uploader-preview img{max-height:72px;max-width:140px;object-fit:contain;}
+.logo-uploader-preview i{font-size:28px;color:var(--c-ink-20);}
+.logo-uploader-drop{flex:1;min-width:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:18px;border:2px dashed var(--c-ink-10);border-radius:14px;background:var(--surface-1);cursor:pointer;transition:border-color .15s ease,background .15s ease;}
+.logo-uploader-drop:hover,.logo-uploader-drop.is-drag{border-color:var(--c-accent);background:var(--c-accent-xl);}
+.logo-uploader-drop i{font-size:24px;color:var(--c-accent);}
+.logo-uploader-drop strong{font-size:13.5px;color:var(--c-ink);}
+.logo-uploader-drop span{font-size:11.5px;color:var(--c-ink-40);max-width:280px;}
 </style>
 @endpush
 
@@ -994,6 +1016,41 @@ function saveSignature() {
     const value = (hex.value || '').trim();
     if (!/^#[0-9a-fA-F]{6}$/.test(value)) return;
     color.value = value;
+  });
+
+  // Nuancier prédéfini
+  const swatches = document.querySelectorAll('.pdf-swatch');
+  const markActive = () => swatches.forEach((s) => s.classList.toggle('is-active', (s.dataset.color || '').toLowerCase() === (color.value || '').toLowerCase()));
+  swatches.forEach((sw) => sw.addEventListener('click', () => {
+    color.value = sw.dataset.color;
+    hex.value = sw.dataset.color;
+    markActive();
+  }));
+  color.addEventListener('input', markActive);
+  markActive();
+})();
+
+// Uploader de logo : clic / glisser-déposer + aperçu en direct
+(function initLogoUploader(){
+  const input = document.getElementById('logoInput');
+  const drop = document.getElementById('logoDrop');
+  const preview = document.getElementById('logoPreview');
+  if (!input || !drop) return;
+
+  const showPreview = (file) => {
+    if (!file || !preview || !file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (e) => { preview.innerHTML = '<img src="' + e.target.result + '" alt="logo">'; };
+    reader.readAsDataURL(file);
+  };
+
+  input.addEventListener('change', () => showPreview(input.files[0]));
+
+  ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('is-drag'); }));
+  ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('is-drag'); }));
+  drop.addEventListener('drop', (e) => {
+    const file = e.dataTransfer && e.dataTransfer.files[0];
+    if (file) { input.files = e.dataTransfer.files; showPreview(file); }
   });
 })();
 

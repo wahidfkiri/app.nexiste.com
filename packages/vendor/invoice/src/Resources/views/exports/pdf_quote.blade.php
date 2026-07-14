@@ -12,6 +12,7 @@
             'mono' => ['primary' => '#111827', 'soft' => '#f9fafb', 'accent' => '#4b5563', 'text' => '#111827', 'muted' => '#6b7280', 'border' => '#e5e7eb'],
         ];
         $palette = $themes[$theme] ?? $themes['ocean'];
+        if (!empty($branding['primary_color'])) { $palette['primary'] = $branding['primary_color']; $palette['accent'] = $branding['primary_color']; }
         $status = (string) ($quote->status ?? 'draft');
         $sym = $quote->currency_symbol ?? '';
         $money = fn ($v) => number_format((float) $v, 2, ',', ' ') . ' ' . $sym;

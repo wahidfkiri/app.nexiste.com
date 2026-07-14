@@ -2445,9 +2445,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeSidebar = () => sidebar?.classList.remove('open');
   const readSidebarCompactPreference = () => {
     try {
-      return window.localStorage.getItem(sidebarCompactStorageKey) === '1';
+      const value = window.localStorage.getItem(sidebarCompactStorageKey);
+      // Par défaut (aucune préférence enregistrée) : menu réduit.
+      return value === null ? true : value === '1';
     } catch (_) {
-      return false;
+      return true;
     }
   };
   const writeSidebarCompactPreference = (value) => {

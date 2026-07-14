@@ -31,5 +31,7 @@ window.InvoiceLang = Object.assign(window.InvoiceLang || {}, {
   invoiceDeleteTitle: @json(__('invoice::invoices.js.invoice_delete_title', ['number' => ':number'])),
   paymentDeleteTitle: @json(__('invoice::invoices.js.payment_delete_title')),
 });
+window.INVOICE_STATUS_LABELS = @json(__('invoice::invoices.status'));
+window.QUOTE_STATUS_LABELS = @json(__('invoice::invoices.quote_status'));
 </script>
 @endpush
