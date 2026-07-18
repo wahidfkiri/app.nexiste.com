@@ -48,6 +48,7 @@ return [
         'revenue' => 'الإيرادات السنوية',
         'potential_value' => 'القيمة المحتملة',
         'payment_term' => 'مهلة الدفع',
+        'currency' => 'العملة المفضّلة',
         'employee_count' => 'عدد الموظفين',
         'notes' => 'ملاحظات داخلية',
         'next_follow_up_at' => 'المتابعة القادمة في',
@@ -78,6 +79,7 @@ return [
         'search' => 'البحث عن عميل…',
         'source' => 'اختر…',
         'payment_term' => 'اختر…',
+        'currency' => 'عملة المستأجر الافتراضية',
         'import_dropzone' => 'CSV، XLSX حتى 10 ميغابايت',
     ],
 

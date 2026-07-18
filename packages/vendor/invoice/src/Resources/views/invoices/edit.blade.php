@@ -95,7 +95,16 @@
               </select>
             </div>
           </div>
-          <input type="hidden" name="currency" value="{{ $tenantCurrency }}">
+          <div class="col-6">
+            <div class="form-group">
+              <label class="form-label">{{ __('invoice::invoices.fields.currency') }}</label>
+              <select name="currency" id="currencySelect" class="form-control">
+                @foreach($currencies as $code => $cfg)
+                  <option value="{{ $code }}" {{ $code === strtoupper($invoice->currency ?? $tenantCurrency) ? 'selected' : '' }}>{{ $code }} — {{ $cfg['name'] ?? $code }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -222,11 +231,16 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
 
   InvLineItems.init({
-    currency: '{{ $tenantCurrency }}',
+    currency: '{{ strtoupper($invoice->currency ?? $tenantCurrency) }}',
     defaultTaxRate: {{ (float) $invoice->tax_rate }},
     withholdingRate: {{ (float) $invoice->withholding_tax_rate }},
     items: existingItems
   });
+
+  const currencySelect = document.getElementById('currencySelect');
+  if (currencySelect) {
+    currencySelect.addEventListener('change', () => InvLineItems.setCurrency(currencySelect.value));
+  }
 
   InvClientSearch.init('clientSearch', 'clientId', {
     suggestionsEl: 'clientSuggestions',
@@ -236,6 +250,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('clientInitials').textContent = (c.company_name || '?').substring(0, 2).toUpperCase();
       document.getElementById('clientName').textContent = c.company_name;
       document.getElementById('clientEmail').textContent = c.email || '';
+      if (c.currency && currencySelect) {
+        currencySelect.value = String(c.currency).toUpperCase();
+        InvLineItems.setCurrency(currencySelect.value);
+      }
     }
   });
 

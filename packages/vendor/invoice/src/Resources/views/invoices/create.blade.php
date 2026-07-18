@@ -102,7 +102,16 @@
               </select>
             </div>
           </div>
-          <input type="hidden" name="currency" value="{{ $tenantCurrency }}">
+          <div class="col-6">
+            <div class="form-group">
+              <label class="form-label">{{ __('invoice::invoices.fields.currency') }}</label>
+              <select name="currency" id="currencySelect" class="form-control">
+                @foreach($currencies as $code => $cfg)
+                  <option value="{{ $code }}" {{ $code === $tenantCurrency ? 'selected' : '' }}>{{ $code }} — {{ $cfg['name'] ?? $code }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -348,6 +357,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
   InvLineItems.init({ currency: '{{ $tenantCurrency }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
 
+  const currencySelect = document.getElementById('currencySelect');
+  if (currencySelect) {
+    currencySelect.addEventListener('change', () => InvLineItems.setCurrency(currencySelect.value));
+  }
+
   InvClientSearch.init('clientSearch', 'clientId', {
     suggestionsEl: 'clientSuggestions',
     onSelect: (c) => {
@@ -357,6 +371,11 @@ document.addEventListener('DOMContentLoaded', () => {
         email: c.email || '',
         search: c.company_name || '',
       });
+      // Devise préférée du client -> pré-remplit la devise du document.
+      if (c.currency && currencySelect) {
+        currencySelect.value = String(c.currency).toUpperCase();
+        InvLineItems.setCurrency(currencySelect.value);
+      }
       clientIdInput?.dispatchEvent(new Event('change', { bubbles: true }));
     }
   });

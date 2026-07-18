@@ -48,6 +48,7 @@ return [
         'revenue' => 'Annual revenue',
         'potential_value' => 'Potential value',
         'payment_term' => 'Payment term',
+        'currency' => 'Preferred currency',
         'employee_count' => 'Number of employees',
         'notes' => 'Internal notes',
         'next_follow_up_at' => 'Next follow-up on',
@@ -78,6 +79,7 @@ return [
         'search' => 'Search a client…',
         'source' => 'Select…',
         'payment_term' => 'Select…',
+        'currency' => 'Tenant default currency',
         'import_dropzone' => 'CSV, XLSX up to 10 MB',
     ],
 

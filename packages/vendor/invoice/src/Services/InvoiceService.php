@@ -34,6 +34,20 @@ class InvoiceService
         return strtoupper((string) config('invoice.default_currency', 'EUR'));
     }
 
+    /**
+     * Devise à appliquer au document : le choix de l'utilisateur (validé contre
+     * la liste des devises configurées), sinon repli sur la devise du tenant.
+     */
+    protected function resolveCurrency($input, int $tenantId): string
+    {
+        $code = strtoupper(trim((string) ($input ?? '')));
+        if ($code !== '' && array_key_exists($code, config('invoice.currencies', []))) {
+            return $code;
+        }
+
+        return self::tenantCurrency($tenantId);
+    }
+
     // Numerotation
 
     public function generateInvoiceNumber(int $tenantId): string
@@ -94,8 +108,7 @@ class InvoiceService
     {
         return DB::transaction(function () use ($data) {
             $data['tenant_id'] = $data['tenant_id'] ?? auth()->user()->tenant_id;
-            $tenant = Tenant::find($data['tenant_id']);
-            $data['currency'] = $tenant->currency ?: self::tenantCurrency($data['tenant_id']);
+            $data['currency'] = $this->resolveCurrency($data['currency'] ?? null, (int) $data['tenant_id']);
             $data['number']    = $this->generateInvoiceNumber($data['tenant_id']);
             $data['user_id']   = auth()->id();
 
@@ -121,12 +134,8 @@ class InvoiceService
         return DB::transaction(function () use ($invoice, $data) {
             $items = $data['items'] ?? [];
             unset($data['items']);
-            unset($data['exchange_rate']);
-            // Devise unique liée au tenant : on réaligne toujours la facture sur
-            // la devise principale (paramètres généraux) au lieu de la figer à
-            // la création. Ainsi l'affichage, le stockage et le PDF restent cohérents.
-            $tenant = Tenant::find($invoice->tenant_id);
-            $data['currency'] = $tenant?->currency ?: self::tenantCurrency($invoice->tenant_id);
+            // Devise choisie sur le document (repli sur la devise du tenant).
+            $data['currency'] = $this->resolveCurrency($data['currency'] ?? $invoice->currency, (int) $invoice->tenant_id);
 
             $invoice->update($data);
             $this->syncItems($invoice, $items);
@@ -145,8 +154,7 @@ class InvoiceService
     {
         return DB::transaction(function () use ($data) {
             $data['tenant_id'] = $data['tenant_id'] ?? auth()->user()->tenant_id;
-            $tenant = Tenant::find($data['tenant_id']);
-            $data['currency'] = $tenant->currency ?: self::tenantCurrency($data['tenant_id']);
+            $data['currency'] = $this->resolveCurrency($data['currency'] ?? null, (int) $data['tenant_id']);
             $data['number']    = $this->generateQuoteNumber($data['tenant_id']);
             $data['user_id']   = auth()->id();
 
@@ -172,10 +180,8 @@ class InvoiceService
         return DB::transaction(function () use ($quote, $data) {
             $items = $data['items'] ?? [];
             unset($data['items']);
-            unset($data['exchange_rate']);
-            // Devise unique liée au tenant (voir updateInvoice).
-            $tenant = Tenant::find($quote->tenant_id);
-            $data['currency'] = $tenant?->currency ?: self::tenantCurrency($quote->tenant_id);
+            // Devise choisie sur le document (repli sur la devise du tenant).
+            $data['currency'] = $this->resolveCurrency($data['currency'] ?? $quote->currency, (int) $quote->tenant_id);
 
             $quote->update($data);
             $this->syncQuoteItems($quote, $items);
@@ -258,12 +264,14 @@ class InvoiceService
 
     public function addPayment(Invoice $invoice, array $data): Payment
     {
-        $tenant = Tenant::find($invoice->tenant_id);
-        $data['currency'] = $tenant->currency ?: self::tenantCurrency($tenant->id);
+        // Un paiement est libellé dans la devise de la facture.
+        $rate = (float) ($invoice->exchange_rate ?: 1);
+        $data['currency'] = $invoice->currency ?: self::tenantCurrency((int) $invoice->tenant_id);
+        $data['exchange_rate'] = $rate;
         $data['tenant_id']  = $invoice->tenant_id;
         $data['invoice_id'] = $invoice->id;
         $data['user_id']    = auth()->id();
-        $data['amount_base_currency'] = $data['amount'];
+        $data['amount_base_currency'] = (float) $data['amount'] * $rate;
 
         return Payment::create($data);
     }

@@ -44,7 +44,7 @@
           <div class="col-4"><div class="form-group"><label class="form-label">{{ $common['reference'] }}</label><input type="text" name="reference" class="form-control"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.issue_date') }} <span class="required">*</span></label><input type="date" name="issue_date" class="form-control" value="{{ date('Y-m-d') }}" required></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.valid_until') }}</label><input type="date" name="valid_until" class="form-control" value="{{ now()->addDays(config('invoice.quote_validity_days', 30))->format('Y-m-d') }}"></div></div>
-          <input type="hidden" name="currency" value="{{ $tenantCurrency }}">
+          <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.currency') }}</label><select name="currency" id="currencySelect" class="form-control">@foreach($currencies as $code => $cfg)<option value="{{ $code }}" {{ $code === $tenantCurrency ? 'selected' : '' }}>{{ $code }} — {{ $cfg['name'] ?? $code }}</option>@endforeach</select></div></div>
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -110,7 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
 
   InvLineItems.init({ currency: '{{ $tenantCurrency }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
-  InvClientSearch.init('clientSearch', 'clientId', { suggestionsEl: 'clientSuggestions' });
+  const currencySelect = document.getElementById('currencySelect');
+  if (currencySelect) currencySelect.addEventListener('change', () => InvLineItems.setCurrency(currencySelect.value));
+  InvClientSearch.init('clientSearch', 'clientId', {
+    suggestionsEl: 'clientSuggestions',
+    onSelect: (c) => {
+      if (c.currency && currencySelect) { currencySelect.value = String(c.currency).toUpperCase(); InvLineItems.setCurrency(currencySelect.value); }
+    }
+  });
   ajaxForm('quoteForm');
 });
 </script>

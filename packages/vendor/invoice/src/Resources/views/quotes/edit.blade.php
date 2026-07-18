@@ -44,7 +44,7 @@
           <div class="col-4"><div class="form-group"><label class="form-label">{{ $common['reference'] }}</label><input type="text" name="reference" class="form-control" value="{{ $quote->reference }}"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.issue_date') }}</label><input type="date" name="issue_date" class="form-control" value="{{ optional($quote->issue_date)->format('Y-m-d') }}"></div></div>
           <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.valid_until') }}</label><input type="date" name="valid_until" class="form-control" value="{{ optional($quote->valid_until)->format('Y-m-d') }}"></div></div>
-          <input type="hidden" name="currency" value="{{ $quote->currency ?? $tenantCurrency }}">
+          <div class="col-4"><div class="form-group"><label class="form-label">{{ __('invoice::invoices.fields.currency') }}</label><select name="currency" id="currencySelect" class="form-control">@foreach($currencies as $code => $cfg)<option value="{{ $code }}" {{ $code === strtoupper($quote->currency ?? $tenantCurrency) ? 'selected' : '' }}>{{ $code }} — {{ $cfg['name'] ?? $code }}</option>@endforeach</select></div></div>
           <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
@@ -127,11 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
 
   InvLineItems.init({
-    currency: '{{ $quote->currency }}',
+    currency: '{{ strtoupper($quote->currency ?? $tenantCurrency) }}',
     defaultTaxRate: {{ (float) $quote->tax_rate }},
     withholdingRate: {{ (float) $quote->withholding_tax_rate }},
     items: existingItems
   });
+
+  const currencySelect = document.getElementById('currencySelect');
+  if (currencySelect) currencySelect.addEventListener('change', () => InvLineItems.setCurrency(currencySelect.value));
 
   ajaxForm('quoteForm');
 });

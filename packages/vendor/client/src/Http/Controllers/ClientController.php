@@ -265,7 +265,7 @@ class ClientController extends Controller
     public function search(Request $request): JsonResponse
     {
         $term = $request->string('q')->trim()->toString();
-        $clients = Client::search($term)->limit(10)->get(['id', 'company_name', 'email', 'phone']);
+        $clients = Client::search($term)->limit(10)->get(['id', 'company_name', 'email', 'phone', 'currency']);
 
         return response()->json([
             'success' => true,

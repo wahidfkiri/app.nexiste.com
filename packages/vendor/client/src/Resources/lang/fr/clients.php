@@ -48,6 +48,7 @@ return [
         'revenue' => 'Chiffre d\'affaires annuel',
         'potential_value' => 'Valeur potentielle',
         'payment_term' => 'Délai de paiement',
+        'currency' => 'Devise préférée',
         'employee_count' => 'Nombre d\'employés',
         'notes' => 'Notes internes',
         'next_follow_up_at' => 'Prochain suivi le',
@@ -78,6 +79,7 @@ return [
         'search' => 'Rechercher un client…',
         'source' => 'Sélectionner…',
         'payment_term' => 'Sélectionner…',
+        'currency' => 'Devise du tenant par défaut',
         'import_dropzone' => 'CSV, XLSX jusqu\'à 10 Mo',
     ],
 

@@ -47,6 +47,7 @@ class Client extends Model
         'revenue',
         'potential_value',
         'payment_term',
+        'currency',
         'industry',
         'employee_count',
         'notes',

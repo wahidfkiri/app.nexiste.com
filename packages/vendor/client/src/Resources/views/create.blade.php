@@ -173,6 +173,10 @@
           <label class="form-label">{{ __('client::clients.fields.payment_term') }}</label>
           <select name="payment_term" class="form-control"><option value="">{{ __('client::clients.placeholders.payment_term') }}</option>@foreach($paymentTerms as $value => $label)<option value="{{ $value }}" {{ $value === '30j' ? 'selected' : '' }}>{{ $label }}</option>@endforeach</select>
         </div>
+        <div class="form-group">
+          <label class="form-label">{{ __('client::clients.fields.currency') }}</label>
+          <select name="currency" class="form-control"><option value="">{{ __('client::clients.placeholders.currency') }}</option>@foreach(config('invoice.currencies', []) as $code => $cfg)<option value="{{ $code }}" {{ old('currency') === $code ? 'selected' : '' }}>{{ $code }} — {{ $cfg['name'] ?? $code }}</option>@endforeach</select>
+        </div>
         <div class="form-group"><label class="form-label">{{ __('client::clients.fields.employee_count') }}</label><input type="number" name="employee_count" class="form-control" placeholder="{{ __('client::clients.placeholders.employee_count') }}" min="0"></div>
       </div>
 

@@ -656,7 +656,13 @@ const InvLineItems = (() => {
   function _setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
   function _esc(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
 
-  return { init, addLine, removeLine, recalc, clear, load, getData };
+  function setCurrency(code) {
+    if (!code) return;
+    currency = String(code).toUpperCase();
+    recalc();
+  }
+
+  return { init, addLine, removeLine, recalc, clear, load, getData, setCurrency };
 })();
 window.InvLineItems = InvLineItems;
 

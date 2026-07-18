@@ -60,6 +60,7 @@ class ClientRequest extends FormRequest
             'revenue' => 'nullable|numeric|min:0',
             'potential_value' => 'nullable|numeric|min:0',
             'payment_term' => 'nullable|in:immediate,15j,30j,45j,60j',
+            'currency' => 'nullable|string|size:3',
             'industry' => 'nullable|string|max:100',
             'employee_count' => 'nullable|integer|min:0',
             'assigned_to' => 'nullable|exists:users,id',
