@@ -787,6 +787,7 @@
       </div>
 
       <div class="crm-header-actions">
+        @if(Route::has('locale.update'))
         <form method="POST" action="{{ route('locale.update') }}" class="header-locale-form">
           @csrf
           <i class="fas fa-globe header-locale-icon" aria-hidden="true"></i>
@@ -796,6 +797,7 @@
             @endforeach
           </select>
         </form>
+        @endif
         <button class="btn-icon" data-modal-open="myAppsModal" aria-label="{{ __('common.my_apps') }}"><i class="fas fa-th-large"></i></button>
         <div class="header-notif-wrap" id="globalNotifWrap">
           <button class="btn-icon" id="globalNotifBtn" aria-label="Notifications" aria-expanded="false" type="button">
