@@ -3,9 +3,32 @@
 @php
   $reportsPage = trans('invoice::invoices.pages.reports_index');
   $common = trans('invoice::invoices.common');
-  $tenantCurrency = strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
-  $currencyCode = $tenantCurrency;
-  $currencySymbol = config("invoice.currencies.{$tenantCurrency}.symbol", $tenantCurrency);
+
+  // Devise de base (paramètres généraux) utilisée pour les totaux consolidés.
+  $baseCurrency = $baseCurrency ?? strtoupper((string) (auth()->user()->tenant->currency ?: config('invoice.default_currency', 'EUR')));
+  $multiCurrency = $multiCurrency ?? false;
+  $ratesConfigured = $ratesConfigured ?? false;
+
+  // Formateur monétaire (repli sur la devise de base).
+  $fmt = fn ($v, $code = null, $dec = 0) => \Vendor\Invoice\Support\Money::format((float) $v, $code ?: $baseCurrency, $dec);
+
+  // Ventilation par devise -> "12 500 € · 8 300 $ · 45 000 DH" (uniquement en multi-devise).
+  $chips = function (array $by) use ($multiCurrency) {
+    if (!$multiCurrency) { return ''; }
+    $parts = [];
+    foreach ($by as $code => $amount) {
+      if ((float) $amount == 0.0) { continue; }
+      $parts[] = \Vendor\Invoice\Support\Money::format((float) $amount, (string) $code, 0);
+    }
+    return implode(' · ', $parts);
+  };
+
+  $eq = $multiCurrency ? '≈ ' : '';
+  $equivLabel = $multiCurrency ? ' (' . ($reportsPage['equivalent'] ?? 'équivalent') . ')' : '';
+
+  $kpiRevenueYear = $kpiRevenueYear ?? ['base' => $stats['revenue']['year'] ?? 0, 'by' => []];
+  $kpiCollected   = $kpiCollected   ?? ['base' => $stats['invoices']['paid_total'] ?? 0, 'by' => []];
+  $kpiDue         = $kpiDue         ?? ['base' => $stats['invoices']['due_total'] ?? 0, 'by' => []];
 @endphp
 
 @section('title', __('invoice::invoices.reports'))
@@ -15,6 +38,14 @@
   <i class="fas fa-chevron-right" style="font-size:10px;color:var(--c-ink-20)"></i>
   <span style="color:var(--c-ink)">{{ __('invoice::invoices.reports') }}</span>
 @endsection
+
+@push('styles')
+<style>
+  .stat-breakdown{margin-top:4px;font-size:11px;line-height:1.5;color:var(--c-ink-40);word-break:break-word;}
+  .report-currency-note{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 14px;border:1px solid var(--c-ink-05);border-radius:12px;background:var(--surface-1);font-size:12.5px;color:var(--c-ink-60);}
+  .report-currency-note i{color:var(--c-accent);}
+</style>
+@endpush
 
 @section('content')
 
@@ -54,27 +85,44 @@
   </div>
 </div>
 
+@if($multiCurrency)
+  @if($ratesConfigured)
+    <div class="report-currency-note">
+      <i class="fas fa-circle-info"></i>
+      <span>{{ $reportsPage['multi_currency_note'] }} ({{ $baseCurrency }})</span>
+    </div>
+  @else
+    <div class="report-currency-note" style="border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08);color:#b45309;">
+      <i class="fas fa-triangle-exclamation" style="color:#d97706;"></i>
+      <span>{{ $reportsPage['rates_missing_note'] }}</span>
+    </div>
+  @endif
+@endif
+
 {{-- KPI Stats --}}
 <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);">
   <div class="stat-card">
     <div class="stat-icon" style="background:var(--c-accent-lt);color:var(--c-accent)"><i class="fas fa-chart-line"></i></div>
     <div class="stat-body">
-      <div class="stat-value" id="rCA">{{ number_format($stats['revenue']['year'] ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div>
-      <div class="stat-label">{{ $reportsPage['annual_revenue'] }}</div>
+      <div class="stat-value" id="rCA">{{ $eq }}{{ $fmt($kpiRevenueYear['base']) }}</div>
+      <div class="stat-label">{{ $reportsPage['annual_revenue'] }}{{ $equivLabel }}</div>
+      @if($multiCurrency && $chips($kpiRevenueYear['by']))<div class="stat-breakdown">{{ $chips($kpiRevenueYear['by']) }}</div>@endif
     </div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:var(--c-success-lt);color:var(--c-success)"><i class="fas fa-circle-check"></i></div>
     <div class="stat-body">
-      <div class="stat-value" id="rPaid">{{ number_format($stats['invoices']['paid_total'] ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div>
-      <div class="stat-label">{{ $reportsPage['collected'] }}</div>
+      <div class="stat-value" id="rPaid">{{ $eq }}{{ $fmt($kpiCollected['base']) }}</div>
+      <div class="stat-label">{{ $reportsPage['collected'] }}{{ $equivLabel }}</div>
+      @if($multiCurrency && $chips($kpiCollected['by']))<div class="stat-breakdown">{{ $chips($kpiCollected['by']) }}</div>@endif
     </div>
   </div>
   <div class="stat-card">
     <div class="stat-icon" style="background:var(--c-danger-lt);color:var(--c-danger)"><i class="fas fa-hourglass-half"></i></div>
     <div class="stat-body">
-      <div class="stat-value" id="rDue">{{ number_format($stats['invoices']['due_total'] ?? 0, 0, ',', ' ') }} {{ $currencySymbol }}</div>
-      <div class="stat-label">{{ $reportsPage['to_collect'] }}</div>
+      <div class="stat-value" id="rDue">{{ $eq }}{{ $fmt($kpiDue['base']) }}</div>
+      <div class="stat-label">{{ $reportsPage['to_collect'] }}{{ $equivLabel }}</div>
+      @if($multiCurrency && $chips($kpiDue['by']))<div class="stat-breakdown">{{ $chips($kpiDue['by']) }}</div>@endif
     </div>
   </div>
   <div class="stat-card">
@@ -102,13 +150,13 @@
 
 <div class="row" style="align-items:flex-start;">
 
-  {{-- Graphique CA mensuel --}}
+  {{-- Graphique CA mensuel (en devise de base) --}}
   <div class="col-8" style="padding:0 12px 0 0;">
     <div class="chart-card">
       <div class="chart-card-header">
         <span class="chart-card-title">
           <i class="fas fa-chart-bar" style="color:var(--c-accent);margin-right:8px;"></i>
-          {{ $reportsPage['monthly_revenue'] }}
+          {{ $reportsPage['monthly_revenue'] }}@if($multiCurrency) <span style="font-weight:var(--fw-normal);color:var(--c-ink-40);font-size:12px;">({{ $baseCurrency }})</span>@endif
         </span>
         <div style="display:flex;gap:12px;font-size:12px;">
           <span style="display:flex;align-items:center;gap:6px;color:var(--c-ink-40);">
@@ -134,24 +182,24 @@
           @endphp
           <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
             <div style="display:flex;gap:3px;align-items:flex-end;width:100%;justify-content:center;">
-              <div style="width:45%;height:{{ $revH }}px;background:var(--c-accent);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ $month }}: {{ number_format($rev,0,',',' ') }} {{ $currencySymbol }}"></div>
-              <div style="width:45%;height:{{ $paidH }}px;background:var(--c-success);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ __('invoice::invoices.pages.reports_index.month_paid_title', ['month' => $month, 'amount' => number_format($paid,0,',',' ').$currencySymbol]) }}"></div>
+              <div style="width:45%;height:{{ $revH }}px;background:var(--c-accent);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ $month }}: {{ $fmt($rev) }}"></div>
+              <div style="width:45%;height:{{ $paidH }}px;background:var(--c-success);border-radius:3px 3px 0 0;opacity:.8;transition:height .6s;" title="{{ __('invoice::invoices.pages.reports_index.month_paid_title', ['month' => $month, 'amount' => $fmt($paid)]) }}"></div>
             </div>
             <div style="font-size:10px;color:var(--c-ink-40);">{{ $month }}</div>
           </div>
           @endforeach
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px;color:var(--c-ink-40);">
-          <span>{{ $reportsPage['billed_revenue'] }} : <strong style="color:var(--c-ink);">{{ number_format(array_sum($monthlyRevenue ?? [0]), 0, ',', ' ') }} {{ $currencySymbol }}</strong></span>
-          <span>{{ $reportsPage['collected'] }} : <strong style="color:var(--c-success);">{{ number_format(array_sum($monthlyPaid ?? [0]), 0, ',', ' ') }} {{ $currencySymbol }}</strong></span>
+          <span>{{ $reportsPage['billed_revenue'] }} : <strong style="color:var(--c-ink);">{{ $fmt(array_sum($monthlyRevenue ?? [0])) }}</strong></span>
+          <span>{{ $reportsPage['collected'] }} : <strong style="color:var(--c-success);">{{ $fmt(array_sum($monthlyPaid ?? [0])) }}</strong></span>
         </div>
       </div>
     </div>
 
-    {{-- Tableau récap par mois --}}
+    {{-- Tableau récap par mois (en devise de base) --}}
     <div class="table-wrapper">
       <div class="table-header">
-        <span class="table-title">{{ $reportsPage['monthly_summary'] }}</span>
+        <span class="table-title">{{ $reportsPage['monthly_summary'] }}@if($multiCurrency) <span style="font-weight:var(--fw-normal);color:var(--c-ink-40);font-size:12px;">({{ $baseCurrency }})</span>@endif</span>
       </div>
       <table class="crm-table">
         <thead>
@@ -176,8 +224,8 @@
           <tr>
             <td style="font-weight:var(--fw-medium);">{{ $month }} {{ date('Y') }}</td>
             <td class="text-right">{{ $count }}</td>
-            <td class="text-right fw-semi font-mono">{{ number_format($rev, 2, ',', ' ') }} {{ $currencySymbol }}</td>
-            <td class="text-right fw-semi font-mono" style="color:var(--c-success);">{{ number_format($paid, 2, ',', ' ') }} {{ $currencySymbol }}</td>
+            <td class="text-right fw-semi font-mono">{{ $fmt($rev, null, 2) }}</td>
+            <td class="text-right fw-semi font-mono" style="color:var(--c-success);">{{ $fmt($paid, null, 2) }}</td>
             <td class="text-right">
               <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
                 <div style="width:50px;height:5px;background:var(--c-ink-05);border-radius:99px;overflow:hidden;">
@@ -186,7 +234,7 @@
                 <span>{{ $rate }}%</span>
               </div>
             </td>
-            <td class="text-right" style="{{ $overdue > 0 ? 'color:var(--c-danger);' : 'color:var(--c-ink-40);' }}">{{ $overdue > 0 ? number_format($overdue, 2, ',', ' ').$currencySymbol : '—' }}</td>
+            <td class="text-right" style="{{ $overdue > 0 ? 'color:var(--c-danger);' : 'color:var(--c-ink-40);' }}">{{ $overdue > 0 ? $fmt($overdue, null, 2) : '—' }}</td>
           </tr>
           @endforeach
         </tbody>
@@ -194,13 +242,13 @@
           <tr style="background:var(--surface-1);font-weight:var(--fw-semi);">
             <td>{{ __('invoice::invoices.pages.reports_index.year_total', ['year' => date('Y')]) }}</td>
             <td class="text-right">{{ array_sum($monthlyCount ?? [0]) }}</td>
-            <td class="text-right font-mono">{{ number_format(array_sum($monthlyRevenue ?? [0]), 2, ',', ' ') }} {{ $currencySymbol }}</td>
-            <td class="text-right font-mono" style="color:var(--c-success);">{{ number_format(array_sum($monthlyPaid ?? [0]), 2, ',', ' ') }} {{ $currencySymbol }}</td>
+            <td class="text-right font-mono">{{ $fmt(array_sum($monthlyRevenue ?? [0]), null, 2) }}</td>
+            <td class="text-right font-mono" style="color:var(--c-success);">{{ $fmt(array_sum($monthlyPaid ?? [0]), null, 2) }}</td>
             <td class="text-right">
               @php $tot = array_sum($monthlyRevenue ?? [0]); $totP = array_sum($monthlyPaid ?? [0]); @endphp
               {{ $tot > 0 ? round($totP / $tot * 100) : 0 }}%
             </td>
-            <td class="text-right" style="color:var(--c-danger);">{{ number_format(array_sum($monthlyOverdue ?? [0]), 2, ',', ' ') }} {{ $currencySymbol }}</td>
+            <td class="text-right" style="color:var(--c-danger);">{{ $fmt(array_sum($monthlyOverdue ?? [0]), null, 2) }}</td>
           </tr>
         </tfoot>
       </table>
@@ -243,12 +291,12 @@
       </div>
     </div>
 
-    {{-- Top clients --}}
+    {{-- Top clients (classement en devise de base) --}}
     <div class="chart-card" style="margin-bottom:16px;">
       <div class="chart-card-header">
         <span class="chart-card-title">
           <i class="fas fa-trophy" style="color:var(--c-warning);margin-right:8px;"></i>
-          {{ $reportsPage['top_clients'] }}
+          {{ $reportsPage['top_clients'] }}@if($multiCurrency) <span style="font-weight:var(--fw-normal);color:var(--c-ink-40);font-size:12px;">({{ $baseCurrency }})</span>@endif
         </span>
       </div>
       <div class="chart-body" style="padding:0;">
@@ -260,7 +308,7 @@
             <div style="font-weight:var(--fw-medium);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $c->company_name }}</div>
             <div style="font-size:11.5px;color:var(--c-ink-40);">{{ __('invoice::invoices.pages.reports_index.invoice_count_suffix', ['count' => $c->invoice_count]) }}</div>
           </div>
-          <div style="font-weight:var(--fw-semi);font-size:13px;font-family: "DM Sans", sans-serif;color:var(--c-ink);">{{ number_format($c->total_revenue, 0, ',', ' ') }} {{ $currencySymbol }}</div>
+          <div style="font-weight:var(--fw-semi);font-size:13px;font-family: "DM Sans", sans-serif;color:var(--c-ink);">{{ $fmt($c->total_revenue) }}</div>
         </div>
         @empty
         <div style="padding:20px;text-align:center;color:var(--c-ink-40);font-size:13px;">{{ $common['no_data'] }}</div>
@@ -268,12 +316,12 @@
       </div>
     </div>
 
-    {{-- Modes de paiement --}}
+    {{-- Modes de paiement (en devise de base) --}}
     <div class="chart-card">
       <div class="chart-card-header">
         <span class="chart-card-title">
           <i class="fas fa-credit-card" style="color:var(--c-accent);margin-right:8px;"></i>
-          {{ $reportsPage['payment_methods'] }}
+          {{ $reportsPage['payment_methods'] }}@if($multiCurrency) <span style="font-weight:var(--fw-normal);color:var(--c-ink-40);font-size:12px;">({{ $baseCurrency }})</span>@endif
         </span>
       </div>
       <div class="chart-body">
@@ -285,7 +333,7 @@
           <div class="donut-legend-item">
             <div class="donut-dot" style="background:{{ $payColors[$i % count($payColors)] }};"></div>
             <span class="donut-legend-label">{{ config("invoice.payment_methods.{$pm->payment_method}", $pm->payment_method) }}</span>
-            <span class="donut-legend-value">{{ number_format($pm->total, 0, ',', ' ') }} {{ $currencySymbol }}</span>
+            <span class="donut-legend-value">{{ $fmt($pm->total) }}</span>
           </div>
           @empty
           <div style="text-align:center;color:var(--c-ink-40);font-size:13px;">{{ $common['no_data'] }}</div>

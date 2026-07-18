@@ -40,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_login_at',
         'last_login_ip',
         'status',
+        'locale',
         'auth_provider',
         'auth_provider_id',
     ];

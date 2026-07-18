@@ -86,6 +86,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Supported Locales
+    |--------------------------------------------------------------------------
+    |
+    | The list of locales the interface can be switched to, and the subset
+    | that must be rendered right-to-left (RTL). Used by the SetLocale
+    | middleware, the global settings selector and the layouts.
+    |
+    */
+
+    'supported_locales' => ['fr', 'en', 'ar'],
+
+    'rtl_locales' => ['ar'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------
     |

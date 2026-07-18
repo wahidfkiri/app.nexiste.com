@@ -1,0 +1,104 @@
+/* ==========================================================================
+   RTL overrides (applied only when <html dir="rtl">, i.e. Arabic).
+   The browser already mirrors text direction and logical alignment; these
+   rules fix the custom components that rely on physical (left/right) CSS.
+   ========================================================================== */
+
+[dir="rtl"] body {
+    text-align: right;
+}
+
+/* ==========================================================================
+   Main app shell (crm-layout): the fixed sidebar moves to the RIGHT in RTL,
+   while the sidebar's own content stays LTR (the <aside> keeps dir="ltr").
+   Selectors are specific enough to beat the layout's inline <style> rules.
+   ========================================================================== */
+
+/* Sidebar pinned to the right edge */
+[dir="rtl"] .crm-layout .crm-sidebar {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 1px solid rgba(148, 163, 184, .16);
+    box-shadow: -18px 0 48px rgba(2, 6, 23, .28);
+    text-align: left;
+}
+
+/* Main content shifts to leave room for the right sidebar */
+[dir="rtl"] .crm-layout .crm-main {
+    margin-left: 0;
+    margin-right: var(--sidebar-w, 260px);
+}
+
+/* Fixed header offset follows the sidebar to the right */
+[dir="rtl"] .crm-layout > .crm-main > .crm-header {
+    left: 0;
+    right: var(--sidebar-w, 260px);
+}
+
+/* Mobile: sidebar slides in from the right, header/content go full width */
+@media (max-width: 1024px) {
+    [dir="rtl"] .crm-sidebar { transform: translateX(100%); }
+    [dir="rtl"] .crm-sidebar.open { transform: translateX(0); }
+    [dir="rtl"] .crm-layout .crm-main { margin-right: 0; }
+    [dir="rtl"] .crm-layout > .crm-main > .crm-header { right: 0; }
+}
+
+/* Generic text alignment */
+[dir="rtl"] .text-left { text-align: right !important; }
+[dir="rtl"] .text-right { text-align: left !important; }
+
+/* --- Dashboard tables ------------------------------------------------------ */
+[dir="rtl"] .dashboard-page table.crm thead th,
+[dir="rtl"] .dashboard-page table.crm tbody td {
+    text-align: right;
+}
+
+/* Cards / decorative circles anchored to a physical side */
+[dir="rtl"] .dashboard-page .stat-card::after { right: auto; left: -40px; }
+[dir="rtl"] .dashboard-page .command-hero::before { right: auto; left: -80px; }
+[dir="rtl"] .dashboard-page .command-hero::after { left: auto; right: 30%; }
+[dir="rtl"] .dashboard-page .hero-metric::before {
+    background: linear-gradient(270deg, var(--primary-light), transparent);
+}
+[dir="rtl"] .dashboard-page .page-eyebrow::before {
+    background: linear-gradient(270deg, var(--primary), transparent);
+}
+
+/* Hover translations must move toward the reading edge (left in RTL) */
+[dir="rtl"] .dashboard-page .integ-card:hover { transform: translateX(-4px); }
+
+/* --- Global settings header search ---------------------------------------- */
+[dir="rtl"] .global-search-wrap input { padding-left: 12px; padding-right: 36px; }
+[dir="rtl"] .global-search-wrap .fa-search { left: auto; right: 12px; }
+[dir="rtl"] .global-search-suggest { left: 0; right: 0; }
+
+/* --- Billing / onboarding topbars ----------------------------------------- */
+[dir="rtl"] .billing-brand img,
+[dir="rtl"] .billing-logout i { transform: scaleX(-1); }
+
+/* Font-awesome directional icons (arrows/chevrons) should be mirrored */
+[dir="rtl"] .fa-arrow-left,
+[dir="rtl"] .fa-arrow-right,
+[dir="rtl"] .fa-chevron-left,
+[dir="rtl"] .fa-chevron-right,
+[dir="rtl"] .fa-angle-left,
+[dir="rtl"] .fa-angle-right,
+[dir="rtl"] .fa-long-arrow-alt-left,
+[dir="rtl"] .fa-long-arrow-alt-right {
+    transform: scaleX(-1);
+}
+
+/* Forms: keep numeric / tel / email inputs left-to-right for readability */
+[dir="rtl"] input[type="email"],
+[dir="rtl"] input[type="tel"],
+[dir="rtl"] input[type="number"],
+[dir="rtl"] input[type="url"],
+[dir="rtl"] input[dir="ltr"] {
+    direction: ltr;
+    text-align: right;
+}
+
+/* List bullets / paddings that used physical left */
+[dir="rtl"] ul,
+[dir="rtl"] ol { padding-right: 1.2rem; padding-left: 0; }

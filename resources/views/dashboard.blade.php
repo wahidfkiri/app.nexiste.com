@@ -69,7 +69,7 @@
   <section class="nd-welcome-bar">
     <div class="nd-welcome-copy">
       <span>{{ data_get($dashboard, 'meta.date') }}</span>
-      <h1>Bienvenue, {{ data_get($dashboard, 'meta.user.name') }}</h1>
+      <h1>{{ __('dashboard.welcome', ['name' => data_get($dashboard, 'meta.user.name')]) }}</h1>
     </div>
 
     <div class="nd-actions nd-welcome-actions">

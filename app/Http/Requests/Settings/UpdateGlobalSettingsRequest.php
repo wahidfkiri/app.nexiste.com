@@ -52,7 +52,7 @@ class UpdateGlobalSettingsRequest extends SecureFormRequest
             ],
             'tenant_address' => ['nullable', 'string', 'max:600'],
             'tenant_timezone' => ['required', 'string', Rule::in(timezone_identifiers_list())],
-            'tenant_locale' => ['required', 'string', Rule::in(['fr', 'en'])],
+            'tenant_locale' => ['required', 'string', Rule::in(config('app.supported_locales', ['fr', 'en', 'ar']))],
             'tenant_currency' => ['required', 'string', Rule::in($currencies)],
 
             'company_country' => ['nullable', 'string', Rule::in($countries)],

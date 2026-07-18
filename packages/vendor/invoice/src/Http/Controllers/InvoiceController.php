@@ -579,36 +579,80 @@ class InvoiceController extends Controller
     {
         $stats = $this->service->getStats();
         $tenantId = auth()->user()->tenant_id;
+        $baseCurrency = \Vendor\Invoice\Services\InvoiceService::tenantCurrency($tenantId);
 
         $year = (int) request('year', now()->year);
 
+        // KPI : total consolidé en devise de base (SUM(x * exchange_rate) — le taux
+        // est gelé sur chaque document, défaut 1) + ventilation par devise.
+        $kpiRevenueYear = $this->currencyBreakdown(
+            fn () => Invoice::byStatus('paid')->whereYear('payment_date', $year),
+            'total'
+        );
+        $kpiCollected = $this->currencyBreakdown(
+            fn () => Invoice::byStatus('paid'),
+            'total'
+        );
+        $kpiDue = $this->currencyBreakdown(
+            fn () => Invoice::whereNotIn('status', ['paid', 'cancelled']),
+            'amount_due'
+        );
+
+        // Devises réellement présentes → bascule automatique en mode multi-devise.
+        $currenciesPresent = Invoice::whereNotIn('status', ['cancelled'])
+            ->select('currency')->distinct()->pluck('currency')
+            ->filter()->map(fn ($c) => strtoupper((string) $c))->unique()->values()->all();
+        $multiCurrency = count($currenciesPresent) > 1;
+
+        // Les totaux consolidés (SUM(x*exchange_rate)) ne sont fiables que si un
+        // taux de change positif est défini pour chaque devise étrangère présente.
+        // Sinon on prévient : seule la ventilation par devise reste exacte.
+        $rateMap = \Vendor\Invoice\Models\Currency::query()->get(['code', 'exchange_rate'])
+            ->keyBy(fn ($r) => strtoupper((string) $r->code))
+            ->map(fn ($r) => (float) $r->exchange_rate);
+        $ratesConfigured = $multiCurrency && collect($currenciesPresent)
+            ->reject(fn ($c) => $c === $baseCurrency)
+            ->every(fn ($c) => ($rateMap[$c] ?? 0) > 0);
+
+        // Séries mensuelles converties en devise de base pour un graphique lisible.
         $monthlyRevenue = [];
         $monthlyPaid = [];
         $monthlyCount = [];
         $monthlyOverdue = [];
         for ($m = 1; $m <= 12; $m++) {
-            $monthlyRevenue[$m] = (float) Invoice::whereYear('issue_date', $year)->whereMonth('issue_date', $m)->sum('total');
-            $monthlyPaid[$m] = (float) Payment::whereYear('payment_date', $year)->whereMonth('payment_date', $m)->sum('amount');
+            $monthlyRevenue[$m] = (float) Invoice::whereYear('issue_date', $year)->whereMonth('issue_date', $m)
+                ->selectRaw('COALESCE(SUM(total * COALESCE(exchange_rate, 1)), 0) as s')->value('s');
+            $monthlyPaid[$m] = (float) Payment::whereYear('payment_date', $year)->whereMonth('payment_date', $m)
+                ->selectRaw('COALESCE(SUM(amount * COALESCE(exchange_rate, 1)), 0) as s')->value('s');
             $monthlyCount[$m] = (int) Invoice::whereYear('issue_date', $year)->whereMonth('issue_date', $m)->count();
-            $monthlyOverdue[$m] = (float) Invoice::whereYear('issue_date', $year)->whereMonth('issue_date', $m)->where('amount_due', '>', 0)->sum('amount_due');
+            $monthlyOverdue[$m] = (float) Invoice::whereYear('issue_date', $year)->whereMonth('issue_date', $m)->where('amount_due', '>', 0)
+                ->selectRaw('COALESCE(SUM(amount_due * COALESCE(exchange_rate, 1)), 0) as s')->value('s');
         }
 
         $topClients = DB::table('invoices')
             ->join('clients', 'clients.id', '=', 'invoices.client_id')
-            ->selectRaw('clients.company_name, count(invoices.id) as invoice_count, sum(invoices.total) as total_revenue')
+            ->selectRaw('clients.company_name, count(invoices.id) as invoice_count, COALESCE(SUM(invoices.total * COALESCE(invoices.exchange_rate, 1)), 0) as total_revenue')
             ->where('invoices.tenant_id', $tenantId)
+            ->whereNull('invoices.deleted_at')
             ->groupBy('clients.company_name')
             ->orderByDesc('total_revenue')
             ->limit(5)
             ->get();
 
-        $paymentMethods = Payment::selectRaw('payment_method, sum(amount) as total')
+        $paymentMethods = Payment::selectRaw('payment_method, COALESCE(SUM(amount * COALESCE(exchange_rate, 1)), 0) as total')
             ->groupBy('payment_method')
             ->orderByDesc('total')
             ->get();
 
         return view('invoice::reports.index', compact(
             'stats',
+            'baseCurrency',
+            'multiCurrency',
+            'ratesConfigured',
+            'currenciesPresent',
+            'kpiRevenueYear',
+            'kpiCollected',
+            'kpiDue',
             'monthlyRevenue',
             'monthlyPaid',
             'monthlyCount',
@@ -616,6 +660,29 @@ class InvoiceController extends Controller
             'topClients',
             'paymentMethods'
         ));
+    }
+
+    /**
+     * Total en devise de base (montant × taux gelé) + ventilation par devise.
+     * $amountColumn est une colonne contrôlée (jamais une saisie utilisateur).
+     *
+     * @param  callable():\Illuminate\Database\Eloquent\Builder  $freshQuery
+     * @return array{base: float, by: array<string, float>}
+     */
+    private function currencyBreakdown(callable $freshQuery, string $amountColumn): array
+    {
+        $base = (float) $freshQuery()
+            ->selectRaw("COALESCE(SUM({$amountColumn} * COALESCE(exchange_rate, 1)), 0) as s")
+            ->value('s');
+
+        $by = $freshQuery()
+            ->selectRaw("UPPER(currency) as ccy, COALESCE(SUM({$amountColumn}), 0) as s")
+            ->groupBy(DB::raw('UPPER(currency)'))
+            ->pluck('s', 'ccy')
+            ->map(fn ($v) => (float) $v)
+            ->toArray();
+
+        return ['base' => $base, 'by' => $by];
     }
 
     public function reportsExport(string $format)

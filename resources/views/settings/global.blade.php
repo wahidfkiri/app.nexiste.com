@@ -1,19 +1,19 @@
 @extends('layouts.global')
 
-@section('title', 'Paramètres globaux')
+@section('title', __('settings.title'))
 
 @section('content')
 <div class="page-header">
   <div class="page-header-left">
-    <h1>Paramètres globaux</h1>
-    <p>Configurez l'identité de votre espace CRM, les préférences métier et les options générales.</p>
+    <h1>{{ __('settings.title') }}</h1>
+    <p>{{ __('settings.subtitle') }}</p>
   </div>
 </div>
 
 @if(!$canManageTenant)
   <section class="info-card">
     <div class="info-card-body">
-      <div class="form-error">Vous n'avez pas les permissions nécessaires pour modifier les paramètres globaux.</div>
+      <div class="form-error">{{ __('settings.no_permission') }}</div>
     </div>
   </section>
 @else
@@ -29,35 +29,35 @@
     <section class="form-section">
       <h3 class="form-section-title">
         <i class="fas fa-building"></i>
-        Entreprise et identité
+        {{ __('settings.sections.company_identity') }}
       </h3>
       <div class="row">
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Nom entreprise <span class="required">*</span></label>
+            <label class="form-label">{{ __('settings.fields.company_name') }} <span class="required">*</span></label>
             <input type="text" name="tenant_name" class="form-control @error('tenant_name') is-invalid @enderror" value="{{ old('tenant_name', $tenant->name) }}">
             @error('tenant_name')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Email</label>
+            <label class="form-label">{{ __('settings.fields.email') }}</label>
             <input type="email" name="tenant_email" class="form-control @error('tenant_email') is-invalid @enderror" value="{{ old('tenant_email', $tenant->email) }}">
             @error('tenant_email')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Téléphone (format +...)</label>
+            <label class="form-label">{{ __('settings.fields.phone') }}</label>
             <input type="text" name="tenant_phone" class="form-control @error('tenant_phone') is-invalid @enderror" placeholder="+33612345678" value="{{ old('tenant_phone', $tenant->phone) }}">
             @error('tenant_phone')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Pays</label>
+            <label class="form-label">{{ __('settings.fields.country') }}</label>
             <select name="company_country" class="form-control @error('company_country') is-invalid @enderror">
-              <option value="">Sélectionnez...</option>
+              <option value="">{{ __('settings.fields.select_placeholder') }}</option>
               @foreach(($countries ?? []) as $country)
                 <option value="{{ $country['code'] }}" {{ old('company_country', $settings['company_country'] ?? '') === $country['code'] ? 'selected' : '' }}>
                   {{ $country['name'] }} ({{ $country['code'] }}) {{ $country['dial'] }}
@@ -69,35 +69,35 @@
         </div>
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">Code postal</label>
+            <label class="form-label">{{ __('settings.fields.postal_code') }}</label>
             <input type="text" name="company_postal_code" class="form-control @error('company_postal_code') is-invalid @enderror" value="{{ old('company_postal_code', $settings['company_postal_code'] ?? '') }}">
             @error('company_postal_code')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-8">
           <div class="form-group">
-            <label class="form-label">Ville</label>
+            <label class="form-label">{{ __('settings.fields.city') }}</label>
             <input type="text" name="company_city" class="form-control @error('company_city') is-invalid @enderror" value="{{ old('company_city', $settings['company_city'] ?? '') }}">
             @error('company_city')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-12">
           <div class="form-group">
-            <label class="form-label">Adresse</label>
+            <label class="form-label">{{ __('settings.fields.address') }}</label>
             <textarea name="tenant_address" rows="3" class="form-control @error('tenant_address') is-invalid @enderror">{{ old('tenant_address', $tenant->address) }}</textarea>
             @error('tenant_address')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Site web</label>
+            <label class="form-label">{{ __('settings.fields.website') }}</label>
             <input type="url" name="company_website" class="form-control @error('company_website') is-invalid @enderror" placeholder="https://..." value="{{ old('company_website', $settings['company_website'] ?? '') }}">
             @error('company_website')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Description société</label>
+            <label class="form-label">{{ __('settings.fields.company_description') }}</label>
             <textarea name="company_description" rows="3" class="form-control @error('company_description') is-invalid @enderror">{{ old('company_description', $settings['company_description'] ?? '') }}</textarea>
             @error('company_description')<span class="form-error">{{ $message }}</span>@enderror
           </div>
@@ -108,12 +108,12 @@
     <section class="form-section">
       <h3 class="form-section-title">
         <i class="fas fa-globe"></i>
-        Préférences régionales
+        {{ __('settings.sections.regional') }}
       </h3>
       <div class="row">
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">Fuseau horaire <span class="required">*</span></label>
+            <label class="form-label">{{ __('settings.fields.timezone') }} <span class="required">*</span></label>
             <select name="tenant_timezone" class="form-control @error('tenant_timezone') is-invalid @enderror" required>
               @foreach(($timezones ?? []) as $tz)
                 <option value="{{ $tz }}" {{ old('tenant_timezone', $tenant->timezone ?? 'Europe/Paris') === $tz ? 'selected' : '' }}>{{ $tz }}</option>
@@ -124,7 +124,7 @@
         </div>
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">Devise <span class="required">*</span></label>
+            <label class="form-label">{{ __('settings.fields.currency') }} <span class="required">*</span></label>
             <select name="tenant_currency" class="form-control @error('tenant_currency') is-invalid @enderror" required>
               @foreach(($currencies ?? []) as $code => $label)
                 <option value="{{ $code }}" {{ old('tenant_currency', strtoupper($tenant->currency ?? 'EUR')) === $code ? 'selected' : '' }}>
@@ -137,10 +137,11 @@
         </div>
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">Langue <span class="required">*</span></label>
+            <label class="form-label">{{ __('common.language') }} <span class="required">*</span></label>
             <select name="tenant_locale" class="form-control @error('tenant_locale') is-invalid @enderror" required>
               <option value="fr" {{ old('tenant_locale', $tenant->locale ?? 'fr') === 'fr' ? 'selected' : '' }}>Français</option>
               <option value="en" {{ old('tenant_locale', $tenant->locale ?? 'fr') === 'en' ? 'selected' : '' }}>English</option>
+              <option value="ar" {{ old('tenant_locale', $tenant->locale ?? 'fr') === 'ar' ? 'selected' : '' }}>العربية</option>
             </select>
             @error('tenant_locale')<span class="form-error">{{ $message }}</span>@enderror
           </div>
@@ -151,45 +152,45 @@
     <section class="form-section">
       <h3 class="form-section-title">
         <i class="fas fa-sliders"></i>
-        Configuration CRM
+        {{ __('settings.sections.crm_config') }}
       </h3>
       <div class="row">
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">Préfixe facture</label>
+            <label class="form-label">{{ __('settings.fields.invoice_prefix') }}</label>
             <input type="text" name="invoice_prefix" class="form-control @error('invoice_prefix') is-invalid @enderror" placeholder="INV" value="{{ old('invoice_prefix', $settings['invoice_prefix'] ?? 'INV') }}">
             @error('invoice_prefix')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">TVA par défaut (%)</label>
+            <label class="form-label">{{ __('settings.fields.default_tax') }}</label>
             <input type="number" min="0" max="100" step="0.01" name="default_tax_rate" class="form-control @error('default_tax_rate') is-invalid @enderror" value="{{ old('default_tax_rate', $settings['default_tax_rate'] ?? '20') }}">
             @error('default_tax_rate')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-4">
           <div class="form-group">
-            <label class="form-label">Format date</label>
+            <label class="form-label">{{ __('settings.fields.date_format') }}</label>
             @php($format = old('date_format', $settings['date_format'] ?? 'd/m/Y'))
             <select name="date_format" class="form-control @error('date_format') is-invalid @enderror">
-              <option value="d/m/Y" {{ $format === 'd/m/Y' ? 'selected' : '' }}>Jour/Mois/Année (31/12/2026)</option>
-              <option value="m/d/Y" {{ $format === 'm/d/Y' ? 'selected' : '' }}>Mois/Jour/Année (12/31/2026)</option>
-              <option value="Y-m-d" {{ $format === 'Y-m-d' ? 'selected' : '' }}>ISO (2026-12-31)</option>
+              <option value="d/m/Y" {{ $format === 'd/m/Y' ? 'selected' : '' }}>{{ __('settings.fields.date_format_dmy') }}</option>
+              <option value="m/d/Y" {{ $format === 'm/d/Y' ? 'selected' : '' }}>{{ __('settings.fields.date_format_mdy') }}</option>
+              <option value="Y-m-d" {{ $format === 'Y-m-d' ? 'selected' : '' }}>{{ __('settings.fields.date_format_iso') }}</option>
             </select>
             @error('date_format')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Ouverture (HH:MM)</label>
+            <label class="form-label">{{ __('settings.fields.open_time') }}</label>
             <input type="time" name="business_hours_start" class="form-control @error('business_hours_start') is-invalid @enderror" value="{{ old('business_hours_start', $settings['business_hours_start'] ?? '09:00') }}">
             @error('business_hours_start')<span class="form-error">{{ $message }}</span>@enderror
           </div>
         </div>
         <div class="col-6">
           <div class="form-group">
-            <label class="form-label">Fermeture (HH:MM)</label>
+            <label class="form-label">{{ __('settings.fields.close_time') }}</label>
             <input type="time" name="business_hours_end" class="form-control @error('business_hours_end') is-invalid @enderror" value="{{ old('business_hours_end', $settings['business_hours_end'] ?? '18:00') }}">
             @error('business_hours_end')<span class="form-error">{{ $message }}</span>@enderror
           </div>
@@ -198,7 +199,7 @@
           <div class="form-group">
             <label style="display:flex;align-items:center;gap:8px;">
               <input type="checkbox" name="notifications_email" value="1" {{ old('notifications_email', $settings['notifications_email'] ?? '1') == '1' ? 'checked' : '' }}>
-              Notifications email activées
+              {{ __('settings.fields.notif_email') }}
             </label>
           </div>
         </div>
@@ -206,7 +207,7 @@
           <div class="form-group">
             <label style="display:flex;align-items:center;gap:8px;">
               <input type="checkbox" name="notifications_browser" value="1" {{ old('notifications_browser', $settings['notifications_browser'] ?? '1') == '1' ? 'checked' : '' }}>
-              Notifications navigateur activées
+              {{ __('settings.fields.notif_browser') }}
             </label>
           </div>
         </div>
@@ -215,15 +216,15 @@
             <div>
               <label class="form-label" style="margin-bottom:6px;display:flex;align-items:center;gap:8px;">
                 <i class="fas fa-wand-magic-sparkles"></i>
-                Suggestions intelligentes
+                {{ __('settings.suggestions.title') }}
               </label>
               <p style="margin:0;color:var(--c-ink-50);font-size:13px;line-height:1.6;">
-                Active ou desactive la modale de suggestions apres la creation d un client, devis, facture, projet ou tache.
+                {{ __('settings.suggestions.desc') }}
               </p>
             </div>
             <label style="display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap;margin-top:2px;">
               <input type="checkbox" name="automation_suggestions_enabled" value="1" {{ old('automation_suggestions_enabled', $settings['automation_suggestions_enabled'] ?? '1') == '1' ? 'checked' : '' }}>
-              Activer
+              {{ __('settings.suggestions.activate') }}
             </label>
           </div>
         </div>
@@ -236,14 +237,13 @@
               <div>
                 <label class="form-label" style="margin-bottom:6px;display:flex;align-items:center;gap:8px;">
                   <i class="fas fa-box-archive"></i>
-                  Sauvegarde globale securisee
+                  {{ __('settings.backup.title') }}
                 </label>
                 <p class="data-export-panel-copy">
-                  Generez une archive ZIP complete avec les exports Excel, les PDF metier et les metadonnees sensibles,
-                  puis envoyez-la vers Google Drive ou Dropbox sans quitter le CRM.
+                  {{ __('settings.backup.desc') }}
                 </p>
               </div>
-              <span class="data-export-panel-badge">ZIP + progression detaillee</span>
+              <span class="data-export-panel-badge">{{ __('settings.backup.badge') }}</span>
             </div>
 
             <div class="data-export-provider-grid">
@@ -266,22 +266,22 @@
                     <div class="data-export-provider-title-row">
                       <strong>{{ $provider['label'] }}</strong>
                       <span class="data-export-provider-state {{ $isReady ? 'is-ready' : ($isInstalled ? 'is-warning' : 'is-missing') }}">
-                        {{ $isReady ? 'Pret' : ($isInstalled ? 'Reconnecter' : 'Installer') }}
+                        {{ $isReady ? __('settings.backup.state_ready') : ($isInstalled ? __('settings.backup.state_reconnect') : __('settings.backup.state_install')) }}
                       </span>
                     </div>
                     <p class="data-export-provider-copy">
                       @if($isReady)
-                        Destination prete pour recevoir l archive ZIP complete de votre CRM.
+                        {{ __('settings.backup.copy_ready') }}
                       @elseif($isInstalled)
-                        L extension est active, mais la session doit etre reconnectee avant l export.
+                        {{ __('settings.backup.copy_reconnect') }}
                       @else
-                        L extension n est pas active pour ce tenant. Activez-la d abord depuis le Marketplace.
+                        {{ __('settings.backup.copy_missing') }}
                       @endif
                     </p>
                     @if(!$isReady)
                       <a href="{{ $provider['action_url'] }}" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
                         <i class="fas {{ $isInstalled ? 'fa-up-right-from-square' : 'fa-puzzle-piece' }}"></i>
-                        {{ $isInstalled ? 'Ouvrir l app ' . $provider['label'] : $provider['action_label'] }}
+                        {{ $isInstalled ? __('settings.backup.open_app', ['provider' => $provider['label']]) : $provider['action_label'] }}
                       </a>
                     @endif
                   </div>
@@ -292,10 +292,9 @@
             @if($unreadyBackupProviders->isNotEmpty())
               <div class="data-export-connect-strip">
                 <div class="data-export-connect-copy">
-                  <strong>Services a preparer avant l export</strong>
+                  <strong>{{ __('settings.backup.prepare_title') }}</strong>
                   <p>
-                    Si Google Drive ou Dropbox n est pas encore pret, ouvrez directement la page de l app pour
-                    installer l extension ou connecter votre compte avant de lancer la sauvegarde.
+                    {{ __('settings.backup.prepare_copy') }}
                   </p>
                 </div>
                 <div class="data-export-connect-actions">
@@ -311,8 +310,8 @@
                         <i class="{{ $provider['icon'] }}"></i>
                       </span>
                       <span class="data-export-connect-text">
-                        <strong>{{ $providerInstalled ? 'Connecter ' . $provider['label'] : 'Installer ' . $provider['label'] }}</strong>
-                        <span>{{ $providerInstalled ? 'Ouvrir la page de l app pour connecter ce service.' : 'Activer l extension puis revenir lancer la sauvegarde.' }}</span>
+                        <strong>{{ $providerInstalled ? __('settings.backup.connect_provider', ['provider' => $provider['label']]) : __('settings.backup.install_provider', ['provider' => $provider['label']]) }}</strong>
+                        <span>{{ $providerInstalled ? __('settings.backup.connect_copy') : __('settings.backup.install_copy') }}</span>
                       </span>
                       <i class="fas fa-up-right-from-square"></i>
                     </a>
@@ -323,12 +322,11 @@
 
             <div class="data-export-actions">
               <div class="data-export-actions-copy">
-                Le ZIP contiendra les donnees Excel de l application, les PDF de factures, devis et bons de livraison,
-                ainsi que les parametres et metadonnees utiles pour l audit.
+                {{ __('settings.backup.actions_copy') }}
               </div>
               <div class="data-export-actions-buttons">
                 <button type="button" class="btn btn-primary" id="startGlobalDataExportBtn" {{ $selectedBackupProvider ? '' : 'disabled' }}>
-                  <i class="fas fa-cloud-arrow-up"></i> Lancer la sauvegarde complete
+                  <i class="fas fa-cloud-arrow-up"></i> {{ __('settings.backup.start_btn') }}
                 </button>
               </div>
             </div>
@@ -340,14 +338,14 @@
             >
               <div class="data-export-status-head">
                 <div>
-                  <div class="data-export-status-kicker">Suivi en temps reel</div>
-                  <h4 id="dataExportStatusTitle">Sauvegarde en attente</h4>
-                  <p id="dataExportStatusSubtitle">Selectionnez une destination puis lancez la sauvegarde.</p>
+                  <div class="data-export-status-kicker">{{ __('settings.backup.tracking_kicker') }}</div>
+                  <h4 id="dataExportStatusTitle">{{ __('settings.backup.pending_title') }}</h4>
+                  <p id="dataExportStatusSubtitle">{{ __('settings.backup.pending_subtitle') }}</p>
                   <div class="data-export-active-step" id="dataExportActiveStepTitle" style="display:none;"></div>
                 </div>
                 <div class="data-export-status-meta">
-                  <span class="data-export-status-badge" id="dataExportStatusBadge">En attente</span>
-                  <span class="data-export-status-provider" id="dataExportStatusProvider">Aucune destination</span>
+                  <span class="data-export-status-badge" id="dataExportStatusBadge">{{ __('settings.backup.status_pending') }}</span>
+                  <span class="data-export-status-provider" id="dataExportStatusProvider">{{ __('settings.backup.no_destination') }}</span>
                 </div>
               </div>
 
@@ -357,7 +355,7 @@
                 </div>
                 <div class="data-export-progress-row">
                   <strong id="dataExportProgressPercent">0%</strong>
-                  <span id="dataExportCurrentStep">Aucune etape en cours.</span>
+                  <span id="dataExportCurrentStep">{{ __('settings.backup.no_step') }}</span>
                 </div>
               </div>
 
@@ -366,25 +364,25 @@
               <div class="data-export-columns">
                 <div class="data-export-column">
                   <div class="data-export-column-title">
-                    <i class="fas fa-wave-square"></i> Journal d execution
+                    <i class="fas fa-wave-square"></i> {{ __('settings.backup.exec_journal') }}
                   </div>
                   <div class="data-export-log-list" id="dataExportLogList"></div>
                 </div>
                 <div class="data-export-column">
                   <div class="data-export-column-title">
-                    <i class="fas fa-shield-halved"></i> Avertissements et resultat
+                    <i class="fas fa-shield-halved"></i> {{ __('settings.backup.warnings_result') }}
                   </div>
                   <div class="data-export-warning-list" id="dataExportWarningList"></div>
                   <div class="data-export-result-box" id="dataExportResultBox" style="display:none;">
-                    <div class="data-export-result-title">Archive disponible</div>
+                    <div class="data-export-result-title">{{ __('settings.backup.archive_available') }}</div>
                     <div class="data-export-result-copy" id="dataExportResultCopy"></div>
                     <div class="data-export-result-actions">
                       <a href="#" target="_blank" rel="noopener" class="btn btn-primary btn-sm" id="dataExportOpenRemoteBtn" style="display:none;">
-                        <i class="fas fa-up-right-from-square"></i> Ouvrir l archive distante
+                        <i class="fas fa-up-right-from-square"></i> {{ __('settings.backup.open_remote') }}
                       </a>
                       <a href="#" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" id="dataExportProviderActionBtn" style="display:none;"></a>
                       <button type="button" class="btn btn-secondary btn-sm" id="dataExportRestartBtn" style="display:none;">
-                        <i class="fas fa-rotate-right"></i> Relancer une nouvelle sauvegarde
+                        <i class="fas fa-rotate-right"></i> {{ __('settings.backup.restart') }}
                       </button>
                     </div>
                   </div>
@@ -394,21 +392,21 @@
 
             <div class="data-export-history">
               <div class="data-export-column-title" style="margin-bottom:8px;">
-                <i class="fas fa-clock-rotate-left"></i> Anciennes sauvegardes
+                <i class="fas fa-clock-rotate-left"></i> {{ __('settings.backup.old_backups') }}
               </div>
               <div class="data-export-history-list" id="dataExportHistoryList">
                 @forelse(($dataExportHistory ?? []) as $historyItem)
                   <div class="data-export-history-item" data-export-history-id="{{ $historyItem['id'] }}">
                     <div class="data-export-history-main">
                       <div class="data-export-history-row">
-                        <strong>{{ $historyItem['reference_date_label'] ?: 'Date indisponible' }}</strong>
+                        <strong>{{ $historyItem['reference_date_label'] ?: __('settings.backup.date_unavailable') }}</strong>
                         <span class="data-export-history-provider">
                           <i class="{{ $historyItem['provider']['icon'] }}"></i>
                           {{ $historyItem['provider']['label'] }}
                         </span>
                       </div>
                       <div class="data-export-history-copy">
-                        {{ $historyItem['file_name'] ?: 'Archive ZIP' }}
+                        {{ $historyItem['file_name'] ?: __('settings.backup.archive_zip') }}
                         @if(!empty($historyItem['error_message']))
                           <span> - {{ $historyItem['error_message'] }}</span>
                         @endif
@@ -420,14 +418,14 @@
                       </span>
                       @if(!empty($historyItem['remote_url']))
                         <a href="{{ $historyItem['remote_url'] }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">
-                          <i class="fas fa-up-right-from-square"></i> Ouvrir
+                          <i class="fas fa-up-right-from-square"></i> {{ __('settings.backup.open') }}
                         </a>
                       @endif
                     </div>
                   </div>
                 @empty
                   <div class="data-export-history-empty" id="dataExportHistoryEmpty">
-                    Aucune sauvegarde precedente a afficher pour le moment.
+                    {{ __('settings.backup.no_history') }}
                   </div>
                 @endforelse
               </div>
@@ -441,12 +439,11 @@
       <section class="form-section">
         <h3 class="form-section-title">
           <i class="fas fa-user-shield"></i>
-          Sessions OAuth des extensions
+          {{ __('settings.sections.oauth_sessions') }}
         </h3>
         <div class="oauth-insights-panel">
           <div class="oauth-insights-copy">
-            Vue superadmin: controle rapide des durees nominales, du buffer de refresh et du comportement reel
-            de chaque extension pour le tenant courant.
+            {{ __('settings.oauth.copy') }}
           </div>
 
           <div class="oauth-insights-grid">
@@ -462,19 +459,19 @@
 
                 <dl class="oauth-insight-meta">
                   <div>
-                    <dt>Duree nominale</dt>
+                    <dt>{{ __('settings.oauth.nominal_lifetime') }}</dt>
                     <dd>{{ $insight['nominal_lifetime'] }}</dd>
                   </div>
                   <div>
-                    <dt>Expiration locale</dt>
+                    <dt>{{ __('settings.oauth.local_expiry') }}</dt>
                     <dd>{{ $insight['expires_at_label'] }}</dd>
                   </div>
                   <div>
-                    <dt>Refresh token</dt>
+                    <dt>{{ __('settings.oauth.refresh_token') }}</dt>
                     <dd>{{ $insight['refresh_token_label'] }}</dd>
                   </div>
                   <div>
-                    <dt>Buffer</dt>
+                    <dt>{{ __('settings.oauth.buffer') }}</dt>
                     <dd>{{ $insight['refresh_buffer_label'] }}</dd>
                   </div>
                 </dl>
@@ -490,7 +487,7 @@
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" id="globalSettingsSaveBtn">
-        <i class="fas fa-floppy-disk"></i> Enregistrer les paramètres
+        <i class="fas fa-floppy-disk"></i> {{ __('settings.save') }}
       </button>
     </div>
   </form>

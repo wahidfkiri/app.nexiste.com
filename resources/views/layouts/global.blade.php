@@ -1,5 +1,9 @@
+@php
+    $__locale = app()->getLocale();
+    $__rtl = in_array($__locale, config('app.rtl_locales', []), true);
+@endphp
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ $__locale }}" dir="{{ $__rtl ? 'rtl' : 'ltr' }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +16,7 @@
   <link rel="stylesheet" href="{{ asset('vendor/invoice/css/invoice.css') }}">
   <link rel="stylesheet" href="{{ asset('vendor/stock/css/stock.css') }}">
   <link rel="stylesheet" href="{{ asset('css/global-font.css') }}">
+  @if($__rtl)<link rel="stylesheet" href="{{ asset('css/rtl.css') }}">@endif
   <style>
     .global-search-wrap{position:relative;min-width:320px;max-width:520px;width:42vw}
     .global-search-wrap input{padding-left:36px}
@@ -26,6 +31,12 @@
     .global-search-badge{font-size:10px;padding:2px 7px;border-radius:999px;background:var(--c-accent-xl);color:var(--c-accent);font-weight:700;white-space:nowrap}
     .global-search-empty,.global-search-loading{padding:12px 10px;color:var(--c-ink-50);font-size:13px}
     .crm-header-actions{display:flex;align-items:center;gap:10px}
+    .header-locale-form{position:relative;display:flex;align-items:center}
+    .header-locale-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--c-ink-40);font-size:12px;pointer-events:none}
+    html[dir="rtl"] .header-locale-icon{left:auto;right:10px}
+    .header-locale-select{appearance:none;-webkit-appearance:none;padding:7px 12px 7px 28px;border:1px solid var(--c-ink-08,#e2e8f0);border-radius:9px;background:#fff;color:var(--c-ink,#0f172a);font-size:13px;font-weight:600;cursor:pointer}
+    html[dir="rtl"] .header-locale-select{padding:7px 28px 7px 12px}
+    .header-locale-select:hover{border-color:var(--c-accent-lt,#93c5fd)}
     .sidebar-compact-toggle.is-active{
       background:rgba(37,99,235,.12);
       color:var(--c-accent);
@@ -612,7 +623,7 @@
   })();
 </script>
 <div class="crm-layout @yield('layout_class')">
-  <aside class="crm-sidebar" id="sidebar">
+  <aside class="crm-sidebar" id="sidebar" dir="ltr">
     <div class="sidebar-brand">
       <img
         src="{{ asset('logo.png') }}"
@@ -658,15 +669,15 @@
         <div class="sidebar-nav-section">Principal</div>
         <a href="{{ url('/dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}">
           <i class="fas fa-home"></i>
-          <span class="sidebar-link-label">Tableau de bord</span>
+          <span class="sidebar-link-label">{{ __('common.nav.dashboard') }}</span>
         </a>
       @endif
 
       @if($layoutCanUsers && Route::has('users.index'))
-        <div class="sidebar-nav-section">Utilisateurs</div>
+        <div class="sidebar-nav-section">{{ __('common.nav.users') }}</div>
         <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') || request()->routeIs('rbac.*') ? 'active' : '' }}">
           <i class="fa fa-user-cog"></i>
-          <span class="sidebar-link-label">Utilisateurs</span>
+          <span class="sidebar-link-label">{{ __('common.nav.users') }}</span>
         </a>
       @endif
       @if($layoutIsSuperAdmin && Route::has('superadmin.tenants.index'))
@@ -677,7 +688,7 @@
         </a>
       @endif
       @if($layoutMarketplaceUrl || $layoutHasVisibleApps)
-        <div class="sidebar-nav-section">Applications</div>
+        <div class="sidebar-nav-section">{{ __('common.nav.applications') }}</div>
         @if($layoutMarketplaceUrl)
           <a href="{{ $layoutMarketplaceUrl }}" class="sidebar-market-link {{ request()->routeIs($layoutMarketplaceActivePattern) || request()->routeIs('marketplace.*') ? 'active' : '' }}">
             <i class="fa fa-store"></i>
@@ -737,21 +748,21 @@
         <div class="sidebar-user" data-dropdown-toggle>
           <div class="sidebar-user-avatar">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}</div>
           <div class="sidebar-user-copy" style="flex:1;min-width:0;">
-            <div class="sidebar-user-name">{{ auth()->user()->name ?? 'Utilisateur' }}</div>
-            <div class="sidebar-user-role">{{ auth()->user()->role_in_tenant ?? 'Membre' }}</div>
+            <div class="sidebar-user-name">{{ auth()->user()->name ?? __('common.user') }}</div>
+            <div class="sidebar-user-role">{{ auth()->user()->role_in_tenant ?? __('common.member') }}</div>
           </div>
           <i class="fas fa-chevron-right user-chevron"></i>
         </div>
         <div class="dropdown-menu">
-          <a href="{{ route('profile-settings') }}" class="dropdown-item"><i class="fas fa-user"></i> Mon profil</a>
+          <a href="{{ route('profile-settings') }}" class="dropdown-item"><i class="fas fa-user"></i> {{ __('common.my_profile') }}</a>
           @if($layoutCanSettings && Route::has('settings.global'))
-            <a href="{{ route('settings.global') }}" class="dropdown-item"><i class="fas fa-gear"></i> Paramètres globaux</a>
+            <a href="{{ route('settings.global') }}" class="dropdown-item"><i class="fas fa-gear"></i> {{ __('common.global_settings') }}</a>
           @endif
           <div class="dropdown-divider"></div>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="dropdown-item danger" style="width:100%;border:none;background:none;cursor:pointer;text-align:left;">
-              <i class="fas fa-right-from-bracket"></i> Deconnexion
+              <i class="fas fa-right-from-bracket"></i> {{ __('common.logout') }}
             </button>
           </form>
         </div>
@@ -762,8 +773,8 @@
 
   <div class="crm-main">
     <header class="crm-header">
-      <button id="sidebarToggle" class="btn-icon" aria-label="Ouvrir le menu"><i class="fas fa-bars"></i></button>
-      <button class="btn-icon sidebar-compact-toggle" id="sidebarCompactToggle" type="button" aria-label="Réduire le menu en mode icônes" aria-pressed="false">
+      <button id="sidebarToggle" class="btn-icon" aria-label="{{ __('common.open_menu') }}"><i class="fas fa-bars"></i></button>
+      <button class="btn-icon sidebar-compact-toggle" id="sidebarCompactToggle" type="button" aria-label="{{ __('common.collapse_menu') }}" aria-pressed="false">
         <i class="fas fa-arrow-left"></i>
       </button>
       <div class="crm-header-breadcrumb">@yield('breadcrumb')</div>
@@ -771,12 +782,21 @@
 
       <div class="global-search-wrap">
         <i class="fas fa-search"></i>
-        <input id="globalSearchInput" class="form-control" type="text" placeholder="Recherche globale: clients, users, factures, devis, projets, notion, apps Google, Slack, Chatbot..." autocomplete="off">
+        <input id="globalSearchInput" class="form-control" type="text" placeholder="{{ __('common.search_placeholder') }}" autocomplete="off">
         <div id="globalSearchSuggestions" class="global-search-suggest"></div>
       </div>
 
       <div class="crm-header-actions">
-        <button class="btn-icon" data-modal-open="myAppsModal" aria-label="Mes applications"><i class="fas fa-th-large"></i></button>
+        <form method="POST" action="{{ route('locale.update') }}" class="header-locale-form">
+          @csrf
+          <i class="fas fa-globe header-locale-icon" aria-hidden="true"></i>
+          <select name="locale" class="header-locale-select" onchange="this.form.submit()" aria-label="{{ __('common.language') }}">
+            @foreach(config('app.supported_locales', ['fr']) as $loc)
+              <option value="{{ $loc }}" {{ app()->getLocale() === $loc ? 'selected' : '' }}>{{ __('common.locales.'.$loc) }}</option>
+            @endforeach
+          </select>
+        </form>
+        <button class="btn-icon" data-modal-open="myAppsModal" aria-label="{{ __('common.my_apps') }}"><i class="fas fa-th-large"></i></button>
         <div class="header-notif-wrap" id="globalNotifWrap">
           <button class="btn-icon" id="globalNotifBtn" aria-label="Notifications" aria-expanded="false" type="button">
             <i class="fas fa-bell"></i>
@@ -787,8 +807,8 @@
           <div class="header-notif-dropdown" id="globalNotifDropdown" aria-hidden="true">
             <div class="header-notif-header">
               <div>
-                <strong>Notifications</strong>
-                <span>Vos rappels et actions a reprendre</span>
+                <strong>{{ __('common.notifications') }}</strong>
+                <span>{{ __('common.notifications_subtitle') }}</span>
               </div>
             </div>
             <div class="header-notif-list">
@@ -818,7 +838,7 @@
                   </div>
                 @endif
               @empty
-                <div class="header-notif-empty">Aucune notification pour le moment.</div>
+                <div class="header-notif-empty">{{ __('common.no_notifications') }}</div>
               @endforelse
             </div>
           </div>
@@ -856,7 +876,7 @@
     <div class="modal-header">
       <div class="modal-header-icon"><i class="fas fa-th-large"></i></div>
       <div>
-        <div class="modal-title">Mes applications</div>
+        <div class="modal-title">{{ __('common.my_apps') }}</div>
         <div class="modal-subtitle">{{ $layoutInstalledAppsCount ?? 0 }} installée(s)</div>
       </div>
       <button class="modal-close" data-modal-close>&times;</button>
@@ -905,9 +925,9 @@
     </div>
     <div class="modal-footer" style="justify-content:flex-start">
       @if(($layoutIsSuperAdmin ?? false) && Route::has('superadmin.extensions.index'))
-        <a href="{{ route('superadmin.extensions.index') }}" class="btn btn-secondary"><i class="fas fa-sliders-h"></i> Gérer le marketplace</a>
+        <a href="{{ route('superadmin.extensions.index') }}" class="btn btn-secondary"><i class="fas fa-sliders-h"></i> {{ __('common.manage_marketplace') }}</a>
       @elseif(($layoutCanMarketplace ?? false) && Route::has('marketplace.my-apps'))
-        <a href="{{ route('marketplace.my-apps') }}" class="btn btn-secondary"><i class="fas fa-th-list"></i> Gérer mes applications</a>
+        <a href="{{ route('marketplace.my-apps') }}" class="btn btn-secondary"><i class="fas fa-th-list"></i> {{ __('common.manage_my_apps') }}</a>
       @endif
     </div>
   </div>
@@ -918,12 +938,12 @@
     <div class="modal-header">
       <div class="modal-header-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
       <div class="modal-header-copy">
-        <div class="modal-title" data-automation-title>Suggestions intelligentes</div>
-        <div class="modal-subtitle" data-automation-subtitle>Le CRM vous propose les prochaines actions utiles.</div>
+        <div class="modal-title" data-automation-title>{{ __('common.suggestions_title') }}</div>
+        <div class="modal-subtitle" data-automation-subtitle>{{ __('common.suggestions_subtitle') }}</div>
       </div>
       <div class="modal-header-actions">
         @if(($layoutCanSettings ?? false) && Route::has('settings.global'))
-          <a href="{{ route('settings.global') }}#automation-suggestions-settings" class="modal-icon-link" aria-label="Parametres des suggestions">
+          <a href="{{ route('settings.global') }}#automation-suggestions-settings" class="modal-icon-link" aria-label="{{ __('common.suggestions_settings') }}">
             <i class="fas fa-gear"></i>
           </a>
         @endif
@@ -948,8 +968,8 @@
       <div class="automation-success" data-automation-success>
         <div class="automation-success-shell">
           <div class="automation-success-icon"><i class="fas fa-circle-check"></i></div>
-          <div class="automation-success-title" data-automation-success-title>Succès</div>
-          <div class="automation-success-text" data-automation-success-text>Toutes les suggestions ont été traitées avec succès.</div>
+          <div class="automation-success-title" data-automation-success-title>{{ __('common.automation_success_title') }}</div>
+          <div class="automation-success-text" data-automation-success-text>{{ __('common.automation_success_text') }}</div>
         </div>
       </div>
     </div>
@@ -1078,8 +1098,8 @@ window.INVOICE_ROUTES = Object.assign(window.INVOICE_ROUTES || {}, @json($invoic
       el.setAttribute('role', 'status');
       el.setAttribute('aria-live', 'polite');
       el.innerHTML = '<div class="pdf-export-box"><div class="pdf-export-spinner"></div>'
-        + '<div class="pdf-export-text">Génération du PDF…</div>'
-        + '<div class="pdf-export-sub">Merci de patienter un instant.</div></div>';
+        + '<div class="pdf-export-text">{{ __('common.generating_pdf') }}</div>'
+        + '<div class="pdf-export-sub">{{ __('common.please_wait') }}</div></div>';
       document.body.appendChild(el);
     }
     return el;
@@ -1337,11 +1357,11 @@ window.CRM_AUTH_ROUTES = {
       return `<div class="global-search-group">${esc(title)}</div>${links}`;
     };
     const renderLoading = () => {
-      box.innerHTML = '<div class="global-search-loading">Recherche en cours...</div>';
+      box.innerHTML = '<div class="global-search-loading">{{ __('common.search_loading') }}</div>';
       box.style.display = 'block';
     };
     const renderNoResults = () => {
-      box.innerHTML = '<div class="global-search-empty">Aucun resultat. Essayez un autre mot-cle.</div>';
+      box.innerHTML = '<div class="global-search-empty">{{ __('common.search_empty') }}</div>';
       box.style.display = 'block';
     };
     const updateKeyboardActive = () => {
@@ -1688,8 +1708,8 @@ window.CRM_AUTH_ROUTES = {
     block.innerHTML = `
       <h3 class="form-section-title"><i class="fas fa-warehouse"></i> Source stock (optionnel)</h3>
       <div class="row">
-        <div class="col-4"><div class="form-group"><label class="form-label">Type</label><select id="stockSourceType" class="form-control"><option value="">Aucune</option><option value="article">Article</option><option value="order">Commande fournisseur</option></select></div></div>
-        <div class="col-8"><div class="form-group"><label class="form-label">Recherche</label><input type="text" id="stockSourceSearch" class="form-control" placeholder="Tapez pour rechercher..."><div id="stockSourceSuggestions" class="client-suggestions" style="display:none;"></div></div></div>
+        <div class="col-4"><div class="form-group"><label class="form-label">{{ __('common.type') }}</label><select id="stockSourceType" class="form-control"><option value="">{{ __('common.none_f') }}</option><option value="article">{{ __('common.article') }}</option><option value="order">{{ __('common.supplier_order') }}</option></select></div></div>
+        <div class="col-8"><div class="form-group"><label class="form-label">{{ __('common.search') }}</label><input type="text" id="stockSourceSearch" class="form-control" placeholder="{{ __('common.type_to_search') }}"><div id="stockSourceSuggestions" class="client-suggestions" style="display:none;"></div></div></div>
       </div>`;
 
     const target = form.querySelector('.form-section');

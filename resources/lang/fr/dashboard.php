@@ -2,6 +2,7 @@
 
 return [
     'page_title' => 'Tableau de bord',
+    'welcome' => 'Bienvenue, :name',
     'session_expired' => 'Session expirée',
     'access_denied' => 'Vous n’avez pas accès à cet espace.',
 

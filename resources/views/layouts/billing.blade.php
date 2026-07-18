@@ -1,5 +1,9 @@
+@php
+    $__locale = app()->getLocale();
+    $__rtl = in_array($__locale, config('app.rtl_locales', []), true);
+@endphp
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ $__locale }}" dir="{{ $__rtl ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('vendor/client/css/crm.css') }}">
     <link rel="stylesheet" href="{{ asset('css/global-font.css') }}">
+    @if($__rtl)<link rel="stylesheet" href="{{ asset('css/rtl.css') }}">@endif
     <style>
         body.billing-body{margin:0;min-height:100vh;background:
             radial-gradient(820px 520px at 6% -10%, #e0e7ff 0%, transparent 66%),

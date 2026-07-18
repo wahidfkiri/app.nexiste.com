@@ -613,6 +613,9 @@ return [
             'month_paid_title' => ':month payé :amount',
             'payment_methods' => 'Modes de paiement',
             'year_total' => 'Total :year',
+            'equivalent' => 'équivalent',
+            'multi_currency_note' => 'Montants consolidés convertis dans la devise de base au taux figé de chaque document. Détail par devise sous chaque total.',
+            'rates_missing_note' => 'Vous facturez en plusieurs devises mais les taux de change ne sont pas configurés : les totaux consolidés (≈) sont approximatifs. Le détail par devise reste exact.',
         ],
     ],
 

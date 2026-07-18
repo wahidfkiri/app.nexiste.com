@@ -109,6 +109,7 @@ Route::middleware('web')->group(function () {
             ->middleware('tenant.permission:marketplace.read')
             ->name('applications');
         Route::get('/notifications/{notification}/open', [NotificationController::class, 'open'])->name('notifications.open');
+        Route::post('/locale', [\App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
         Route::get('/settings/global', [GlobalSettingsController::class, 'show'])
             ->middleware('tenant.permission:settings.read')
             ->name('settings.global');
