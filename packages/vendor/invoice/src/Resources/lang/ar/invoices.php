@@ -296,6 +296,7 @@ return [
         'payment_terms' => 'شروط الدفع',
         'payment_method' => 'طريقة الدفع',
         'exchange_rate' => 'سعر الصرف',
+        'equivalent_total' => 'الإجمالي المكافئ بـ',
         'currency_with_symbol' => ':code — :name (:symbol)',
         'currency_with_name' => ':code — :name',
         'status_all' => 'جميع الحالات',

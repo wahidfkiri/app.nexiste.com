@@ -45,6 +45,9 @@
     <table class="row">
       <tr>
         <td style="width:60%;vertical-align:top;">
+          @if(($branding['show_logo'] ?? true) && !empty($branding['logo_path']))
+            <img src="{{ $branding['logo_path'] }}" alt="Logo" style="max-height:52px;max-width:220px;margin-bottom:10px;">
+          @endif
           <div class="kicker">{{ __('invoice::invoices.common.quote') }}</div>
           <div class="h1">{{ $quote->number }}</div>
           @if($quote->reference)<div class="muted" style="font-size:8.8pt;margin-top:4px;">Référence : {{ $quote->reference }}</div>@endif
@@ -150,6 +153,7 @@
       <td>{{ __('invoice::invoices.common.total_ttc') }}</td>
       <td class="right">{{ number_format((float) $quote->total, 2, ',', ' ') }} {{ $quote->currency_symbol ?? '' }}</td>
     </tr>
+    @include('invoice::partials.pdf_base_equivalent', ['doc' => $quote])
   </table>
 
   @if(($signature['enabled'] ?? false) && ($signature['show_on_quote'] ?? false) && !empty($signature['data']))

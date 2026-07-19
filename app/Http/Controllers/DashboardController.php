@@ -216,11 +216,11 @@ class DashboardController extends Controller
             'enabled' => true,
             'invoice_count' => (int) (clone $invoiceQuery)->count(),
             'open_count' => (int) (clone $invoiceQuery)->whereNotIn('status', $closedStatuses)->count(),
-            'revenue_month' => (float) (clone $invoiceQuery)->whereBetween('issue_date', [$range['month_start']->toDateString(), $range['now']->toDateString()])->sum('total'),
-            'revenue_previous' => (float) (clone $invoiceQuery)->whereBetween('issue_date', [$range['previous_start']->toDateString(), $range['previous_end']->toDateString()])->sum('total'),
-            'payments_month' => $paymentQuery ? (float) (clone $paymentQuery)->whereBetween('payment_date', [$range['month_start']->toDateString(), $range['now']->toDateString()])->sum('amount') : 0.0,
-            'payments_previous' => $paymentQuery ? (float) (clone $paymentQuery)->whereBetween('payment_date', [$range['previous_start']->toDateString(), $range['previous_end']->toDateString()])->sum('amount') : 0.0,
-            'pending_amount' => (float) (clone $invoiceQuery)->whereNotIn('status', $closedStatuses)->sum('amount_due'),
+            'revenue_month' => $this->sumBase((clone $invoiceQuery)->whereBetween('issue_date', [$range['month_start']->toDateString(), $range['now']->toDateString()]), 'total'),
+            'revenue_previous' => $this->sumBase((clone $invoiceQuery)->whereBetween('issue_date', [$range['previous_start']->toDateString(), $range['previous_end']->toDateString()]), 'total'),
+            'payments_month' => $paymentQuery ? $this->sumBase((clone $paymentQuery)->whereBetween('payment_date', [$range['month_start']->toDateString(), $range['now']->toDateString()]), 'amount') : 0.0,
+            'payments_previous' => $paymentQuery ? $this->sumBase((clone $paymentQuery)->whereBetween('payment_date', [$range['previous_start']->toDateString(), $range['previous_end']->toDateString()]), 'amount') : 0.0,
+            'pending_amount' => $this->sumBase((clone $invoiceQuery)->whereNotIn('status', $closedStatuses), 'amount_due'),
             'recent_invoices' => $this->tenantQuery(Invoice::class, $tenantId)
                 ->with(['client' => fn ($query) => $query->withoutGlobalScope('tenant')->select('id', 'tenant_id', 'company_name')])
                 ->latest('created_at')
@@ -235,18 +235,22 @@ class DashboardController extends Controller
             'chart' => [
                 'labels' => $months->map(fn ($month) => $month->translatedFormat('M'))->values()->all(),
                 'invoices' => $months->map(function ($month) use ($tenantId) {
-                    return round((float) (clone $this->tenantQuery(Invoice::class, $tenantId))
-                        ->whereBetween('issue_date', [$month->copy()->startOfMonth()->toDateString(), $month->copy()->endOfMonth()->toDateString()])
-                        ->sum('total'), 2);
+                    return round($this->sumBase(
+                        $this->tenantQuery(Invoice::class, $tenantId)
+                            ->whereBetween('issue_date', [$month->copy()->startOfMonth()->toDateString(), $month->copy()->endOfMonth()->toDateString()]),
+                        'total'
+                    ), 2);
                 })->values()->all(),
                 'payments' => $months->map(function ($month) use ($tenantId, $paymentQuery) {
                     if (! $paymentQuery) {
                         return 0;
                     }
 
-                    return round((float) (clone $this->tenantQuery(Payment::class, $tenantId))
-                        ->whereBetween('payment_date', [$month->copy()->startOfMonth()->toDateString(), $month->copy()->endOfMonth()->toDateString()])
-                        ->sum('amount'), 2);
+                    return round($this->sumBase(
+                        $this->tenantQuery(Payment::class, $tenantId)
+                            ->whereBetween('payment_date', [$month->copy()->startOfMonth()->toDateString(), $month->copy()->endOfMonth()->toDateString()]),
+                        'amount'
+                    ), 2);
                 })->values()->all(),
                 'currency' => $currency,
             ],
@@ -725,6 +729,17 @@ class DashboardController extends Controller
         return $modelClass::query()
             ->withoutGlobalScope('tenant')
             ->where($table . '.tenant_id', $tenantId);
+    }
+
+    /**
+     * Somme convertie dans la devise de base du tenant (montant × taux figé).
+     * Permet d'agréger des documents libellés dans des devises différentes.
+     */
+    private function sumBase($query, string $column): float
+    {
+        return (float) $query
+            ->selectRaw("COALESCE(SUM({$column} * COALESCE(exchange_rate, 1)), 0) as s")
+            ->value('s');
     }
 
     private function stockArticlesQuery(int $tenantId)

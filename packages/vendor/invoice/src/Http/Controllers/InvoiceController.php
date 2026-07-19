@@ -553,13 +553,14 @@ class InvoiceController extends Controller
 
     public function paymentsStats(): JsonResponse
     {
-        $base = Payment::query();
+        $sumBase = fn ($query) => (float) $query
+            ->selectRaw('COALESCE(SUM(amount * COALESCE(exchange_rate, 1)), 0) as s')->value('s');
 
         $data = [
-            'total' => (float) $base->sum('amount'),
-            'month' => (float) Payment::whereMonth('payment_date', now()->month)->whereYear('payment_date', now()->year)->sum('amount'),
+            'total' => $sumBase(Payment::query()),
+            'month' => $sumBase(Payment::whereMonth('payment_date', now()->month)->whereYear('payment_date', now()->year)),
             'count' => (int) Payment::count(),
-            'transfer' => (float) Payment::where('payment_method', 'bank_transfer')->sum('amount'),
+            'transfer' => $sumBase(Payment::where('payment_method', 'bank_transfer')),
         ];
 
         return response()->json(['success' => true, 'data' => $data]);

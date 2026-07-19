@@ -243,6 +243,7 @@
                         <td>{{ __('invoice::invoices.common.total_ttc') }}</td>
                         <td class="right">{{ $money($invoice->total) }}</td>
                     </tr>
+                    @include('invoice::partials.pdf_base_equivalent', ['doc' => $invoice])
                     @if((float) $invoice->amount_paid > 0)
                         <tr>
                             <td class="label">{{ __('invoice::invoices.fields.amount_paid') }}</td>

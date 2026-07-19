@@ -249,6 +249,16 @@
               <span class="totals-label">{{ __('invoice::invoices.common.total_ttc') }}</span>
               <span class="totals-value">{{ number_format($invoice->total, 2, ',', ' ') }} {{ $invoice->currency_symbol }}</span>
             </div>
+            @php
+              $__base = strtoupper((string) ($invoice->tenant->currency ?? config('invoice.default_currency', 'EUR')));
+              $__rate = (float) ($invoice->exchange_rate ?? 1);
+            @endphp
+            @if(strtoupper((string) $invoice->currency) !== $__base && $__rate > 0 && abs($__rate - 1.0) > 0.0000001)
+            <div class="totals-row grand-total" style="color:var(--c-ink-60);">
+              <span class="totals-label">{{ __('invoice::invoices.common.equivalent_total') }} {{ $__base }}</span>
+              <span class="totals-value">{{ \Vendor\Invoice\Support\Money::format((float) $invoice->total * $__rate, $__base) }}</span>
+            </div>
+            @endif
             @if($invoice->amount_paid > 0)
             <div class="totals-row" style="color:var(--c-success);">
               <span class="totals-label">{{ __('invoice::invoices.fields.amount_paid') }}</span>

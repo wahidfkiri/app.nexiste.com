@@ -192,6 +192,7 @@
           <td>{{ __('invoice::invoices.common.total_ttc') }}</td>
           <td class="right">{{ number_format((float) $quote->total, 2, ',', ' ') }} {{ $quote->currency_symbol ?? '' }}</td>
         </tr>
+        @include('invoice::partials.pdf_base_equivalent', ['doc' => $quote])
       </table>
 
       @if(($signature['enabled'] ?? false) && ($signature['show_on_quote'] ?? false) && !empty($signature['data']))

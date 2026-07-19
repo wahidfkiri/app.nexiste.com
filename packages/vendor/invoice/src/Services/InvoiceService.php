@@ -400,10 +400,10 @@ class InvoiceService
                 'sent'       => Invoice::byStatus('sent')->count(),
                 'paid'       => Invoice::byStatus('paid')->count(),
                 'overdue'    => Invoice::overdue()->count(),
-                'total_ht'   => Invoice::whereNotIn('status',['cancelled'])->sum('subtotal'),
-                'total_ttc'  => Invoice::whereNotIn('status',['cancelled'])->sum('total'),
-                'paid_total' => Invoice::byStatus('paid')->sum('total'),
-                'due_total'  => Invoice::whereNotIn('status',['paid','cancelled'])->sum('amount_due'),
+                'total_ht'   => self::sumBase(Invoice::whereNotIn('status',['cancelled']), 'subtotal'),
+                'total_ttc'  => self::sumBase(Invoice::whereNotIn('status',['cancelled']), 'total'),
+                'paid_total' => self::sumBase(Invoice::byStatus('paid'), 'total'),
+                'due_total'  => self::sumBase(Invoice::whereNotIn('status',['paid','cancelled']), 'amount_due'),
             ],
             'quotes' => [
                 'total'    => Quote::count(),
@@ -414,10 +414,20 @@ class InvoiceService
                 'expired'  => Quote::expired()->count(),
             ],
             'revenue' => [
-                'month'     => Invoice::byStatus('paid')->whereMonth('payment_date', now()->month)->sum('total'),
-                'year'      => Invoice::byStatus('paid')->whereYear('payment_date', now()->year)->sum('total'),
+                'month'     => self::sumBase(Invoice::byStatus('paid')->whereMonth('payment_date', now()->month), 'total'),
+                'year'      => self::sumBase(Invoice::byStatus('paid')->whereYear('payment_date', now()->year), 'total'),
             ],
         ];
+    }
+
+    /**
+     * Somme d'une colonne convertie en devise de base (montant × taux figé).
+     */
+    protected static function sumBase($query, string $column): float
+    {
+        return (float) $query
+            ->selectRaw("COALESCE(SUM({$column} * COALESCE(exchange_rate, 1)), 0) as s")
+            ->value('s');
     }
 
     public function getFilteredInvoices(array $filters): LengthAwarePaginator

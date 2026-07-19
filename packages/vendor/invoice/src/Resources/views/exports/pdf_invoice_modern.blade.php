@@ -227,6 +227,7 @@
           <td>{{ __('invoice::invoices.common.total_ttc') }}</td>
           <td class="right">{{ number_format((float) $invoice->total, 2, ',', ' ') }} {{ $invoice->currency_symbol }}</td>
         </tr>
+        @include('invoice::partials.pdf_base_equivalent', ['doc' => $invoice])
       </table>
 
       @if(($signature['enabled'] ?? false) && ($signature['show_on_invoice'] ?? false) && !empty($signature['data']))

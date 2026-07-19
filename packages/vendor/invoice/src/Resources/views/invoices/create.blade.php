@@ -112,7 +112,6 @@
               </select>
             </div>
           </div>
-          <input type="hidden" name="exchange_rate" value="1">
         </div>
       </div>
 
@@ -270,6 +269,14 @@
             <span class="totals-label">{{ $common['total_ttc'] }}</span>
             <span class="totals-value" id="tot-grand">0,00 {{ $currencySymbol }}</span>
           </div>
+          <div class="totals-row" id="exchange-rate-row" style="display:none;align-items:center;gap:10px;">
+            <span class="totals-label">{{ $common['exchange_rate'] }}<br><small style="color:var(--c-ink-40);font-weight:400;">1 <span id="rateCur"></span> = {{ $tenantCurrency }}</small></span>
+            <input type="number" name="exchange_rate" id="exchange_rate_input" value="1" min="0.000001" step="any" class="form-control" style="width:110px;text-align:right;">
+          </div>
+          <div class="totals-row grand-total" id="tot-base-equiv-row" style="display:none;">
+            <span class="totals-label">{{ $common['equivalent_total'] }} {{ $tenantCurrency }}</span>
+            <span class="totals-value" id="tot-base-equiv">0</span>
+          </div>
           <div class="withholding-info" id="withholding-info" style="display:none;">
             <i class="fas fa-circle-info"></i>
             {{ $common['net_after_withholding'] }} : <strong id="tot-net">0,00 {{ $currencySymbol }}</strong>
@@ -355,12 +362,27 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('withholding_tax_rate')?.addEventListener('change', () => InvLineItems.recalc());
   document.getElementById('discount_value')?.addEventListener('input', () => InvLineItems.recalc());
-  InvLineItems.init({ currency: '{{ $tenantCurrency }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
+  InvLineItems.init({ currency: '{{ $tenantCurrency }}', baseCurrency: '{{ $tenantCurrency }}', defaultTaxRate: {{ config('invoice.tax.default_rate', 20) }} });
 
+  const baseCurrency = '{{ $tenantCurrency }}';
   const currencySelect = document.getElementById('currencySelect');
-  if (currencySelect) {
-    currencySelect.addEventListener('change', () => InvLineItems.setCurrency(currencySelect.value));
+  const exRow = document.getElementById('exchange-rate-row');
+  const exInput = document.getElementById('exchange_rate_input');
+  const rateCur = document.getElementById('rateCur');
+
+  // Affiche le taux + l'équivalent dans la devise de base quand la devise diffère.
+  function syncCurrencyUI(code) {
+    code = String(code || baseCurrency).toUpperCase();
+    const foreign = code !== baseCurrency;
+    if (exRow) exRow.style.display = foreign ? 'flex' : 'none';
+    if (rateCur) rateCur.textContent = code;
+    if (!foreign && exInput) exInput.value = 1;
+    InvLineItems.setBaseRate(parseFloat(exInput?.value || 1));
+    InvLineItems.setCurrency(code);
   }
+
+  if (currencySelect) currencySelect.addEventListener('change', () => syncCurrencyUI(currencySelect.value));
+  if (exInput) exInput.addEventListener('input', () => InvLineItems.setBaseRate(parseFloat(exInput.value || 1)));
 
   InvClientSearch.init('clientSearch', 'clientId', {
     suggestionsEl: 'clientSuggestions',
@@ -374,11 +396,13 @@ document.addEventListener('DOMContentLoaded', () => {
       // Devise préférée du client -> pré-remplit la devise du document.
       if (c.currency && currencySelect) {
         currencySelect.value = String(c.currency).toUpperCase();
-        InvLineItems.setCurrency(currencySelect.value);
+        syncCurrencyUI(currencySelect.value);
       }
       clientIdInput?.dispatchEvent(new Event('change', { bubbles: true }));
     }
   });
+
+  syncCurrencyUI(currencySelect ? currencySelect.value : baseCurrency);
 
   window.CrmDrafts?.attach('invoiceForm', {
     type: 'invoice',

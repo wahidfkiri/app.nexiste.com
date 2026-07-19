@@ -204,7 +204,7 @@ class InvTable {
 
   _fmtCur(n) {
     const cur = window.DEFAULT_CURRENCY || 'EUR';
-    return new Intl.NumberFormat('fr-FR', { style:'currency', currency: cur, maximumFractionDigits:0 }).format(n || 0);
+    return InvCurrencyFmt.format(n || 0, cur);
   }
 
   _showSkeletons(count = 5) {
@@ -251,8 +251,10 @@ class InvTable {
   }
 
   _rowInvoice(inv) {
-    const cur = window.DEFAULT_CURRENCY || inv.currency || 'EUR';
-    const fmtCur = (n) => InvCurrencyFmt.format(n, cur);
+    // Montants affichés dans la devise active (base) via le taux figé du document.
+    const baseCur = window.DEFAULT_CURRENCY || inv.currency || 'EUR';
+    const rate = parseFloat(inv.exchange_rate || 1) || 1;
+    const fmtCur = (n) => InvCurrencyFmt.format((n || 0) * rate, baseCur);
     const statusColors = { draft:'var(--c-ink-20)', sent:'var(--c-info)', viewed:'var(--c-purple)', partial:'var(--c-warning)', paid:'var(--c-success)', overdue:'var(--c-danger)', cancelled:'var(--c-ink-20)', refunded:'var(--c-warning)' };
     const dot = `<span style="width:6px;height:6px;border-radius:50%;background:${statusColors[inv.status]||'var(--c-ink-20)'};display:inline-block;margin-right:5px;"></span>`;
     const isOverdue = inv.is_overdue;
@@ -297,6 +299,7 @@ class InvTable {
 
   _rowQuote(q) {
     const cur = window.DEFAULT_CURRENCY || q.currency || 'EUR';
+    const _qRate = parseFloat(q.exchange_rate || 1) || 1;
     const expired = q.is_expired;
     const dot = `<span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;margin-right:5px;opacity:.7;"></span>`;
     const showUrl = invoiceRoute('quoteShow', { quote: q.uuid ?? q.id });
@@ -316,7 +319,7 @@ class InvTable {
         <td style="color:var(--c-ink-60);">${q.issue_date ? this._fmtDate(q.issue_date) : '—'}</td>
         <td style="${expired?'color:var(--c-danger);font-weight:var(--fw-medium);':''}">${q.valid_until ? this._fmtDate(q.valid_until) : '—'}</td>
         <td><span style="background:var(--c-ink-02);border:1px solid var(--c-ink-05);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:var(--fw-semi);">${cur}</span></td>
-        <td style="text-align:right;font-weight:var(--fw-semi);font-family:var(--ff-display);">${InvCurrencyFmt.format(q.total, cur)}</td>
+        <td style="text-align:right;font-weight:var(--fw-semi);font-family:var(--ff-display);">${InvCurrencyFmt.format((q.total || 0) * _qRate, cur)}</td>
         <td><span class="badge badge-${q.status}">${dot}${this._esc((window.QUOTE_STATUS_LABELS && window.QUOTE_STATUS_LABELS[q.status]) || q.status_label || q.status)}</span>${q.is_converted?`<span class="badge badge-paid" style="margin-left:6px;">${InvoiceLang.convertedBadge}</span>`:''}</td>
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
@@ -332,6 +335,7 @@ class InvTable {
 
   _rowPayment(p) {
     const cur = window.DEFAULT_CURRENCY || p.currency || 'EUR';
+    const _pRate = parseFloat(p.exchange_rate || 1) || 1;
     const invoiceUrl = invoiceRoute('show', { invoice: p.invoice_id });
     return `
       <tr data-id="${p.id}">
@@ -348,7 +352,7 @@ class InvTable {
         </td>
         <td style="color:var(--c-ink-60);font-size:13px;">${this._esc(p.reference||'—')}</td>
         <td style="color:var(--c-ink-60);font-size:13px;">${this._esc(p.bank_name||'—')}</td>
-        <td style="text-align:right;font-weight:var(--fw-bold);font-family:var(--ff-display);color:var(--c-success);">${InvCurrencyFmt.format(p.amount, cur)}</td>
+        <td style="text-align:right;font-weight:var(--fw-bold);font-family:var(--ff-display);color:var(--c-success);">${InvCurrencyFmt.format((p.amount || 0) * _pRate, cur)}</td>
         <td>
           <div class="row-actions" style="justify-content:flex-end;padding-right:4px;">
             <a href="${invoiceUrl}" class="btn-icon" title="${InvoiceLang.viewInvoiceTitle}"><i class="fas fa-file-invoice"></i></a>
@@ -461,6 +465,8 @@ const InvLineItems = (() => {
   let items   = [];
   let counter = 0;
   let currency        = window.DEFAULT_CURRENCY || 'EUR';
+  let baseCurrency    = window.DEFAULT_CURRENCY || 'EUR';
+  let baseRate        = 1;
   let globalDiscType  = 'none';
   let globalDiscVal   = 0;
   let taxRate         = 20;
@@ -468,6 +474,8 @@ const InvLineItems = (() => {
 
   function init(opts = {}) {
     currency        = opts.currency        || window.DEFAULT_CURRENCY || 'EUR';
+    baseCurrency    = opts.baseCurrency    || window.DEFAULT_CURRENCY || 'EUR';
+    baseRate        = parseFloat(opts.baseRate || 1) || 1;
     taxRate         = parseFloat(opts.defaultTaxRate || 0);
     withholdingRate = parseFloat(opts.withholdingRate || 0);
 
@@ -651,6 +659,14 @@ const InvLineItems = (() => {
     if (withRow) withRow.style.display = withAmt > 0 ? 'flex' : 'none';
     const withInfo = document.getElementById('withholding-info');
     if (withInfo) withInfo.style.display = withholdingRate > 0 ? 'flex' : 'none';
+
+    // Équivalent dans la devise de base (devise active du tenant) au taux saisi.
+    const baseRow = document.getElementById('tot-base-equiv-row');
+    if (baseRow) {
+      const foreign = baseCurrency && currency !== baseCurrency && baseRate > 0;
+      baseRow.style.display = foreign ? 'flex' : 'none';
+      if (foreign) _setText('tot-base-equiv', InvCurrencyFmt.format(total * baseRate, baseCurrency));
+    }
   }
 
   function _setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
@@ -662,7 +678,12 @@ const InvLineItems = (() => {
     recalc();
   }
 
-  return { init, addLine, removeLine, recalc, clear, load, getData, setCurrency };
+  function setBaseRate(rate) {
+    baseRate = parseFloat(rate) || 1;
+    recalc();
+  }
+
+  return { init, addLine, removeLine, recalc, clear, load, getData, setCurrency, setBaseRate };
 })();
 window.InvLineItems = InvLineItems;
 

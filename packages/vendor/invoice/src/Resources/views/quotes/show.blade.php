@@ -73,6 +73,10 @@
           <div class="totals-row"><span class="totals-label">{{ __('invoice::invoices.common.subtotal') }}</span><span class="totals-value">{{ number_format($quote->subtotal, 2, ',', ' ') }}</span></div>
           <div class="totals-row"><span class="totals-label">{{ __('invoice::invoices.common.vat') }}</span><span class="totals-value">{{ number_format($quote->tax_amount, 2, ',', ' ') }}</span></div>
           <div class="totals-row grand-total"><span class="totals-label">{{ __('invoice::invoices.common.total') }}</span><span class="totals-value">{{ number_format($quote->total, 2, ',', ' ') }} {{ config('invoice.currencies.'.$quote->currency.'.symbol', $quote->currency) }}</span></div>
+          @php $__base = strtoupper((string) ($quote->tenant->currency ?? config('invoice.default_currency', 'EUR'))); $__rate = (float) ($quote->exchange_rate ?? 1); @endphp
+          @if(strtoupper((string) $quote->currency) !== $__base && $__rate > 0 && abs($__rate - 1.0) > 0.0000001)
+          <div class="totals-row grand-total" style="color:var(--c-ink-60);"><span class="totals-label">{{ __('invoice::invoices.common.equivalent_total') }} {{ $__base }}</span><span class="totals-value">{{ \Vendor\Invoice\Support\Money::format((float) $quote->total * $__rate, $__base) }}</span></div>
+          @endif
         </div>
       </div>
     </div>

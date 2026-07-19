@@ -236,6 +236,7 @@
                         <td>{{ __('invoice::invoices.common.total_ttc') }}</td>
                         <td class="right">{{ $money($quote->total) }}</td>
                     </tr>
+                    @include('invoice::partials.pdf_base_equivalent', ['doc' => $quote])
                 </table>
             </td>
         </tr>

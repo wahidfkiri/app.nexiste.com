@@ -296,6 +296,7 @@ return [
         'payment_terms' => 'Conditions de paiement',
         'payment_method' => 'Mode de paiement',
         'exchange_rate' => 'Taux de change',
+        'equivalent_total' => 'Total équivalent en',
         'currency_with_symbol' => ':code — :name (:symbol)',
         'currency_with_name' => ':code — :name',
         'status_all' => 'Tous les statuts',
